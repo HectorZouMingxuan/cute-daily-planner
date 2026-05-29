@@ -110,6 +110,29 @@ class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
       );
     });
 
+    // Previous week comparison
+    final prevWeekStart = weekStart.subtract(const Duration(days: 7));
+    int prevTasksDone = 0;
+    double prevIncome = 0;
+    double prevSpending = 0;
+    int prevEvents = 0;
+    int prevHabitsChecked = 0;
+    for (int i = 0; i < 7; i++) {
+      final day = prevWeekStart.add(Duration(days: i));
+      prevEvents += events.where((e) => _recurrenceCalculator.occursOn(e, day)).length;
+      final dayExpenses = expenses.where((e) => _isSameDate(e.date, day)).toList();
+      for (final e in dayExpenses) {
+        if (e.type == ExpenseType.income) {
+          prevIncome += e.amount;
+        } else {
+          prevSpending += e.amount;
+        }
+      }
+      final dayTodos = todos.where((t) => _isSameDate(t.date, day)).toList();
+      prevTasksDone += dayTodos.where((t) => t.isDone).length;
+      prevHabitsChecked += checkIns.where((c) => _isSameDate(c.date, day) && c.isDone).length;
+    }
+
     final avgMood = moodCounts.entries.isEmpty
         ? null
         : moodCounts.entries.reduce((a, b) => a.value > b.value ? a : b).key;
@@ -182,6 +205,7 @@ class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
                         icon: Icons.checklist_rounded,
                         label: '$totalTasksDone / $totalTasks tasks done',
                         color: AppColors.sage,
+                        delta: _deltaStr(totalTasksDone - prevTasksDone),
                       ),
                       _AggregateChip(
                         icon: Icons.account_balance_wallet_rounded,
@@ -190,11 +214,15 @@ class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
                         color: totalIncome > totalSpending
                             ? AppColors.mint
                             : AppColors.danger,
+                        delta: _deltaStr(
+                          (totalIncome - totalSpending - (prevIncome - prevSpending)).round(),
+                        ),
                       ),
                       _AggregateChip(
                         icon: Icons.event_rounded,
                         label: '$totalEvents events',
                         color: AppColors.primary,
+                        delta: _deltaStr(totalEvents - prevEvents),
                       ),
                       if (avgMood != null)
                         _AggregateChip(
@@ -206,6 +234,7 @@ class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
                         icon: Icons.auto_awesome_rounded,
                         label: '$habitDaysChecked / $habitTotalDays habits',
                         color: AppColors.mint,
+                        delta: _deltaStr(habitDaysChecked - prevHabitsChecked),
                       ),
                     ],
                   ),
@@ -249,6 +278,11 @@ class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
 
   bool _isSameDate(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
+
+  String? _deltaStr(int diff) {
+    if (diff == 0) return null;
+    return diff > 0 ? '↑$diff' : '↓${diff.abs()}';
   }
 
   String _narrativeSummary(
@@ -307,11 +341,13 @@ class _AggregateChip extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.color,
+    this.delta,
   });
 
   final IconData icon;
   final String label;
   final Color color;
+  final String? delta;
 
   @override
   Widget build(BuildContext context) {
@@ -330,6 +366,11 @@ class _AggregateChip extends StatelessWidget {
             label,
             style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: color),
           ),
+          if (delta != null)
+            Text(
+              delta!,
+              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: color.withValues(alpha: .65)),
+            ),
         ],
       ),
     );

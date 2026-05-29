@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.7 — 2026-05-29
+
+**Week-over-week comparison deltas**
+
+- Aggregate stats row now shows week-over-week deltas (e.g. "↑3", "↓200")
+- Compares current week against previous week for tasks done, net income, events, and habits
+- Delta indicators use subtle dimmed text within each aggregate chip
+- No delta shown when there's no change from the previous week
+
 ## v2.6 — 2026-05-29
 
 **Narrative weekly summary**
