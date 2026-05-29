@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.28 — 2026-05-29
+
+**Habit completions in monthly summary**
+
+- The monthly summary line on the calendar now includes habit check-ins (e.g. "45 habits done")
+- Counts all completed habit check-ins for the viewed month
+- Auto-hides when no habits have been completed in the month
+
 ## v3.27 — 2026-05-29
 
 **Event duration in upcoming preview**

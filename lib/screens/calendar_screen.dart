@@ -75,6 +75,7 @@ class CalendarScreen extends ConsumerWidget {
       eventList.value ?? const [],
       todoList.value ?? const [],
       expenseList.value ?? const [],
+      habitState.valueOrNullForUi.checkIns,
     );
 
     PersistentBottomSheetController? eventsSheet;
@@ -668,6 +669,7 @@ class CalendarScreen extends ConsumerWidget {
     List<CalendarEvent> events,
     List<TodoItem> todos,
     List<ExpenseEntry> expenses,
+    List<HabitCheckIn> checkIns,
   ) {
     final month = focusedDay.month;
     final year = focusedDay.year;
@@ -684,6 +686,10 @@ class CalendarScreen extends ConsumerWidget {
       net += e.type == ExpenseType.income ? e.amount : -e.amount;
     }
 
+    final monthCheckIns = checkIns
+        .where((c) => c.date.month == month && c.date.year == year && c.isDone)
+        .length;
+
     final parts = <String>[];
     if (monthTodos.isNotEmpty) {
       final done = monthTodos.where((t) => t.isDone).length;
@@ -691,6 +697,7 @@ class CalendarScreen extends ConsumerWidget {
     }
     if (monthEvents > 0) parts.add('$monthEvents events');
     if (net != 0) parts.add('${net > 0 ? "+" : ""}${net.toStringAsFixed(0)} net');
+    if (monthCheckIns > 0) parts.add('$monthCheckIns habits done');
 
     return parts.isEmpty ? null : parts.join('  ·  ');
   }
