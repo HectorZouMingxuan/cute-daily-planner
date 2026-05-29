@@ -33,7 +33,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       duration: const Duration(milliseconds: 600),
     );
     _entrances = List.generate(8, (i) {
-      final start = i * 0.10;
+      final start = i * 0.08;
       return CurvedAnimation(
         parent: _animController,
         curve: Interval(start, start + 0.4, curve: Curves.easeOutCubic),
