@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.3 — 2026-05-29
+
+**Upcoming events preview on home screen**
+
+- New "Upcoming" section on the main calendar screen showing the next 3 events
+- Events from today through the next 7 days, respecting recurrence rules
+- Each event shows colored bar, title, relative day (Today/Tomorrow/day name), and time
+- Section auto-hides when no upcoming events exist
+- Recurring events properly resolved to their next occurrence
+
 ## v2.2 — 2026-05-29
 
 **Expense category breakdown in weekly overview**

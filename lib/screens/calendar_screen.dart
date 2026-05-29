@@ -29,6 +29,7 @@ import '../widgets/common/sync_status_badge.dart';
 import '../widgets/calendar/month_view.dart';
 import '../widgets/home/daily_summary_card.dart';
 import '../widgets/home/module_card.dart';
+import '../widgets/home/upcoming_events_card.dart';
 import '../widgets/home/module_sheet.dart';
 import '../widgets/events/event_form.dart';
 import '../widgets/expenses/expense_form.dart';
@@ -325,6 +326,8 @@ class CalendarScreen extends ConsumerWidget {
                         habitsTotal: habitsTotal,
                       ),
                       const SizedBox(height: AppSpacing.md),
+                      UpcomingEventsCard(events: _upcomingEvents(eventList.value ?? const [])),
+                      const SizedBox(height: AppSpacing.md),
                       LayoutBuilder(
                         builder: (context, constraints) {
                           final cardWidth =
@@ -581,6 +584,21 @@ class CalendarScreen extends ConsumerWidget {
 
   String _habitSubtitle(int checked, int total) {
     return '$checked / $total today';
+  }
+
+  List<CalendarEvent> _upcomingEvents(List<CalendarEvent> events) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final nextWeek = today.add(const Duration(days: 7));
+    return events
+        .where((e) {
+          final occ = _recurrenceCalculator.occurrenceFor(e, today);
+          final d = DateTime(occ.startAt.year, occ.startAt.month, occ.startAt.day);
+          return d.isAfter(today) && d.isBefore(nextWeek.add(const Duration(days: 1)));
+        })
+        .map((e) => _recurrenceCalculator.occurrenceFor(e, today))
+        .toList()
+      ..sort((a, b) => a.startAt.compareTo(b.startAt));
   }
 
   Future<void> _openEventForm({
