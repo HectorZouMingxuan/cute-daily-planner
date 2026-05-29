@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.37 — 2026-05-29
+
+**Habit module subtitle for all-done state**
+
+- Habits module card now shows "All done today!" when every habit is checked in
+- Previously always showed the ratio (e.g. "3/3 today"), which was less celebratory
+- Matches the task module pattern from v1.1
+
 ## v3.36 — 2026-05-29
 
 **Category emojis in spending breakdown**

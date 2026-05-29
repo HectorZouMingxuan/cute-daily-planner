@@ -768,6 +768,7 @@ class CalendarScreen extends ConsumerWidget {
   }
 
   String _habitSubtitle(int checked, int total) {
+    if (checked == total) return 'All done today!';
     return '$checked / $total today';
   }
 
