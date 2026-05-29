@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.4 — 2026-05-29
+
+**Weekly expense summary bar in expense sheet**
+
+- Expenses bottom sheet now shows a 7-day mini bar chart of daily net totals
+- Green bars for net income days, red bars for net spending days
+- Daily net amount labels above each bar
+- Day-of-week labels with today highlighted
+- Bar auto-hides when no expense data exists in the last 7 days
+
 ## v1.3 — 2026-05-29
 
 **Mood trend display in mood sheet**

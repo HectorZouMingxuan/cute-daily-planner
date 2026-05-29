@@ -379,6 +379,7 @@ class CalendarScreen extends ConsumerWidget {
                               child: ExpensesSheet(
                                 selectedDate: calendarView.selectedDay,
                                 expenses: selectedExpenses,
+                                allExpenses: expenseList.value ?? const [],
                                 onAdd: () => _openExpenseForm(
                                   context: context,
                                   expenseController: expenseController,

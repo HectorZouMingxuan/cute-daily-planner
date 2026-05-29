@@ -15,6 +15,7 @@ import '../calendar/draggable_event_tile.dart';
 import '../common/empty_state.dart';
 import '../common/soft_card.dart';
 import '../expenses/expense_card.dart';
+import '../expenses/expense_summary_bar.dart';
 import '../expenses/expense_summary_card.dart';
 import '../habits/habit_check_list.dart';
 import '../mood/mood_picker.dart';
@@ -134,6 +135,7 @@ class ExpensesSheet extends StatelessWidget {
   const ExpensesSheet({
     required this.selectedDate,
     required this.expenses,
+    required this.allExpenses,
     required this.onAdd,
     required this.onExpenseTap,
     super.key,
@@ -141,6 +143,7 @@ class ExpensesSheet extends StatelessWidget {
 
   final DateTime selectedDate;
   final List<ExpenseEntry> expenses;
+  final List<ExpenseEntry> allExpenses;
   final VoidCallback onAdd;
   final ValueChanged<ExpenseEntry> onExpenseTap;
 
@@ -158,7 +161,9 @@ class ExpensesSheet extends StatelessWidget {
             child: Column(
               children: [
                 ExpenseSummaryCard(expenses: expenses),
-                const SizedBox(height: AppSpacing.md),
+                const SizedBox(height: AppSpacing.sm),
+                ExpenseSummaryBar(expenses: allExpenses, selectedDate: selectedDate),
+                if (expenses.isNotEmpty) const SizedBox(height: AppSpacing.sm),
                 if (expenses.isEmpty)
                   const EmptyState(
                     icon: Icons.account_balance_wallet_outlined,
