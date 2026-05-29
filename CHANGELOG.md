@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.13 — 2026-05-29
+
+**Settings screen enrichment**
+
+- Settings now shows app name, icon, and version at the top
+- Added About dialog with licenses and app info (built-in Flutter widget)
+- Removed Firebase setup placeholder for a cleaner look
+
 ## v3.12 — 2026-05-29
 
 **Swipe to delete habits**

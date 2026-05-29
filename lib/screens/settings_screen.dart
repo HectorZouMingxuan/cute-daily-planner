@@ -4,13 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/sync_metadata.dart';
 import '../providers/sync_provider.dart';
 import '../providers/theme_provider.dart';
+import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
-import '../widgets/common/empty_state.dart';
 import '../widgets/common/soft_card.dart';
 import '../widgets/common/sync_status_badge.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
+
+  static const _appVersion = '1.0.0';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,6 +24,40 @@ class SettingsScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),
         children: [
+          SoftCard(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            child: Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: .25),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.calendar_month_rounded,
+                      color: AppColors.primary, size: 26),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Cute Daily Planner',
+                          style: TextStyle(
+                              color: AppColors.textMain,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 15)),
+                      Text('Version $_appVersion',
+                          style: TextStyle(
+                              color: AppColors.textMuted, fontSize: 12)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
           ListTile(
             title: const Text('Theme'),
             subtitle: Text(
@@ -32,19 +68,32 @@ class SettingsScreen extends ConsumerWidget {
               onChanged: (_) => ref.read(themeModeProvider.notifier).toggle(),
             ),
           ),
-          const SizedBox(height: AppSpacing.md),
           ListTile(
             title: const Text('Sync Status'),
             subtitle: Text(syncState.message),
             trailing: SyncStatusBadge(label: syncState.status.label),
           ),
-          const SizedBox(height: AppSpacing.md),
-          const SoftCard(
-            child: EmptyState(
-              icon: Icons.info_outline_rounded,
-              title: 'Firebase setup needed',
-              message:
-                  'Local calendar works now. Add Firebase config to enable cloud sync.',
+          ListTile(
+            leading: const Icon(Icons.info_outline_rounded),
+            title: const Text('About'),
+            subtitle: const Text('Licenses and app info'),
+            onTap: () => showAboutDialog(
+              context: context,
+              applicationName: 'Cute Daily Planner',
+              applicationVersion: _appVersion,
+              applicationIcon: Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: .25),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.calendar_month_rounded,
+                    color: AppColors.primary, size: 26),
+              ),
+              children: [
+                const Text('Your cute daily planner and habit tracker.'),
+              ],
             ),
           ),
         ],
