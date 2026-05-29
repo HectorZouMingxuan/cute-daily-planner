@@ -297,6 +297,19 @@ class CalendarScreen extends ConsumerWidget {
                     final habits = habitState.valueOrNullForUi.habits;
                     final habitCheckIns = habitState.valueOrNullForUi.checkIns;
 
+                    final taskDoneCount = selectedTodos.where((t) => t.isDone).length;
+                    final taskTotal = selectedTodos.length;
+                    final expenseNet = selectedExpenses.fold<double>(
+                      0,
+                      (sum, e) => e.type == ExpenseType.income
+                          ? sum + e.amount
+                          : sum - e.amount,
+                    );
+                    final habitsCheckedToday = habitCheckIns
+                        .where((c) => _isSameDate(c.date, calendarView.selectedDay) && c.isDone)
+                        .length;
+                    final habitsTotal = habits.length;
+
                     return Wrap(
                       spacing: AppSpacing.md,
                       runSpacing: AppSpacing.md,
@@ -309,7 +322,7 @@ class CalendarScreen extends ConsumerWidget {
                             color: AppColors.primary,
                             subtitle: selectedEvents.isEmpty
                                 ? 'None'
-                                : '${selectedEvents.length} event${selectedEvents.length == 1 ? '' : 's'}',
+                                : _eventSubtitle(selectedEvents),
                             onTap: () {
                               final scaffold =
                                   Scaffold.of(context);
@@ -347,7 +360,7 @@ class CalendarScreen extends ConsumerWidget {
                             color: AppColors.yellow,
                             subtitle: selectedExpenses.isEmpty
                                 ? 'None'
-                                : '${selectedExpenses.length} item${selectedExpenses.length == 1 ? '' : 's'}',
+                                : _expenseSubtitle(expenseNet),
                             onTap: () => showAppBottomSheet(
                               context: context,
                               child: ExpensesSheet(
@@ -377,7 +390,7 @@ class CalendarScreen extends ConsumerWidget {
                             color: AppColors.sage,
                             subtitle: selectedTodos.isEmpty
                                 ? 'None'
-                                : '${selectedTodos.length} task${selectedTodos.length == 1 ? '' : 's'}',
+                                : _taskSubtitle(taskDoneCount, taskTotal),
                             onTap: () => showAppBottomSheet(
                               context: context,
                               child: TasksSheet(
@@ -401,7 +414,7 @@ class CalendarScreen extends ConsumerWidget {
                             title: 'Notes',
                             color: AppColors.lavender,
                             subtitle: selectedNote != null
-                                ? 'Has note'
+                                ? _notePreview(selectedNote.content)
                                 : 'Tap to write',
                             onTap: () => showAppBottomSheet(
                               context: context,
@@ -457,7 +470,7 @@ class CalendarScreen extends ConsumerWidget {
                             color: AppColors.mint,
                             subtitle: habits.isEmpty
                                 ? 'None'
-                                : '${habits.length} habit${habits.length == 1 ? '' : 's'}',
+                                : _habitSubtitle(habitsCheckedToday, habitsTotal),
                             onTap: () => showAppBottomSheet(
                               context: context,
                               child: HabitsSheet(
@@ -513,6 +526,36 @@ class CalendarScreen extends ConsumerWidget {
         .map((event) => _recurrenceCalculator.occurrenceFor(event, day))
         .toList()
       ..sort((a, b) => a.startAt.compareTo(b.startAt));
+  }
+
+  String _eventSubtitle(List<CalendarEvent> events) {
+    final timed = events.where((e) => !e.isAllDay).toList();
+    if (timed.isNotEmpty) {
+      final time = DateFormat('HH:mm').format(timed.first.startAt);
+      return events.length == 1 ? 'at $time' : '${events.length} events, next $time';
+    }
+    return '${events.length} event${events.length == 1 ? '' : 's'}';
+  }
+
+  String _expenseSubtitle(double net) {
+    if (net == 0) return 'Balanced';
+    final sign = net > 0 ? '+' : '';
+    return '$sign${net.toStringAsFixed(0)}';
+  }
+
+  String _taskSubtitle(int done, int total) {
+    if (done == total) return 'All $total done!';
+    return '$done / $total done';
+  }
+
+  String _notePreview(String content) {
+    final trimmed = content.trim();
+    if (trimmed.length <= 28) return trimmed;
+    return '${trimmed.substring(0, 28)}...';
+  }
+
+  String _habitSubtitle(int checked, int total) {
+    return '$checked / $total today';
   }
 
   Future<void> _openEventForm({
