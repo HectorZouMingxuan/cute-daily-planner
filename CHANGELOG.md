@@ -1,5 +1,15 @@
 # Changelog
 
+## v4.3.4 — 2026-05-29
+
+**Fix: Task checkbox toggle updates immediately + two-way toggle restored**
+
+- `TodoList` converted to `ConsumerWidget` that watches `todoListProvider` directly, so it rebuilds inside modal sheets when task data changes
+- Task checkbox now updates instantly — no manual refresh needed
+- Completed tasks can now be unchecked (two-way toggle: false→true and true→false both work)
+- "Task completed" and "Task marked as incomplete" notifications on toggle
+- Calendar task indicators (count, check mark, daily summary, module card subtitles) all update immediately
+
 ## v4.3.3 — 2026-05-29
 
 **Popup notifications for login/register + per-account dark mode preference**

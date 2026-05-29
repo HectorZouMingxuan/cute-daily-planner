@@ -209,7 +209,6 @@ class ExpensesSheet extends StatelessWidget {
 class TasksSheet extends StatelessWidget {
   const TasksSheet({
     required this.selectedDate,
-    required this.todos,
     required this.onAdd,
     required this.onToggle,
     required this.onDelete,
@@ -218,7 +217,6 @@ class TasksSheet extends StatelessWidget {
   });
 
   final DateTime selectedDate;
-  final List<TodoItem> todos;
   final VoidCallback onAdd;
   final ValueChanged<TodoItem> onToggle;
   final ValueChanged<TodoItem> onDelete;
@@ -234,7 +232,7 @@ class TasksSheet extends StatelessWidget {
         const Divider(),
         Flexible(
           child: TodoList(
-            todos: todos,
+            selectedDate: selectedDate,
             onToggle: onToggle,
             onDelete: onDelete,
             onClearDone: onClearDone,

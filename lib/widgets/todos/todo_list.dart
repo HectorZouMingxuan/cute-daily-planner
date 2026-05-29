@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/todo_item.dart';
+import '../../providers/todo_provider.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_radius.dart';
 import '../../theme/app_spacing.dart';
@@ -30,22 +32,27 @@ class _PriorityCount extends StatelessWidget {
   }
 }
 
-class TodoList extends StatelessWidget {
+class TodoList extends ConsumerWidget {
   const TodoList({
-    required this.todos,
+    required this.selectedDate,
     required this.onToggle,
     required this.onDelete,
     this.onClearDone,
     super.key,
   });
 
-  final List<TodoItem> todos;
+  final DateTime selectedDate;
   final ValueChanged<TodoItem> onToggle;
   final ValueChanged<TodoItem> onDelete;
   final VoidCallback? onClearDone;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final allTodos = ref.watch(todoListProvider).value ?? [];
+    final todos = allTodos
+        .where((t) => _isSameDate(t.date, selectedDate))
+        .toList();
+
     final doneCount = todos.where((todo) => todo.isDone).length;
     final progress = todos.isEmpty ? 0.0 : doneCount / todos.length;
     final highCount = todos.where((t) => t.priority == TodoPriority.high).length;
@@ -156,5 +163,9 @@ class TodoList extends StatelessWidget {
           ),
       ],
     );
+  }
+
+  bool _isSameDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 }

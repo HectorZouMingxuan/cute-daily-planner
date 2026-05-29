@@ -547,7 +547,6 @@ class CalendarScreen extends ConsumerWidget {
                               context: context,
                               child: TasksSheet(
                                 selectedDate: calendarView.selectedDay,
-                                todos: selectedTodos,
                                 onAdd: () => _openTodoForm(
                                   context: context,
                                   todoController: todoController,
@@ -556,6 +555,11 @@ class CalendarScreen extends ConsumerWidget {
                                 onToggle: (todo) async {
                                   await todoController.toggleDone(todo);
                                   if (!context.mounted) return;
+                                  final newIsDone = !todo.isDone;
+                                  AppNotification.success(
+                                    context,
+                                    newIsDone ? 'Task completed' : 'Task marked as incomplete',
+                                  );
                                   final currentTodos = ref.read(todoListProvider).value ?? [];
                                   final dayTodos = currentTodos
                                       .where((t) => _isSameDate(t.date, calendarView.selectedDay))
