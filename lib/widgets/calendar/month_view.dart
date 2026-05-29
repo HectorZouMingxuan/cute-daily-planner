@@ -14,6 +14,7 @@ class MonthView extends StatelessWidget {
     required this.eventLoader,
     required this.onDaySelected,
     required this.onEventDropped,
+    this.onDayLongPress,
     this.incompleteTaskLoader,
     this.allTasksDoneLoader,
     this.hasEventsLoader,
@@ -27,6 +28,7 @@ class MonthView extends StatelessWidget {
   final List<CalendarEvent> Function(DateTime day) eventLoader;
   final void Function(DateTime selectedDay, DateTime focusedDay) onDaySelected;
   final void Function(CalendarEvent event, DateTime targetDay) onEventDropped;
+  final void Function(DateTime day)? onDayLongPress;
   final int Function(DateTime day)? incompleteTaskLoader;
   final bool Function(DateTime day)? allTasksDoneLoader;
   final bool Function(DateTime day)? hasEventsLoader;
@@ -83,6 +85,7 @@ class MonthView extends StatelessWidget {
         defaultBuilder: (context, day, focusedDay) => _DragTargetDayCell(
           day: day,
           onEventDropped: onEventDropped,
+          onLongPress: onDayLongPress != null ? () => onDayLongPress!(day) : null,
           incompleteCount: incompleteTaskLoader?.call(day) ?? 0,
           allTasksDone: allTasksDoneLoader?.call(day) ?? false,
           hasEvents: hasEventsLoader?.call(day) ?? false,
@@ -97,6 +100,7 @@ class MonthView extends StatelessWidget {
             fontWeight: FontWeight.w800,
           ),
           onEventDropped: onEventDropped,
+          onLongPress: onDayLongPress != null ? () => onDayLongPress!(day) : null,
           incompleteCount: incompleteTaskLoader?.call(day) ?? 0,
           allTasksDone: allTasksDoneLoader?.call(day) ?? false,
           hasEvents: hasEventsLoader?.call(day) ?? false,
@@ -111,6 +115,7 @@ class MonthView extends StatelessWidget {
             fontWeight: FontWeight.w800,
           ),
           onEventDropped: onEventDropped,
+          onLongPress: onDayLongPress != null ? () => onDayLongPress!(day) : null,
           incompleteCount: incompleteTaskLoader?.call(day) ?? 0,
           allTasksDone: allTasksDoneLoader?.call(day) ?? false,
           hasEvents: hasEventsLoader?.call(day) ?? false,
@@ -121,6 +126,7 @@ class MonthView extends StatelessWidget {
           day: day,
           textStyle:  TextStyle(color: AppColors.textMuted),
           onEventDropped: onEventDropped,
+          onLongPress: onDayLongPress != null ? () => onDayLongPress!(day) : null,
           incompleteCount: incompleteTaskLoader?.call(day) ?? 0,
           allTasksDone: allTasksDoneLoader?.call(day) ?? false,
           hasEvents: hasEventsLoader?.call(day) ?? false,
@@ -175,6 +181,7 @@ class _DragTargetDayCell extends StatelessWidget {
     required this.onEventDropped,
     this.backgroundColor,
     this.textStyle,
+    this.onLongPress,
     this.incompleteCount = 0,
     this.allTasksDone = false,
     this.hasEvents = false,
@@ -186,6 +193,7 @@ class _DragTargetDayCell extends StatelessWidget {
   final Color? backgroundColor;
   final TextStyle? textStyle;
   final void Function(CalendarEvent event, DateTime targetDay) onEventDropped;
+  final VoidCallback? onLongPress;
   final int incompleteCount;
   final bool allTasksDone;
   final bool hasEvents;
@@ -197,58 +205,61 @@ class _DragTargetDayCell extends StatelessWidget {
     final hasExpense = expenseNet != null;
     final hasTask = incompleteCount > 0 || allTasksDone;
 
-    return DragTarget<CalendarEvent>(
-      onAcceptWithDetails: (details) => onEventDropped(details.data, day),
-      builder: (context, candidateData, rejectedData) {
-        final highlighted = candidateData.isNotEmpty;
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          margin: const EdgeInsets.all(5),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: highlighted
-                ? AppColors.mint.withValues(alpha: .45)
-                : backgroundColor,
-            borderRadius: BorderRadius.circular(AppRadius.small),
-            border: highlighted
-                ? Border.all(color: AppColors.mint, width: 2)
-                : null,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '${day.day}',
-                style:
-                    textStyle ??  TextStyle(color: AppColors.textMain),
-              ),
-              if (hasTask || mood != null || hasExpense || hasEvents)
-                Padding(
-                  padding: const EdgeInsets.only(top: 1),
-                  child: Wrap(
-                    spacing: 2,
-                    runSpacing: 1,
-                    alignment: WrapAlignment.center,
-                    children: [
-                      if (incompleteCount > 0)
-                        TaskCountBadge(count: incompleteCount),
-                      if (allTasksDone) const CheckMark(),
-                      if (mood != null) MoodEmoji(mood: mood!),
-                      if (hasExpense && expenseNet!.startsWith('+'))
-                        ExpenseLabel(
-                            total: expenseNet!, color: AppColors.mint),
-                      if (hasExpense && expenseNet!.startsWith('-'))
-                        ExpenseLabel(
-                            total: expenseNet!, color: AppColors.danger),
-                      if (hasEvents) const EventBadge(),
-                    ],
-                  ),
+    return GestureDetector(
+      onLongPress: onLongPress,
+      child: DragTarget<CalendarEvent>(
+        onAcceptWithDetails: (details) => onEventDropped(details.data, day),
+        builder: (context, candidateData, rejectedData) {
+          final highlighted = candidateData.isNotEmpty;
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            margin: const EdgeInsets.all(5),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: highlighted
+                  ? AppColors.mint.withValues(alpha: .45)
+                  : backgroundColor,
+              borderRadius: BorderRadius.circular(AppRadius.small),
+              border: highlighted
+                  ? Border.all(color: AppColors.mint, width: 2)
+                  : null,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '${day.day}',
+                  style:
+                      textStyle ??  TextStyle(color: AppColors.textMain),
                 ),
-            ],
-          ),
-        );
-      },
+                if (hasTask || mood != null || hasExpense || hasEvents)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 1),
+                    child: Wrap(
+                      spacing: 2,
+                      runSpacing: 1,
+                      alignment: WrapAlignment.center,
+                      children: [
+                        if (incompleteCount > 0)
+                          TaskCountBadge(count: incompleteCount),
+                        if (allTasksDone) const CheckMark(),
+                        if (mood != null) MoodEmoji(mood: mood!),
+                        if (hasExpense && expenseNet!.startsWith('+'))
+                          ExpenseLabel(
+                              total: expenseNet!, color: AppColors.mint),
+                        if (hasExpense && expenseNet!.startsWith('-'))
+                          ExpenseLabel(
+                              total: expenseNet!, color: AppColors.danger),
+                        if (hasEvents) const EventBadge(),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

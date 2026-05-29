@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.20 — 2026-05-29
+
+**Quick actions on calendar day long-press**
+
+- Long-press any day cell on the calendar to show a quick-action bottom sheet
+- Options: Add Event, Add Task, Add Expense — directly opens the creation form for that day
+- Automatically selects the day before opening the form, no need to tap-and-then-add
+
 ## v3.19 — 2026-05-29
 
 **Mood note displayed in feedback card**

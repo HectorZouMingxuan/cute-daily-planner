@@ -288,6 +288,55 @@ class CalendarScreen extends ConsumerWidget {
                               );
                             }
                           },
+                          onDayLongPress: (day) {
+                            calendarController.selectDay(day, day);
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (ctx) => SafeArea(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ListTile(
+                                      leading: const Icon(Icons.add_rounded),
+                                      title: const Text('Add Event'),
+                                      onTap: () {
+                                        Navigator.pop(ctx);
+                                        _openEventForm(
+                                          context: context,
+                                          eventController: eventController,
+                                          selectedDate: day,
+                                        );
+                                      },
+                                    ),
+                                    ListTile(
+                                      leading: const Icon(Icons.checklist_rounded),
+                                      title: const Text('Add Task'),
+                                      onTap: () {
+                                        Navigator.pop(ctx);
+                                        _openTodoForm(
+                                          context: context,
+                                          todoController: todoController,
+                                          selectedDate: day,
+                                        );
+                                      },
+                                    ),
+                                    ListTile(
+                                      leading: const Icon(Icons.account_balance_wallet_rounded),
+                                      title: const Text('Add Expense'),
+                                      onTap: () {
+                                        Navigator.pop(ctx);
+                                        _openExpenseForm(
+                                          context: context,
+                                          expenseController: expenseController,
+                                          selectedDate: day,
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                       ),
