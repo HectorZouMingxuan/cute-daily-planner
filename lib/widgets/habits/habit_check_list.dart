@@ -45,79 +45,99 @@ class HabitCheckList extends StatelessWidget {
       );
     }
 
-    return Column(
-      children: habits.map((habit) {
-        final checkIn = checkIns.where((item) {
-          return item.habitId == habit.id &&
-              _isSameDate(item.date, selectedDate);
-        }).firstOrNull;
-        final done = checkIn?.isDone ?? false;
-        final streak = _calculateStreak(habit.id, selectedDate);
+    final allDone = habits.every((h) {
+      final ci = checkIns.where((c) =>
+          c.habitId == h.id && _isSameDate(c.date, selectedDate)).firstOrNull;
+      return ci?.isDone ?? false;
+    });
 
-        return Dismissible(
-          key: Key(habit.id),
-          direction: DismissDirection.endToStart,
-          background: Container(
-            alignment: Alignment.centerRight,
-            padding: const EdgeInsets.only(right: AppSpacing.lg),
-            decoration: BoxDecoration(
-              color: AppColors.danger.withValues(alpha: .85),
-              borderRadius: BorderRadius.circular(AppRadius.medium),
+    return Column(
+      children: [
+        ...habits.map((habit) {
+          final checkIn = checkIns.where((item) {
+            return item.habitId == habit.id &&
+                _isSameDate(item.date, selectedDate);
+          }).firstOrNull;
+          final done = checkIn?.isDone ?? false;
+          final streak = _calculateStreak(habit.id, selectedDate);
+
+          return Dismissible(
+            key: Key(habit.id),
+            direction: DismissDirection.endToStart,
+            background: Container(
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: AppSpacing.lg),
+              decoration: BoxDecoration(
+                color: AppColors.danger.withValues(alpha: .85),
+                borderRadius: BorderRadius.circular(AppRadius.medium),
+              ),
+              child: const Icon(Icons.delete_rounded, color: Colors.white),
             ),
-            child: const Icon(Icons.delete_rounded, color: Colors.white),
-          ),
-          confirmDismiss: (_) async {
-            onDelete(habit);
-            return false;
-          },
-          child: Card(
-            child: CheckboxListTile(
-              value: done,
-              onChanged: (_) => onToggle(habit, checkIn),
-              title: Text(
-                habit.title,
-                style: TextStyle(
-                  color: AppColors.textMain,
-                  fontWeight: FontWeight.w800,
+            confirmDismiss: (_) async {
+              onDelete(habit);
+              return false;
+            },
+            child: Card(
+              child: CheckboxListTile(
+                value: done,
+                onChanged: (_) => onToggle(habit, checkIn),
+                title: Text(
+                  habit.title,
+                  style: TextStyle(
+                    color: AppColors.textMain,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(done ? 'Done' : 'Not done'),
+                        if (streak > 1) ...[
+                          const SizedBox(width: AppSpacing.sm),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Color(habit.color).withValues(alpha: .25),
+                              borderRadius: BorderRadius.circular(AppRadius.small),
+                            ),
+                            child: Text(
+                              '$streak day streak',
+                              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(habit.color)),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    _WeekDots(habitId: habit.id, selectedDate: selectedDate, checkIns: checkIns, color: Color(habit.color)),
+                  ],
+                ),
+                secondary: CircleAvatar(
+                  backgroundColor: Color(habit.color).withValues(alpha: .45),
+                  child: Icon(_habitIcons[habit.icon] ?? Icons.check_rounded),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
                 ),
               ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(done ? 'Done' : 'Not done'),
-                      if (streak > 1) ...[
-                        const SizedBox(width: AppSpacing.sm),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: Color(habit.color).withValues(alpha: .25),
-                            borderRadius: BorderRadius.circular(AppRadius.small),
-                          ),
-                          child: Text(
-                            '$streak day streak',
-                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(habit.color)),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  _WeekDots(habitId: habit.id, selectedDate: selectedDate, checkIns: checkIns, color: Color(habit.color)),
-                ],
-              ),
-              secondary: CircleAvatar(
-                backgroundColor: Color(habit.color).withValues(alpha: .45),
-                child: Icon(_habitIcons[habit.icon] ?? Icons.check_rounded),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.sm,
-              ),
+            ),
+          );
+        }),
+        if (allDone) ...[
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            'All habits checked in today!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: AppColors.mint,
             ),
           ),
-        );
-      }).toList(),
+        ],
+      ],
     );
   }
 

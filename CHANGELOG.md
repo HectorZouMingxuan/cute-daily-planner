@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.24 — 2026-05-29
+
+**All habits done encouragement**
+
+- When every habit for the selected day is checked in, a "All habits checked in today!" message appears at the bottom of the habit list
+- Provides immediate positive feedback for completing all daily routines
+- Message automatically hides if any habit is unchecked
+
 ## v3.23 — 2026-05-29
 
 **Habit-colored week dots**
