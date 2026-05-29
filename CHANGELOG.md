@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.6 — 2026-05-29
+
+**Narrative weekly summary**
+
+- Weekly overview now opens with a natural-language paragraph describing the week
+- Intelligently combines task completion, events, mood, finances, and habits into readable text
+- Adapts tone: "All tasks completed — a perfect productivity week!" vs encouraging for lower completion
+- Shows encouraging prompt when no data exists: "Start by adding a task, mood, or expense!"
+
 ## v2.5 — 2026-05-29
 
 **Time-based greeting on home screen**

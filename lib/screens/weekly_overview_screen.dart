@@ -165,6 +165,11 @@ class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
               padding: const EdgeInsets.all(AppSpacing.md),
               children: [
                 Text(weekRange, style: AppTextStyles.sectionTitle),
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  _narrativeSummary(totalTasksDone, totalTasks, totalIncome, totalSpending, avgMood, habitDaysChecked, habitTotalDays, totalEvents),
+                  style: const TextStyle(fontSize: 13, color: AppColors.textMuted, fontWeight: FontWeight.w500, height: 1.4),
+                ),
                 const SizedBox(height: AppSpacing.md),
                 // Aggregate summary row
                 SoftCard(
@@ -244,6 +249,56 @@ class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
 
   bool _isSameDate(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
+
+  String _narrativeSummary(
+    int tasksDone,
+    int tasksTotal,
+    double income,
+    double spending,
+    MoodOption? avgMood,
+    int habitsChecked,
+    int habitsTotal,
+    int totalEvents,
+  ) {
+    if (tasksTotal == 0 && income == 0 && spending == 0 && avgMood == null && habitsChecked == 0 && totalEvents == 0) {
+      return 'No data recorded this week yet. Start by adding a task, mood, or expense!';
+    }
+
+    final parts = <String>[];
+
+    if (tasksTotal > 0) {
+      if (tasksDone == tasksTotal) {
+        parts.add('All $tasksTotal tasks completed — a perfect productivity week!');
+      } else if (tasksDone > tasksTotal / 2) {
+        parts.add('$tasksDone of $tasksTotal tasks done — making great progress.');
+      } else {
+        parts.add('$tasksDone of $tasksTotal tasks completed.');
+      }
+    }
+
+    if (totalEvents > 0) {
+      parts.add('$totalEvents event${totalEvents == 1 ? '' : 's'} this week.');
+    }
+
+    if (avgMood != null) {
+      parts.add('Mostly felt ${avgMood.label.toLowerCase()}.');
+    }
+
+    final net = income - spending;
+    if (income > 0 && spending > 0) {
+      parts.add('Earned +${income.toStringAsFixed(0)}, spent -${spending.toStringAsFixed(0)} (net ${net > 0 ? "+" : ""}${net.toStringAsFixed(0)}).');
+    } else if (income > 0) {
+      parts.add('Earned +${income.toStringAsFixed(0)}.');
+    } else if (spending > 0) {
+      parts.add('Spent -${spending.toStringAsFixed(0)}.');
+    }
+
+    if (habitsChecked > 0) {
+      parts.add('$habitsChecked of $habitsTotal habits checked in.');
+    }
+
+    return parts.join(' ');
   }
 }
 
