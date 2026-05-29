@@ -84,6 +84,7 @@ class MonthView extends StatelessWidget {
       calendarBuilders: CalendarBuilders(
         defaultBuilder: (context, day, focusedDay) => _DragTargetDayCell(
           day: day,
+          isWeekend: day.weekday == DateTime.saturday || day.weekday == DateTime.sunday,
           onEventDropped: onEventDropped,
           onLongPress: onDayLongPress != null ? () => onDayLongPress!(day) : null,
           incompleteCount: incompleteTaskLoader?.call(day) ?? 0,
@@ -124,6 +125,7 @@ class MonthView extends StatelessWidget {
         ),
         outsideBuilder: (context, day, focusedDay) => _DragTargetDayCell(
           day: day,
+          isWeekend: day.weekday == DateTime.saturday || day.weekday == DateTime.sunday,
           textStyle:  TextStyle(color: AppColors.textMuted),
           onEventDropped: onEventDropped,
           onLongPress: onDayLongPress != null ? () => onDayLongPress!(day) : null,
@@ -182,6 +184,7 @@ class _DragTargetDayCell extends StatelessWidget {
     this.backgroundColor,
     this.textStyle,
     this.onLongPress,
+    this.isWeekend = false,
     this.incompleteCount = 0,
     this.allTasksDone = false,
     this.hasEvents = false,
@@ -194,6 +197,7 @@ class _DragTargetDayCell extends StatelessWidget {
   final TextStyle? textStyle;
   final void Function(CalendarEvent event, DateTime targetDay) onEventDropped;
   final VoidCallback? onLongPress;
+  final bool isWeekend;
   final int incompleteCount;
   final bool allTasksDone;
   final bool hasEvents;
@@ -204,6 +208,7 @@ class _DragTargetDayCell extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasExpense = expenseNet != null;
     final hasTask = incompleteCount > 0 || allTasksDone;
+    final effectiveBg = backgroundColor ?? (isWeekend ? AppColors.primarySoft.withValues(alpha: .25) : null);
 
     return GestureDetector(
       onLongPress: onLongPress,
@@ -218,7 +223,7 @@ class _DragTargetDayCell extends StatelessWidget {
             decoration: BoxDecoration(
               color: highlighted
                   ? AppColors.mint.withValues(alpha: .45)
-                  : backgroundColor,
+                  : effectiveBg,
               borderRadius: BorderRadius.circular(AppRadius.small),
               border: highlighted
                   ? Border.all(color: AppColors.mint, width: 2)

@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.34 — 2026-05-29
+
+**Weekend column tint in calendar grid**
+
+- Saturday and Sunday columns now have a subtle background tint for visual distinction
+- Helps quickly identify weekends when scanning the month grid
+- Today and selected day backgrounds take priority over the weekend tint
+
 ## v3.33 — 2026-05-29
 
 **Priority breakdown in task list header**
