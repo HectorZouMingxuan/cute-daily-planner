@@ -1,5 +1,18 @@
 # Changelog
 
+## v2.0 — 2026-05-29
+
+**Weekly overview dashboard (major new feature)**
+
+- New Weekly Overview screen accessible from calendar app bar (week icon)
+- Shows the current week's date range as a header
+- Aggregate summary row with: tasks done/total, income vs spending, event count, dominant mood, habits completed
+- Day-by-day breakdown cards showing mood emoji, events, task progress, net expense, and habits checked
+- Today's row is highlighted with a warm tint and primary color border for quick orientation
+- Each day shows "No data" placeholder when no activity exists
+- Navigate back to calendar with standard back button
+- Month calendar week definition (Mon–Sun)
+
 ## v1.9 — 2026-05-29
 
 **Motivational message in daily summary**

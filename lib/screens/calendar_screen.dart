@@ -86,6 +86,13 @@ class CalendarScreen extends ConsumerWidget {
         backgroundColor: AppColors.ink.withValues(alpha: .72),
         foregroundColor: Colors.white,
         actions: [
+          IconButton(
+            tooltip: 'Weekly overview',
+            onPressed: () {
+              Navigator.of(context).pushNamed(CuteCalendarApp.weeklyRoute);
+            },
+            icon: const Icon(Icons.view_week_rounded),
+          ),
           Center(child: SyncStatusBadge(label: syncState.status.label)),
           IconButton(
             tooltip: 'Try again',

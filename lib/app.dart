@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'screens/calendar_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/weekly_overview_screen.dart';
 import 'theme/app_theme.dart';
 
 class CuteCalendarApp extends StatelessWidget {
@@ -9,6 +10,7 @@ class CuteCalendarApp extends StatelessWidget {
 
   static const loginRoute = '/';
   static const calendarRoute = '/calendar';
+  static const weeklyRoute = '/weekly';
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +29,10 @@ class CuteCalendarApp extends StatelessWidget {
             final username = settings.arguments as String? ?? '';
             return MaterialPageRoute(
               builder: (_) => CalendarScreen(username: username),
+            );
+          case weeklyRoute:
+            return MaterialPageRoute(
+              builder: (_) => const WeeklyOverviewScreen(),
             );
           default:
             return MaterialPageRoute(
