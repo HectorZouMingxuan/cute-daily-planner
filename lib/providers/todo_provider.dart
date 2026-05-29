@@ -2,9 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/todo_item.dart';
 import '../repositories/todo_repository.dart';
+import 'user_provider.dart';
 
 final todoRepositoryProvider = Provider<TodoRepository>((ref) {
-  return createTodoRepository();
+  final api = ref.read(firestorePlannerApiProvider);
+  return createTodoRepository(firestoreApi: api);
 });
 
 final todoListProvider =
@@ -16,11 +18,20 @@ class TodoListController extends AsyncNotifier<List<TodoItem>> {
   TodoRepository get _repository => ref.read(todoRepositoryProvider);
 
   @override
-  Future<List<TodoItem>> build() => _repository.getTodos();
+  Future<List<TodoItem>> build() {
+    final userId = ref.read(currentUserIdProvider);
+    return _repository.getTodos(userId: userId);
+  }
+
+  Future<void> refreshTodos() async {
+    final userId = ref.read(currentUserIdProvider);
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() => _repository.getTodos(userId: userId));
+  }
 
   Future<void> saveTodo(TodoItem todo) async {
     await _repository.saveTodo(todo);
-    state = await AsyncValue.guard(_repository.getTodos);
+    await refreshTodos();
   }
 
   Future<void> toggleDone(TodoItem todo) async {
@@ -56,7 +67,7 @@ class TodoListController extends AsyncNotifier<List<TodoItem>> {
         );
       }
     }
-    state = await AsyncValue.guard(_repository.getTodos);
+    await refreshTodos();
   }
 
   Future<void> restoreTodo(TodoItem todo) async {
@@ -73,7 +84,7 @@ class TodoListController extends AsyncNotifier<List<TodoItem>> {
       syncStatus: todo.syncStatus,
       version: todo.version + 1,
     ));
-    state = await AsyncValue.guard(_repository.getTodos);
+    await refreshTodos();
   }
 
   bool _isSameDate(DateTime a, DateTime b) {

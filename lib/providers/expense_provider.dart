@@ -2,9 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/expense_entry.dart';
 import '../repositories/expense_repository.dart';
+import 'user_provider.dart';
 
 final expenseRepositoryProvider = Provider<ExpenseRepository>((ref) {
-  return createExpenseRepository();
+  final api = ref.read(firestorePlannerApiProvider);
+  return createExpenseRepository(firestoreApi: api);
 });
 
 final expenseListProvider =
@@ -16,11 +18,21 @@ class ExpenseListController extends AsyncNotifier<List<ExpenseEntry>> {
   ExpenseRepository get _repository => ref.read(expenseRepositoryProvider);
 
   @override
-  Future<List<ExpenseEntry>> build() => _repository.getExpenses();
+  Future<List<ExpenseEntry>> build() {
+    final userId = ref.read(currentUserIdProvider);
+    return _repository.getExpenses(userId: userId);
+  }
+
+  Future<void> refreshExpenses() async {
+    final userId = ref.read(currentUserIdProvider);
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+        () => _repository.getExpenses(userId: userId));
+  }
 
   Future<void> saveExpense(ExpenseEntry expense) async {
     await _repository.saveExpense(expense);
-    state = await AsyncValue.guard(_repository.getExpenses);
+    await refreshExpenses();
   }
 
   Future<void> deleteExpense(ExpenseEntry expense) async {
@@ -31,6 +43,6 @@ class ExpenseListController extends AsyncNotifier<List<ExpenseEntry>> {
         version: expense.version + 1,
       ),
     );
-    state = await AsyncValue.guard(_repository.getExpenses);
+    await refreshExpenses();
   }
 }

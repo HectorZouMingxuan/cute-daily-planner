@@ -1,5 +1,19 @@
 # Changelog
 
+## v4.4.0 — 2026-05-29
+
+**Firestore persistence for all planner data + per-account dark mode fix**
+
+- All modules now sync to Firestore: tasks, expenses, moods, notes, habits, and habit check-ins
+- Data structure: `users/{uid}/{tasks|expenses|moods|notes|habits|habitCheckIns}/{id}`
+- Each repository uses write-through: local save first, Firestore best-effort alongside
+- Each repository reads Firestore first, falling back to local on network errors
+- `FirestorePlannerApi` now has full read/write methods for all modules
+- Fixed dark mode loading: `authStateChanges` stream now reads Firestore profile to get saved `darkModeEnabled`
+- Dark mode preference now loads correctly on every login, not just on sign-in method return
+- All providers inject `FirestorePlannerApi` into repository creation for Firestore access
+- Different accounts see only their own data — fully isolated per Firebase UID
+
 ## v4.3.4 — 2026-05-29
 
 **Fix: Task checkbox toggle updates immediately + two-way toggle restored**

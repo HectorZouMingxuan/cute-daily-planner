@@ -12,7 +12,14 @@ class AuthRepository {
 
   bool get isConfigured => _authApi.isConfigured;
   UserProfile? get currentUser => _authApi.currentUser;
-  Stream<UserProfile?> get authStateChanges => _authApi.authStateChanges;
+
+  Stream<UserProfile?> get authStateChanges {
+    return _authApi.authStateChanges.asyncMap((profile) async {
+      if (profile == null) return null;
+      final stored = await _readProfile(profile.id);
+      return stored ?? profile;
+    });
+  }
 
   Future<UserProfile> signInWithEmailAndPassword({
     required String email,

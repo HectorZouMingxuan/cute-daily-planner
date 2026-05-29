@@ -11,6 +11,55 @@ import '../models/todo_item.dart';
 class FirestorePlannerApi {
   bool get isConfigured => Firebase.apps.isNotEmpty;
 
+  // ── Read ──────────────────────────────────────────────────────
+
+  Future<List<TodoItem>> getTodos(String userId) async {
+    final snapshot = await _collection(userId, 'tasks').get();
+    return snapshot.docs
+        .map((doc) => TodoItem.fromJson(doc.data()))
+        .where((t) => !t.isDeleted)
+        .toList();
+  }
+
+  Future<List<ExpenseEntry>> getExpenses(String userId) async {
+    final snapshot = await _collection(userId, 'expenses').get();
+    return snapshot.docs
+        .map((doc) => ExpenseEntry.fromJson(doc.data()))
+        .where((e) => !e.isDeleted)
+        .toList();
+  }
+
+  Future<List<MoodEntry>> getMoods(String userId) async {
+    final snapshot = await _collection(userId, 'moods').get();
+    return snapshot.docs
+        .map((doc) => MoodEntry.fromJson(doc.data()))
+        .toList();
+  }
+
+  Future<List<DailyNote>> getNotes(String userId) async {
+    final snapshot = await _collection(userId, 'notes').get();
+    return snapshot.docs
+        .map((doc) => DailyNote.fromJson(doc.data()))
+        .toList();
+  }
+
+  Future<List<Habit>> getHabits(String userId) async {
+    final snapshot = await _collection(userId, 'habits').get();
+    return snapshot.docs
+        .map((doc) => Habit.fromJson(doc.data()))
+        .where((h) => !h.isDeleted)
+        .toList();
+  }
+
+  Future<List<HabitCheckIn>> getHabitCheckIns(String userId) async {
+    final snapshot = await _collection(userId, 'habitCheckIns').get();
+    return snapshot.docs
+        .map((doc) => HabitCheckIn.fromJson(doc.data()))
+        .toList();
+  }
+
+  // ── Write ─────────────────────────────────────────────────────
+
   Future<void> upsertExpense(ExpenseEntry expense) {
     return _set(
       userId: expense.userId,
@@ -23,7 +72,7 @@ class FirestorePlannerApi {
   Future<void> upsertTodo(TodoItem todo) {
     return _set(
       userId: todo.userId,
-      collection: 'todos',
+      collection: 'tasks',
       id: todo.id,
       data: todo.toJson(),
     );
@@ -65,6 +114,18 @@ class FirestorePlannerApi {
     );
   }
 
+  // ── Helpers ───────────────────────────────────────────────────
+
+  CollectionReference<Map<String, dynamic>> _collection(
+    String userId,
+    String name,
+  ) {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection(name);
+  }
+
   Future<void> _set({
     required String userId,
     required String collection,
@@ -75,11 +136,9 @@ class FirestorePlannerApi {
       throw StateError('Firebase config is missing');
     }
 
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection(collection)
-        .doc(id)
-        .set(data, SetOptions(merge: true));
+    await _collection(userId, collection).doc(id).set(
+          data,
+          SetOptions(merge: true),
+        );
   }
 }

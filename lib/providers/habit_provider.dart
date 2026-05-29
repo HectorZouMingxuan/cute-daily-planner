@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/habit.dart';
 import '../models/habit_check_in.dart';
 import '../repositories/habit_repository.dart';
+import 'user_provider.dart';
 
 class HabitState {
   const HabitState({required this.habits, required this.checkIns});
@@ -12,7 +13,8 @@ class HabitState {
 }
 
 final habitRepositoryProvider = Provider<HabitRepository>((ref) {
-  return createHabitRepository();
+  final api = ref.read(firestorePlannerApiProvider);
+  return createHabitRepository(firestoreApi: api);
 });
 
 final habitProvider = AsyncNotifierProvider<HabitController, HabitState>(
@@ -24,20 +26,32 @@ class HabitController extends AsyncNotifier<HabitState> {
 
   @override
   Future<HabitState> build() async {
+    final userId = ref.read(currentUserIdProvider);
     return HabitState(
-      habits: await _repository.getHabits(),
-      checkIns: await _repository.getCheckIns(),
+      habits: await _repository.getHabits(userId: userId),
+      checkIns: await _repository.getCheckIns(userId: userId),
     );
+  }
+
+  Future<void> refreshHabits() async {
+    final userId = ref.read(currentUserIdProvider);
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      return HabitState(
+        habits: await _repository.getHabits(userId: userId),
+        checkIns: await _repository.getCheckIns(userId: userId),
+      );
+    });
   }
 
   Future<void> saveHabit(Habit habit) async {
     await _repository.saveHabit(habit);
-    state = await AsyncValue.guard(build);
+    await refreshHabits();
   }
 
   Future<void> saveCheckIn(HabitCheckIn checkIn) async {
     await _repository.saveCheckIn(checkIn);
-    state = await AsyncValue.guard(build);
+    await refreshHabits();
   }
 
   Future<void> deleteHabit(String habitId) async {
@@ -57,6 +71,6 @@ class HabitController extends AsyncNotifier<HabitState> {
       version: habit.version + 1,
     );
     await _repository.saveHabit(deleted);
-    state = await AsyncValue.guard(build);
+    await refreshHabits();
   }
 }
