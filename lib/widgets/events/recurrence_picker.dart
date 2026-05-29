@@ -19,7 +19,7 @@ class RecurrencePicker extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Repeat', style: AppTextStyles.body),
+        Text('Repeat', style: AppTextStyles.body),
         const SizedBox(height: AppSpacing.sm),
         DropdownButtonFormField<RecurrenceFrequency>(
           initialValue: selectedRule.frequency,

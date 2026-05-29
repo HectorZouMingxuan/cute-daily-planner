@@ -73,7 +73,7 @@ class _SummaryItem extends StatelessWidget {
               label,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textMuted,
                 fontWeight: FontWeight.w700,
                 fontSize: 11,
@@ -84,7 +84,7 @@ class _SummaryItem extends StatelessWidget {
               value.toStringAsFixed(2),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textMain,
                 fontWeight: FontWeight.w900,
                 fontSize: 15,

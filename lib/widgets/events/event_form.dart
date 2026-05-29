@@ -129,7 +129,7 @@ class _EventFormState extends State<EventForm> {
               const SizedBox(height: AppSpacing.md),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('All Day'),
+                title: Text('All Day'),
                 value: _isAllDay,
                 onChanged: (value) => setState(() => _isAllDay = value),
               ),
@@ -144,7 +144,7 @@ class _EventFormState extends State<EventForm> {
                 onTap: () => _pickDateTime(isStart: false),
               ),
               const SizedBox(height: AppSpacing.md),
-              const Text('Color', style: AppTextStyles.body),
+              Text('Color', style: AppTextStyles.body),
               const SizedBox(height: AppSpacing.sm),
               ColorPicker(
                 selectedColor: _color,

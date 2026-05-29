@@ -37,7 +37,7 @@ class _HabitFormState extends State<HabitForm> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Add Habit', style: AppTextStyles.title),
+            Text('Add Habit', style: AppTextStyles.title),
             const SizedBox(height: AppSpacing.md),
             TextFormField(
               controller: _titleController,

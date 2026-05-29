@@ -42,7 +42,7 @@ class ExpenseCard extends StatelessWidget {
                   children: [
                     Text(
                       expense.category.label,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.textMain,
                         fontWeight: FontWeight.w800,
                       ),
@@ -53,7 +53,7 @@ class ExpenseCard extends StatelessWidget {
                           : expense.note,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: AppColors.textMuted),
+                      style:  TextStyle(color: AppColors.textMuted),
                     ),
                   ],
                 ),

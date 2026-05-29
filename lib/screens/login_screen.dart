@@ -134,7 +134,7 @@ class _LogoIcon extends StatelessWidget {
         color: AppColors.primarySoft.withValues(alpha: .85),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: const Icon(
+      child: Icon(
         Icons.calendar_month_rounded,
         size: 40,
         color: AppColors.ink,
@@ -185,7 +185,7 @@ class _TextFieldRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
-      style: const TextStyle(color: AppColors.ink),
+      style:  TextStyle(color: AppColors.ink),
       decoration: const InputDecoration(
         hintText: 'Your username',
         prefixIcon: Icon(Icons.person_outline_rounded),

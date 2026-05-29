@@ -46,9 +46,9 @@ class MonthView extends StatelessWidget {
       daysOfWeekHeight: 34,
       rowHeight: 52,
       calendarStyle: CalendarStyle(
-        outsideTextStyle: const TextStyle(color: AppColors.textMuted),
-        weekendTextStyle: const TextStyle(color: AppColors.textMain),
-        defaultTextStyle: const TextStyle(color: AppColors.textMain),
+        outsideTextStyle:  TextStyle(color: AppColors.textMuted),
+        weekendTextStyle:  TextStyle(color: AppColors.textMain),
+        defaultTextStyle:  TextStyle(color: AppColors.textMain),
         todayDecoration: BoxDecoration(
           color: AppColors.primary.withValues(alpha: .35),
           borderRadius: BorderRadius.circular(AppRadius.small),
@@ -57,17 +57,17 @@ class MonthView extends StatelessWidget {
           color: AppColors.primary,
           borderRadius: BorderRadius.circular(AppRadius.small),
         ),
-        selectedTextStyle: const TextStyle(
+        selectedTextStyle: TextStyle(
           color: AppColors.textMain,
           fontWeight: FontWeight.w800,
         ),
-        todayTextStyle: const TextStyle(
+        todayTextStyle: TextStyle(
           color: AppColors.textMain,
           fontWeight: FontWeight.w800,
         ),
         cellMargin: const EdgeInsets.all(5),
       ),
-      daysOfWeekStyle: const DaysOfWeekStyle(
+      daysOfWeekStyle: DaysOfWeekStyle(
         weekdayStyle: TextStyle(
           color: AppColors.textMuted,
           fontWeight: FontWeight.w700,
@@ -92,7 +92,7 @@ class MonthView extends StatelessWidget {
         todayBuilder: (context, day, focusedDay) => _DragTargetDayCell(
           day: day,
           backgroundColor: AppColors.primary.withValues(alpha: .35),
-          textStyle: const TextStyle(
+          textStyle: TextStyle(
             color: AppColors.textMain,
             fontWeight: FontWeight.w800,
           ),
@@ -106,7 +106,7 @@ class MonthView extends StatelessWidget {
         selectedBuilder: (context, day, focusedDay) => _DragTargetDayCell(
           day: day,
           backgroundColor: AppColors.primary,
-          textStyle: const TextStyle(
+          textStyle: TextStyle(
             color: AppColors.textMain,
             fontWeight: FontWeight.w800,
           ),
@@ -119,7 +119,7 @@ class MonthView extends StatelessWidget {
         ),
         outsideBuilder: (context, day, focusedDay) => _DragTargetDayCell(
           day: day,
-          textStyle: const TextStyle(color: AppColors.textMuted),
+          textStyle:  TextStyle(color: AppColors.textMuted),
           onEventDropped: onEventDropped,
           incompleteCount: incompleteTaskLoader?.call(day) ?? 0,
           allTasksDone: allTasksDoneLoader?.call(day) ?? false,
@@ -207,7 +207,7 @@ class _DragTargetDayCell extends StatelessWidget {
               Text(
                 '${day.day}',
                 style:
-                    textStyle ?? const TextStyle(color: AppColors.textMain),
+                    textStyle ??  TextStyle(color: AppColors.textMain),
               ),
               if (hasTask || mood != null || hasExpense || hasEvents)
                 Padding(

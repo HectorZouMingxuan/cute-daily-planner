@@ -82,7 +82,7 @@ class DailySummaryCard extends StatelessWidget {
                       ? 'All done'
                       : '$taskDone/$taskTotal',
                   icon: taskDone == taskTotal
-                      ? const Icon(Icons.check_circle, size: 14, color: AppColors.mint)
+                      ? Icon(Icons.check_circle, size: 14, color: AppColors.mint)
                       : null,
                 ),
               if (expenseNet != 0) _ExpenseStatChip(net: expenseNet),
@@ -94,7 +94,7 @@ class DailySummaryCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             Text(
               message,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textMuted,
@@ -128,7 +128,7 @@ class _StatChip extends StatelessWidget {
           if (icon != null) ...[icon!, const SizedBox(width: 4)],
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w700,
               color: AppColors.textMain,

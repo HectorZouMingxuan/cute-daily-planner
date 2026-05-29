@@ -1,5 +1,16 @@
 # Changelog
 
+## v3.0 — 2026-05-29
+
+**Dark mode support**
+
+- New dark theme with dark-appropriate colors for background, surface, text, and borders
+- Theme toggle in Settings screen (Light / Dark switch)
+- Accent colors (primary, mint, sage, pink, lavender, yellow) stay consistent across themes
+- AppColors system refactored with brightness-aware getters that resolve correctly per theme
+- Material 3 color scheme adapts automatically; custom widgets (SoftCard, calendar cells) follow theme
+- Riverpod-based ThemeModeNotifier for reactive theme switching
+
 ## v2.9 — 2026-05-29
 
 **Monthly summary line on calendar**

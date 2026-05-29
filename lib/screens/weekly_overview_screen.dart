@@ -152,14 +152,14 @@ class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Week', style: const TextStyle(fontSize: 16)),
+        title: Text('Week', style: TextStyle(fontSize: 16)),
         backgroundColor: AppColors.ink.withValues(alpha: .72),
         foregroundColor: Colors.white,
         actions: [
           IconButton(
             tooltip: 'Previous week',
             onPressed: () => setState(() => _weekOffset--),
-            icon: const Icon(Icons.chevron_left_rounded),
+            icon: Icon(Icons.chevron_left_rounded),
           ),
           if (!isCurrentWeek)
             IconButton(
@@ -191,7 +191,7 @@ class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
                 const SizedBox(height: AppSpacing.sm),
                 Text(
                   _narrativeSummary(totalTasksDone, totalTasks, totalIncome, totalSpending, avgMood, habitDaysChecked, habitTotalDays, totalEvents),
-                  style: const TextStyle(fontSize: 13, color: AppColors.textMuted, fontWeight: FontWeight.w500, height: 1.4),
+                  style:  TextStyle(fontSize: 13, color: AppColors.textMuted, fontWeight: FontWeight.w500, height: 1.4),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 // Aggregate summary row
@@ -444,7 +444,7 @@ class _DayRow extends StatelessWidget {
                   ),
                   Text(
                     dateLabel,
-                    style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
+                    style:  TextStyle(fontSize: 11, color: AppColors.textMuted),
                   ),
                 ],
               ),
@@ -456,7 +456,7 @@ class _DayRow extends StatelessWidget {
                 runSpacing: 4,
                 children: [
                   if (mood != null)
-                    Text(_moji[mood] ?? '', style: const TextStyle(fontSize: 16)),
+                    Text(_moji[mood] ?? '', style: TextStyle(fontSize: 16)),
                   if (eventCount > 0)
                     _MiniChip(label: '$eventCount ev', color: AppColors.primary),
                   if (todoTotal > 0)
@@ -475,7 +475,7 @@ class _DayRow extends StatelessWidget {
                       color: AppColors.mint,
                     ),
                   if (mood == null && eventCount == 0 && todoTotal == 0 && net == 0 && habitsChecked == 0)
-                    const Text(
+                    Text(
                       'No data',
                       style: TextStyle(fontSize: 11, color: AppColors.textMuted),
                     ),
@@ -530,7 +530,7 @@ class _CategoryBar extends StatelessWidget {
           width: 80,
           child: Text(
             category.label,
-            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textMain),
+            style:  TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textMain),
           ),
         ),
         const SizedBox(width: AppSpacing.sm),
@@ -591,7 +591,7 @@ class _MoodDistributionRow extends StatelessWidget {
           return Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(_emojis[mood] ?? '', style: const TextStyle(fontSize: 18)),
+              Text(_emojis[mood] ?? '', style: TextStyle(fontSize: 18)),
               const SizedBox(width: 2),
               Text(
                 '×$count',

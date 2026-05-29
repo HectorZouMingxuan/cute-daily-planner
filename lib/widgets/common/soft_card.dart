@@ -29,7 +29,9 @@ class SoftCard extends StatelessWidget {
             border: Border.all(color: AppColors.border.withValues(alpha: .45)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: .05),
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.black.withValues(alpha: .3)
+                    : Colors.black.withValues(alpha: .05),
                 blurRadius: 18,
                 offset: const Offset(0, 8),
               ),

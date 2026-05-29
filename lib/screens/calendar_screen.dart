@@ -88,7 +88,7 @@ class CalendarScreen extends ConsumerWidget {
             if (username != null && username!.isNotEmpty)
               Text(
                 _greeting(username!),
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
               ),
           ],
         ),
@@ -126,7 +126,7 @@ class CalendarScreen extends ConsumerWidget {
                 CuteCalendarApp.loginRoute,
               );
             },
-            icon: const Icon(Icons.logout_rounded),
+            icon: Icon(Icons.logout_rounded),
           ),
         ],
       ),
@@ -178,15 +178,15 @@ class CalendarScreen extends ConsumerWidget {
                       foregroundColor: AppColors.ink,
                     ),
                     onPressed: calendarController.goToToday,
-                    icon: const Icon(Icons.today_outlined),
-                    label: const Text('Today'),
+                    icon: Icon(Icons.today_outlined),
+                    label: Text('Today'),
                   ),
                 ),
                 if (monthlySummary != null) ...[
                   const SizedBox(height: AppSpacing.sm),
                   Text(
                     monthlySummary,
-                    style: const TextStyle(fontSize: 12, color: AppColors.textMuted, fontWeight: FontWeight.w600),
+                    style:  TextStyle(fontSize: 12, color: AppColors.textMuted, fontWeight: FontWeight.w600),
                   ),
                 ],
                 const SizedBox(height: AppSpacing.md),

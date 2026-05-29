@@ -45,7 +45,7 @@ class EventCard extends StatelessWidget {
                       event.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.textMain,
                         fontWeight: FontWeight.w800,
                         fontSize: 16,
@@ -54,7 +54,7 @@ class EventCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       timeLabel,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.textMuted,
                         fontWeight: FontWeight.w600,
                       ),
@@ -63,7 +63,7 @@ class EventCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         event.recurrenceRule.label,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.textMuted,
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
@@ -75,7 +75,7 @@ class EventCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(
+              Icon(
                 Icons.chevron_right_rounded,
                 color: AppColors.textMuted,
               ),

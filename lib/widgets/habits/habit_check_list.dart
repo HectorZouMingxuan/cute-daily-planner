@@ -49,7 +49,7 @@ class HabitCheckList extends StatelessWidget {
             onChanged: (_) => onToggle(habit, checkIn),
             title: Text(
               habit.title,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textMain,
                 fontWeight: FontWeight.w800,
               ),

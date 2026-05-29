@@ -29,7 +29,7 @@ class ReminderPicker extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Reminder', style: AppTextStyles.body),
+        Text('Reminder', style: AppTextStyles.body),
         const SizedBox(height: AppSpacing.sm),
         DropdownButtonFormField<int>(
           initialValue: selectedReminder.minutesBefore,

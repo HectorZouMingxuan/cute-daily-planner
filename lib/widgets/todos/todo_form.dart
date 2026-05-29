@@ -39,7 +39,7 @@ class _TodoFormState extends State<TodoForm> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Add Task', style: AppTextStyles.title),
+            Text('Add Task', style: AppTextStyles.title),
             const SizedBox(height: AppSpacing.md),
             TextFormField(
               controller: _titleController,

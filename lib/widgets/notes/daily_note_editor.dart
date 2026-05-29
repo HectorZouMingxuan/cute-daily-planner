@@ -79,7 +79,7 @@ class _DailyNoteEditorState extends State<DailyNoteEditor> {
             children: [
               Text(
                 '$_wordCount word${_wordCount == 1 ? '' : 's'}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   color: AppColors.textMuted,
                   fontWeight: FontWeight.w600,
@@ -90,7 +90,7 @@ class _DailyNoteEditorState extends State<DailyNoteEditor> {
                 Expanded(
                   child: Text(
                     lastEditedStr,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       color: AppColors.textMuted,
                       fontWeight: FontWeight.w500,

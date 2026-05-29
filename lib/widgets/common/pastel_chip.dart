@@ -25,7 +25,7 @@ class PastelChip extends StatelessWidget {
         label,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: const TextStyle(
+        style: TextStyle(
           color: AppColors.textMain,
           fontSize: 12,
           fontWeight: FontWeight.w700,

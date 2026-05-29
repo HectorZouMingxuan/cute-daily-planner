@@ -13,14 +13,14 @@ class TaskCountBadge extends StatelessWidget {
     return Container(
       width: 11,
       height: 11,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.yellow,
         shape: BoxShape.circle,
       ),
       child: Center(
         child: Text(
           '$count',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 6.5,
             fontWeight: FontWeight.w900,
             color: AppColors.ink,
@@ -98,7 +98,7 @@ class EventBadge extends StatelessWidget {
         color: AppColors.primary.withValues(alpha: .5),
         shape: BoxShape.circle,
       ),
-      child: const Center(
+      child: Center(
         child: Text(
           'E',
           style: TextStyle(

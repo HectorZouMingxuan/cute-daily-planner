@@ -35,7 +35,7 @@ class TodoList extends StatelessWidget {
             children: [
               Text(
                 '$doneCount of ${todos.length} Done',
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.textMain,
                   fontWeight: FontWeight.w900,
                 ),
@@ -51,7 +51,7 @@ class TodoList extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: TextButton.icon(
               onPressed: onClearDone,
-              icon: const Icon(Icons.clear_all_rounded, size: 16),
+              icon: Icon(Icons.clear_all_rounded, size: 16),
               label: Text('Clear $doneCount done'),
               style: TextButton.styleFrom(
                 foregroundColor: AppColors.textMuted,

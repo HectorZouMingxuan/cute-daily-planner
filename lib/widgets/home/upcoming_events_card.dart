@@ -71,11 +71,11 @@ class UpcomingEventsCard extends StatelessWidget {
                             event.title,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.textMain),
+                            style:  TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.textMain),
                           ),
                           Text(
                             '$dayLabel  ·  $timeLabel',
-                            style: const TextStyle(fontSize: 11, color: AppColors.textMuted, fontWeight: FontWeight.w600),
+                            style:  TextStyle(fontSize: 11, color: AppColors.textMuted, fontWeight: FontWeight.w600),
                           ),
                         ],
                       ),

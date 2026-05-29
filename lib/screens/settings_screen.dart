@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/sync_metadata.dart';
 import '../providers/sync_provider.dart';
+import '../providers/theme_provider.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/common/empty_state.dart';
 import '../widgets/common/soft_card.dart';
@@ -14,12 +15,24 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final syncState = ref.watch(syncProvider);
+    final themeMode = ref.watch(themeModeProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),
         children: [
+          ListTile(
+            title: const Text('Theme'),
+            subtitle: Text(
+              themeMode == ThemeMode.dark ? 'Dark' : 'Light',
+            ),
+            trailing: Switch(
+              value: themeMode == ThemeMode.dark,
+              onChanged: (_) => ref.read(themeModeProvider.notifier).toggle(),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
           ListTile(
             title: const Text('Sync Status'),
             subtitle: Text(syncState.message),
