@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.2 — 2026-05-29
+
+**Monthly total in expense sheet**
+
+- Expense bottom sheet now shows monthly income, spending, and net below the weekly bar
+- Format: "May  +5000  -2500  net +2500"
+- Auto-hides when no expenses exist for the viewed month
+
 ## v3.1 — 2026-05-29
 
 **Swipe to delete task cards**

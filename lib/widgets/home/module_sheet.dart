@@ -163,6 +163,8 @@ class ExpensesSheet extends StatelessWidget {
                 ExpenseSummaryCard(expenses: expenses),
                 const SizedBox(height: AppSpacing.sm),
                 ExpenseSummaryBar(expenses: allExpenses, selectedDate: selectedDate),
+                const SizedBox(height: AppSpacing.sm),
+                _MonthlyTotal(allExpenses: allExpenses, selectedDate: selectedDate),
                 if (expenses.isNotEmpty) const SizedBox(height: AppSpacing.sm),
                 if (expenses.isEmpty)
                   const EmptyState(
@@ -388,6 +390,69 @@ class HabitsSheet extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _MonthlyTotal extends StatelessWidget {
+  const _MonthlyTotal({required this.allExpenses, required this.selectedDate});
+
+  final List<ExpenseEntry> allExpenses;
+  final DateTime selectedDate;
+
+  @override
+  Widget build(BuildContext context) {
+    final month = selectedDate.month;
+    final year = selectedDate.year;
+    final monthExpenses = allExpenses.where((e) => e.date.month == month && e.date.year == year).toList();
+
+    if (monthExpenses.isEmpty) return const SizedBox.shrink();
+
+    var income = 0.0;
+    var spending = 0.0;
+    for (final e in monthExpenses) {
+      if (e.type == ExpenseType.income) {
+        income += e.amount;
+      } else {
+        spending += e.amount;
+      }
+    }
+    final net = income - spending;
+
+    return SoftCard(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      child: Row(
+        children: [
+          Text(
+            DateFormat('MMM').format(selectedDate),
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: AppColors.textMain),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          if (income > 0)
+            Text(
+              '+${income.toStringAsFixed(0)}',
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.mint),
+            ),
+          if (income > 0 && spending > 0)
+            Text('  ', style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
+          if (spending > 0)
+            Text(
+              '-${spending.toStringAsFixed(0)}',
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.danger),
+            ),
+          if ((income > 0 || spending > 0) && net != 0) ...[
+            const SizedBox(width: AppSpacing.sm),
+            Text(
+              'net ${net > 0 ? "+" : ""}${net.toStringAsFixed(0)}',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: net > 0 ? AppColors.mint : AppColors.danger,
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }
