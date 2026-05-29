@@ -114,6 +114,19 @@ class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
         ? null
         : moodCounts.entries.reduce((a, b) => a.value > b.value ? a : b).key;
 
+    // Category breakdown for the week
+    final weekExpenses = expenses.where((e) {
+      final d = DateTime(e.date.year, e.date.month, e.date.day);
+      return !d.isBefore(weekStart) && !d.isAfter(weekEnd) && e.type == ExpenseType.expense;
+    }).toList();
+    final categoryTotals = <ExpenseCategory, double>{};
+    for (final e in weekExpenses) {
+      categoryTotals[e.category] = (categoryTotals[e.category] ?? 0) + e.amount;
+    }
+    final sortedCategories = categoryTotals.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    final hasCategories = sortedCategories.isNotEmpty;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Week', style: const TextStyle(fontSize: 16)),
@@ -196,6 +209,27 @@ class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
                 Text('Daily Breakdown', style: AppTextStyles.sectionTitle),
                 const SizedBox(height: AppSpacing.sm),
                 ...dailyCards,
+                if (hasCategories) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  Text('Spending by Category', style: AppTextStyles.sectionTitle),
+                  const SizedBox(height: AppSpacing.sm),
+                  SoftCard(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    child: Wrap(
+                      spacing: AppSpacing.sm,
+                      runSpacing: AppSpacing.sm,
+                      children: sortedCategories.map((entry) {
+                        final maxAmount = sortedCategories.first.value;
+                        final ratio = maxAmount > 0 ? entry.value / maxAmount : 1.0;
+                        return _CategoryBar(
+                          category: entry.key,
+                          amount: entry.value,
+                          ratio: ratio,
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
               ],
             ),
           ],
@@ -373,6 +407,62 @@ class _MiniChip extends StatelessWidget {
         label,
         style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: color),
       ),
+    );
+  }
+}
+
+class _CategoryBar extends StatelessWidget {
+  const _CategoryBar({
+    required this.category,
+    required this.amount,
+    required this.ratio,
+  });
+
+  final ExpenseCategory category;
+  final double amount;
+  final double ratio;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 80,
+          child: Text(
+            category.label,
+            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textMain),
+          ),
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: Container(
+            height: 18,
+            decoration: BoxDecoration(
+              color: AppColors.border.withValues(alpha: .3),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: FractionallySizedBox(
+              alignment: Alignment.centerLeft,
+              widthFactor: ratio,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.danger.withValues(alpha: .55),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        SizedBox(
+          width: 52,
+          child: Text(
+            '-${amount.toStringAsFixed(0)}',
+            textAlign: TextAlign.end,
+            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.danger),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.2 — 2026-05-29
+
+**Expense category breakdown in weekly overview**
+
+- Weekly overview now shows a "Spending by Category" section below daily breakdown
+- Horizontal bars show proportional spending per category (Food, Transport, Shopping, etc.)
+- Categories sorted by amount (highest first)
+- Section auto-hides when no expenses exist for the viewed week
+
 ## v2.1 — 2026-05-29
 
 **Week navigation arrows on weekly overview**
