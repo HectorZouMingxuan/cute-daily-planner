@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.6 — 2026-05-29
+
+**Habit streak display in habits sheet**
+
+- Each habit now shows a current streak badge (e.g. "5 day streak")
+- Streak counts consecutive past days where the habit was checked as done
+- Badge only appears for streaks of 2+ days to keep the UI clean
+- Mint-colored chip matching the habits module color
+
 ## v1.5 — 2026-05-29
 
 **Login screen polish with entrance animations**
