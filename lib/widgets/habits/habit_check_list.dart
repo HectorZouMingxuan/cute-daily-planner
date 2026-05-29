@@ -104,7 +104,7 @@ class HabitCheckList extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 4),
-                  _WeekDots(habitId: habit.id, selectedDate: selectedDate, checkIns: checkIns),
+                  _WeekDots(habitId: habit.id, selectedDate: selectedDate, checkIns: checkIns, color: Color(habit.color)),
                 ],
               ),
               secondary: CircleAvatar(
@@ -148,11 +148,13 @@ class _WeekDots extends StatelessWidget {
     required this.habitId,
     required this.selectedDate,
     required this.checkIns,
+    required this.color,
   });
 
   final String habitId;
   final DateTime selectedDate;
   final List<HabitCheckIn> checkIns;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -175,10 +177,10 @@ class _WeekDots extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: isDone
-                ? AppColors.mint.withValues(alpha: .75)
+                ? color.withValues(alpha: .75)
                 : AppColors.border.withValues(alpha: .4),
             border: isToday && !isDone
-                ? Border.all(color: AppColors.mint.withValues(alpha: .5), width: 1.5)
+                ? Border.all(color: color.withValues(alpha: .5), width: 1.5)
                 : null,
           ),
         );

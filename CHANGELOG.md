@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.23 — 2026-05-29
+
+**Habit-colored week dots**
+
+- Weekly completion dots now use the habit's chosen color instead of always green
+- Today's dot border also matches the habit color for visual consistency
+- Unifies all habit visual elements (avatar, streak badge, dots) under one color
+
 ## v3.22 — 2026-05-29
 
 **Expense count in module subtitle**
