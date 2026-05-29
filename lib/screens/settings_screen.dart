@@ -6,6 +6,7 @@ import '../providers/sync_provider.dart';
 import '../providers/theme_provider.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
+import '../widgets/common/app_notification.dart';
 import '../widgets/common/soft_card.dart';
 import '../widgets/common/sync_status_badge.dart';
 
@@ -65,7 +66,15 @@ class SettingsScreen extends ConsumerWidget {
             ),
             trailing: Switch(
               value: themeMode == ThemeMode.dark,
-              onChanged: (_) => ref.read(themeModeProvider.notifier).toggle(),
+              onChanged: (_) async {
+                await ref.read(themeModeProvider.notifier).toggle();
+                if (!context.mounted) return;
+                final isDark = ref.read(themeModeProvider) == ThemeMode.dark;
+                AppNotification.info(
+                  context,
+                  isDark ? 'Dark mode enabled' : 'Light mode enabled',
+                );
+              },
             ),
           ),
           ListTile(

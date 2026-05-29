@@ -1,5 +1,20 @@
 # Changelog
 
+## v4.3.3 — 2026-05-29
+
+**Popup notifications for login/register + per-account dark mode preference**
+
+- Login/register errors now appear as popup notifications (SnackBar) instead of inline page text — page no longer jumps or resizes on error
+- All validation errors (empty email, empty password, password too short) also use popup notifications
+- Removed inline error container and form field validators from login screen
+- Dark mode preference is now saved per Firebase account in Firestore at `users/{uid}.darkModeEnabled`
+- On login, the user's saved dark mode preference is automatically applied
+- On registration, dark mode preference defaults to false (light mode) or current app state
+- Toggling dark mode in Settings immediately updates Firestore and shows a confirmation notification
+- `UserProfile` model gains `darkModeEnabled` field
+- `AuthRepository` gains `saveDarkModePreference()` and profile reading on sign-in
+- `ThemeModeNotifier` gains `applyPreference()` and async `toggle()` with Firestore persistence
+
 ## v4.3.2 — 2026-05-29
 
 **Consistent notification system and UI polish**

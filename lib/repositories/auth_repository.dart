@@ -17,11 +17,13 @@ class AuthRepository {
   Future<UserProfile> signInWithEmailAndPassword({
     required String email,
     required String password,
-  }) {
-    return _authApi.signInWithEmailAndPassword(
+  }) async {
+    final profile = await _authApi.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
+    final stored = await _readProfile(profile.id);
+    return stored ?? profile;
   }
 
   Future<UserProfile> createUserWithEmailAndPassword({
@@ -38,6 +40,49 @@ class AuthRepository {
 
   Future<void> signOut() {
     return _authApi.signOut();
+  }
+
+  Future<void> saveDarkModePreference({
+    required String userId,
+    required bool darkModeEnabled,
+  }) async {
+    final firestore = _firestore;
+    if (firestore == null) return;
+
+    try {
+      await firestore.collection('users').doc(userId).set({
+        'darkModeEnabled': darkModeEnabled,
+        'updatedAt': DateTime.now().toIso8601String(),
+      }, SetOptions(merge: true));
+    } catch (_) {
+      // Non-critical write
+    }
+  }
+
+  Future<UserProfile?> _readProfile(String userId) async {
+    final firestore = _firestore;
+    if (firestore == null) return null;
+
+    try {
+      final doc = await firestore.collection('users').doc(userId).get();
+      if (!doc.exists) return null;
+      final data = doc.data()!;
+      return UserProfile(
+        id: userId,
+        email: data['email'] as String? ?? '',
+        displayName: data['displayName'] as String? ?? '',
+        darkModeEnabled: data['darkModeEnabled'] as bool? ?? false,
+        createdAt: _parseDateTime(data['createdAt']),
+        updatedAt: _parseDateTime(data['updatedAt']),
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  DateTime? _parseDateTime(dynamic value) {
+    if (value is String) return DateTime.tryParse(value);
+    return null;
   }
 
   Future<void> _upsertProfile(UserProfile profile) async {

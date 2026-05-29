@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/auth_provider.dart';
 import '../theme/app_colors.dart';
-import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
+import '../widgets/common/app_notification.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -24,7 +24,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   bool _isRegistering = false;
   bool _loading = false;
   bool _obscurePassword = true;
-  String? _errorText;
 
   @override
   void initState() {
@@ -33,7 +32,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
-    _entrances = List.generate(8, (i) {
+    _entrances = List.generate(7, (i) {
       final start = i * 0.08;
       return CurvedAnimation(
         parent: _animController,
@@ -52,30 +51,45 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
 
-    setState(() {
-      _loading = true;
-      _errorText = null;
-    });
+    if (email.isEmpty) {
+      AppNotification.error(context, 'Please enter your email');
+      return;
+    }
+    if (password.isEmpty) {
+      AppNotification.error(context, 'Please enter your password');
+      return;
+    }
+    if (password.length < 6) {
+      AppNotification.error(context, 'Password must be at least 6 characters');
+      return;
+    }
+
+    setState(() => _loading = true);
 
     try {
       final controller = ref.read(authControllerProvider);
       if (_isRegistering) {
         await controller.createUserWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
+          email: email,
+          password: password,
         );
       } else {
         await controller.signInWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
+          email: email,
+          password: password,
         );
       }
     } on FirebaseAuthException catch (e) {
-      setState(() => _errorText = _friendlyMessage(e.code));
+      if (mounted) {
+        AppNotification.error(context, _friendlyMessage(e.code));
+      }
     } catch (e) {
-      setState(() => _errorText = 'Something went wrong. Please try again.');
+      if (mounted) {
+        AppNotification.error(context, 'Something went wrong. Please try again.');
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -154,12 +168,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                             hintText: 'Email',
                             prefixIcon: Icon(Icons.email_outlined),
                           ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Please enter your email';
-                            }
-                            return null;
-                          },
                         ),
                       ),
                       const SizedBox(height: AppSpacing.md),
@@ -184,59 +192,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               ),
                             ),
                           ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your password';
-                            }
-                            if (value.length < 6) {
-                              return 'Password must be at least 6 characters';
-                            }
-                            return null;
-                          },
                           onFieldSubmitted: (_) => _submit(),
                         ),
                       ),
-                      if (_errorText != null) ...[
-                        const SizedBox(height: AppSpacing.sm),
-                        _buildAnimated(
-                          5,
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 10,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.danger.withValues(alpha: .12),
-                              borderRadius: BorderRadius.circular(AppRadius.small),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.error_outline_rounded,
-                                  color: AppColors.danger,
-                                  size: 18,
-                                ),
-                                const SizedBox(width: 8),
-                                Flexible(
-                                  child: Text(
-                                    _errorText!,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      color: AppColors.danger,
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
                       const SizedBox(height: AppSpacing.md),
                       _buildAnimated(
-                        6,
+                        5,
                         _AuthButton(
                           loading: _loading,
                           onPressed: _submit,
@@ -245,12 +206,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       ),
                       const SizedBox(height: AppSpacing.sm),
                       _buildAnimated(
-                        7,
+                        6,
                         _ToggleRow(
                           isRegistering: _isRegistering,
                           onToggle: () => setState(() {
                             _isRegistering = !_isRegistering;
-                            _errorText = null;
                           }),
                         ),
                       ),

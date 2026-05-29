@@ -36,6 +36,15 @@ class AuthGate extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
 
+    ref.listen(authStateProvider, (_, next) {
+      final user = next.asData?.value;
+      if (user != null) {
+        ref.read(themeModeProvider.notifier).applyPreference(
+              user.darkModeEnabled,
+            );
+      }
+    });
+
     return authState.when(
       loading: () => const Scaffold(
         body: Center(child: CircularProgressIndicator()),
