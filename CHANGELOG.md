@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.5 — 2026-05-29
+
+**Login screen polish with entrance animations**
+
+- Added staggered fade-in + slide-up entrance animation for login screen elements
+- Logo, title, subtitle, text field, and button appear sequentially (600ms total)
+- Added smooth crossfade page transition (400ms) when navigating from login to calendar
+- Broken down login screen into small private widgets for readability
+
 ## v1.4 — 2026-05-29
 
 **Weekly expense summary bar in expense sheet**
