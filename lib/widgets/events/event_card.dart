@@ -20,6 +20,10 @@ class EventCard extends StatelessWidget {
         ? 'All day'
         : '${DateFormat.jm().format(event.startAt)} - ${DateFormat.jm().format(event.endAt)}';
 
+    final durationLabel = event.isAllDay
+        ? null
+        : _formatDuration(event.endAt.difference(event.startAt));
+
     return Card(
       child: InkWell(
         borderRadius: BorderRadius.circular(AppRadius.medium),
@@ -52,12 +56,27 @@ class EventCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      timeLabel,
-                      style: TextStyle(
-                        color: AppColors.textMuted,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          timeLabel,
+                          style: TextStyle(
+                            color: AppColors.textMuted,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        if (durationLabel != null) ...[
+                          const SizedBox(width: AppSpacing.sm),
+                          Text(
+                            durationLabel,
+                            style: TextStyle(
+                              color: AppColors.textMuted.withValues(alpha: .7),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                     if (event.recurrenceRule.repeats) ...[
                       const SizedBox(height: 4),
@@ -85,4 +104,13 @@ class EventCard extends StatelessWidget {
       ),
     );
   }
+}
+
+String _formatDuration(Duration d) {
+  final hours = d.inHours;
+  final minutes = d.inMinutes.remainder(60);
+  if (hours > 0 && minutes > 0) return '${hours}h ${minutes}m';
+  if (hours > 0) return '${hours}h';
+  if (minutes > 0) return '${minutes}m';
+  return '';
 }

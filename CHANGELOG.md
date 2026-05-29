@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.15 — 2026-05-29
+
+**Event duration display**
+
+- Event cards now show the duration alongside the time range (e.g. "2:00 PM - 3:30 PM  1h 30m")
+- Duration auto-formats as "Xh Ym", "Xh", or "Ym" depending on length
+- All-day events omit the duration label since they span the full day
+
 ## v3.14 — 2026-05-29
 
 **Event delete confirmation**
