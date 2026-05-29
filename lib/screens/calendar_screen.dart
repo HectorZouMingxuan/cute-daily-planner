@@ -569,6 +569,7 @@ class CalendarScreen extends ConsumerWidget {
                                     ),
                                   );
                                 },
+                                onDelete: (habit) => habitController.deleteHabit(habit.id),
                               ),
                             ),
                           ),

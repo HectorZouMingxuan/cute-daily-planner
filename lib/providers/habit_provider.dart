@@ -39,4 +39,24 @@ class HabitController extends AsyncNotifier<HabitState> {
     await _repository.saveCheckIn(checkIn);
     state = await AsyncValue.guard(build);
   }
+
+  Future<void> deleteHabit(String habitId) async {
+    final currentState = state.value;
+    if (currentState == null) return;
+    final habit = currentState.habits.firstWhere((h) => h.id == habitId);
+    final deleted = Habit(
+      id: habit.id,
+      userId: habit.userId,
+      title: habit.title,
+      icon: habit.icon,
+      color: habit.color,
+      createdAt: habit.createdAt,
+      updatedAt: DateTime.now(),
+      deletedAt: DateTime.now(),
+      syncStatus: habit.syncStatus,
+      version: habit.version + 1,
+    );
+    await _repository.saveHabit(deleted);
+    state = await AsyncValue.guard(build);
+  }
 }

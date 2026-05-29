@@ -401,6 +401,7 @@ class HabitsSheet extends StatelessWidget {
     required this.checkIns,
     required this.onAdd,
     required this.onToggle,
+    required this.onDelete,
     super.key,
   });
 
@@ -409,6 +410,7 @@ class HabitsSheet extends StatelessWidget {
   final List<HabitCheckIn> checkIns;
   final VoidCallback onAdd;
   final void Function(Habit habit, HabitCheckIn? checkIn) onToggle;
+  final ValueChanged<Habit> onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -426,6 +428,7 @@ class HabitsSheet extends StatelessWidget {
               checkIns: checkIns,
               selectedDate: selectedDate,
               onToggle: onToggle,
+              onDelete: onDelete,
             ),
           ),
         ),

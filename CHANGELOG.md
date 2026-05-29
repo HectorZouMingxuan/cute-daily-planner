@@ -1,5 +1,14 @@
 # Changelog
 
+## v3.12 — 2026-05-29
+
+**Swipe to delete habits**
+
+- Habit cards now support swipe-left-to-delete, matching the task card pattern
+- Red delete background appears on swipe for clear visual feedback
+- Deleting a habit soft-deletes it (filtered from lists but preserved in storage)
+- Streak badge now uses the habit's chosen color instead of always mint
+
 ## v3.11 — 2026-05-29
 
 **Habit icon and color customization**
