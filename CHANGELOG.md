@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.4 — 2026-05-29
+
+**Mood distribution row in weekly overview**
+
+- Weekly overview now shows a mood distribution row with all 5 mood types
+- Each mood shows its emoji and count (e.g. "🌟 ×3  ☀️ ×2  ☁️ ×1")
+- SoftCard layout with evenly spaced mood columns
+- Counts dimmed for moods with zero occurrences
+- Auto-hides when no mood data exists for the week
+
 ## v2.3 — 2026-05-29
 
 **Upcoming events preview on home screen**

@@ -205,6 +205,10 @@ class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
                     ],
                   ),
                 ),
+                if (moodCounts.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  _MoodDistributionRow(moodCounts: moodCounts),
+                ],
                 const SizedBox(height: AppSpacing.md),
                 Text('Daily Breakdown', style: AppTextStyles.sectionTitle),
                 const SizedBox(height: AppSpacing.sm),
@@ -463,6 +467,48 @@ class _CategoryBar extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _MoodDistributionRow extends StatelessWidget {
+  const _MoodDistributionRow({required this.moodCounts});
+
+  final Map<MoodOption, int> moodCounts;
+
+  static const _emojis = {
+    MoodOption.great: '🌟',
+    MoodOption.good: '☀️',
+    MoodOption.okay: '🍃',
+    MoodOption.tired: '🌙',
+    MoodOption.bad: '☁️',
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return SoftCard(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: MoodOption.values.map((mood) {
+          final count = moodCounts[mood] ?? 0;
+          return Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(_emojis[mood] ?? '', style: const TextStyle(fontSize: 18)),
+              const SizedBox(width: 2),
+              Text(
+                '×$count',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: count > 0 ? AppColors.textMain : AppColors.textMuted,
+                ),
+              ),
+            ],
+          );
+        }).toList(),
+      ),
     );
   }
 }
