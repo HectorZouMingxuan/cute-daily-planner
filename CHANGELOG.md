@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.32 — 2026-05-29
+
+**Events sorted by start time**
+
+- Events for a selected day are now sorted chronologically by start time
+- Ensures event cards, module subtitles, and indicators all follow time order
+- Particularly helpful on busy days with multiple events
+
 ## v3.31 — 2026-05-29
 
 **Mood emoji in daily summary card**

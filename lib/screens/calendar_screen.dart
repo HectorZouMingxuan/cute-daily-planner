@@ -375,7 +375,7 @@ class CalendarScreen extends ConsumerWidget {
                   final selectedEvents = _eventsForDay(
                     eventList.value ?? const [],
                     calendarView.selectedDay,
-                  );
+                  )..sort((a, b) => a.startAt.compareTo(b.startAt));
                   final selectedExpenses = (expenseList.value ?? const [])
                       .where(
                         (e) => _isSameDate(e.date, calendarView.selectedDay),
