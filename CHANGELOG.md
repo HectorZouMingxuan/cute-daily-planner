@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.25 — 2026-05-29
+
+**Year in monthly expense total**
+
+- Monthly total line in the expense sheet now shows the full month and year (e.g. "May 2026" instead of "May")
+- Helps distinguish between same months in different years when browsing historical data
+
 ## v3.24 — 2026-05-29
 
 **All habits done encouragement**

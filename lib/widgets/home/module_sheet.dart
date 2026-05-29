@@ -486,7 +486,7 @@ class _MonthlyTotal extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            DateFormat('MMM').format(selectedDate),
+            DateFormat('MMM yyyy').format(selectedDate),
             style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: AppColors.textMain),
           ),
           const SizedBox(width: AppSpacing.sm),
