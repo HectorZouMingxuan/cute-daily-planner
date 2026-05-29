@@ -54,23 +54,30 @@ class HabitCheckList extends StatelessWidget {
                 fontWeight: FontWeight.w800,
               ),
             ),
-            subtitle: Row(
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(done ? 'Done' : 'Not done'),
-                if (streak > 1) ...[
-                  const SizedBox(width: AppSpacing.sm),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: AppColors.mint.withValues(alpha: .25),
-                      borderRadius: BorderRadius.circular(AppRadius.small),
-                    ),
-                    child: Text(
-                      '$streak day streak',
-                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.mint),
-                    ),
-                  ),
-                ],
+                Row(
+                  children: [
+                    Text(done ? 'Done' : 'Not done'),
+                    if (streak > 1) ...[
+                      const SizedBox(width: AppSpacing.sm),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: AppColors.mint.withValues(alpha: .25),
+                          borderRadius: BorderRadius.circular(AppRadius.small),
+                        ),
+                        child: Text(
+                          '$streak day streak',
+                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.mint),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 4),
+                _WeekDots(habitId: habit.id, selectedDate: selectedDate, checkIns: checkIns),
               ],
             ),
             secondary: CircleAvatar(
@@ -105,5 +112,53 @@ class HabitCheckList extends StatelessWidget {
       current = current.subtract(const Duration(days: 1));
     }
     return streak;
+  }
+}
+
+class _WeekDots extends StatelessWidget {
+  const _WeekDots({
+    required this.habitId,
+    required this.selectedDate,
+    required this.checkIns,
+  });
+
+  final String habitId;
+  final DateTime selectedDate;
+  final List<HabitCheckIn> checkIns;
+
+  @override
+  Widget build(BuildContext context) {
+    final monday = selectedDate.subtract(Duration(days: selectedDate.weekday - 1));
+    final doneSet = checkIns
+        .where((c) => c.habitId == habitId && c.isDone)
+        .map((c) => DateTime(c.date.year, c.date.month, c.date.day))
+        .toSet();
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(7, (i) {
+        final day = monday.add(Duration(days: i));
+        final isDone = doneSet.contains(day);
+        final isToday = _isSameDate(day, selectedDate);
+        return Container(
+          width: 10,
+          height: 10,
+          margin: const EdgeInsets.only(right: 3),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: isDone
+                ? AppColors.mint.withValues(alpha: .75)
+                : AppColors.border.withValues(alpha: .4),
+            border: isToday && !isDone
+                ? Border.all(color: AppColors.mint.withValues(alpha: .5), width: 1.5)
+                : null,
+          ),
+        );
+      }),
+    );
+  }
+
+  bool _isSameDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 }

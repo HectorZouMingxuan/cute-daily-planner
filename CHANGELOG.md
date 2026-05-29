@@ -1,5 +1,14 @@
 # Changelog
 
+## v3.5 — 2026-05-29
+
+**Weekly habit completion dots**
+
+- Each habit now shows a 7-day mini-grid of dots (Mon–Sun)
+- Green filled dot for days the habit was completed, empty dot for missed days
+- Today's dot highlighted with a subtle border for quick orientation
+- Compact design that fits below the existing status text and streak badge
+
 ## v3.4 — 2026-05-29
 
 **Undo snackbar for task deletion**
