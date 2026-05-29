@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.9 — 2026-05-29
+
+**Monthly summary line on calendar**
+
+- Calendar screen now shows a monthly aggregate line below the month header
+- Displays task completion, event count, and net income for the viewed month
+- Format: "8/14 tasks · 5 events · +3,200 net"
+- Auto-hides when no data exists for the viewed month
+
 ## v2.8 — 2026-05-29
 
 **Clear completed tasks button**

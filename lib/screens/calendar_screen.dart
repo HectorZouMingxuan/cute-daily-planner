@@ -11,6 +11,7 @@ import '../models/habit.dart';
 import '../models/habit_check_in.dart';
 import '../models/mood_entry.dart';
 import '../models/sync_metadata.dart';
+import '../models/todo_item.dart';
 import '../providers/calendar_view_provider.dart';
 import '../providers/daily_note_provider.dart';
 import '../providers/event_provider.dart';
@@ -68,6 +69,13 @@ class CalendarScreen extends ConsumerWidget {
     final selectedDateTitle = DateFormat(
       'EEEE, MMMM d',
     ).format(calendarView.selectedDay);
+
+    final monthlySummary = _monthlySummary(
+      calendarView.focusedDay,
+      eventList.value ?? const [],
+      todoList.value ?? const [],
+      expenseList.value ?? const [],
+    );
 
     PersistentBottomSheetController? eventsSheet;
 
@@ -174,6 +182,13 @@ class CalendarScreen extends ConsumerWidget {
                     label: const Text('Today'),
                   ),
                 ),
+                if (monthlySummary != null) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    monthlySummary,
+                    style: const TextStyle(fontSize: 12, color: AppColors.textMuted, fontWeight: FontWeight.w600),
+                  ),
+                ],
                 const SizedBox(height: AppSpacing.md),
                 Stack(
                   children: [
@@ -549,6 +564,38 @@ class CalendarScreen extends ConsumerWidget {
     final hour = DateTime.now().hour;
     final timeGreeting = hour < 12 ? 'Morning' : hour < 17 ? 'Afternoon' : 'Evening';
     return 'Good $timeGreeting, $username';
+  }
+
+  String? _monthlySummary(
+    DateTime focusedDay,
+    List<CalendarEvent> events,
+    List<TodoItem> todos,
+    List<ExpenseEntry> expenses,
+  ) {
+    final month = focusedDay.month;
+    final year = focusedDay.year;
+
+    final monthTodos = todos.where((t) => t.date.month == month && t.date.year == year).toList();
+    final monthEvents = events.where((e) {
+      final d = e.startAt;
+      return d.month == month && d.year == year;
+    }).length;
+    final monthExpenses = expenses.where((e) => e.date.month == month && e.date.year == year).toList();
+
+    var net = 0.0;
+    for (final e in monthExpenses) {
+      net += e.type == ExpenseType.income ? e.amount : -e.amount;
+    }
+
+    final parts = <String>[];
+    if (monthTodos.isNotEmpty) {
+      final done = monthTodos.where((t) => t.isDone).length;
+      parts.add('$done/${monthTodos.length} tasks');
+    }
+    if (monthEvents > 0) parts.add('$monthEvents events');
+    if (net != 0) parts.add('${net > 0 ? "+" : ""}${net.toStringAsFixed(0)} net');
+
+    return parts.isEmpty ? null : parts.join('  ·  ');
   }
 
   bool _isSameDate(DateTime a, DateTime b) {
