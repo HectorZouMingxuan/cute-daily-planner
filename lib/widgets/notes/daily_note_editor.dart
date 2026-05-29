@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../models/daily_note.dart';
 import '../../models/sync_metadata.dart';
+import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../common/soft_card.dart';
 
@@ -24,11 +26,13 @@ class DailyNoteEditor extends StatefulWidget {
 
 class _DailyNoteEditorState extends State<DailyNoteEditor> {
   late final TextEditingController _controller;
+  bool _saved = false;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.note?.content ?? '');
+    _controller.addListener(() => setState(() {}));
   }
 
   @override
@@ -36,6 +40,7 @@ class _DailyNoteEditorState extends State<DailyNoteEditor> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.note?.id != widget.note?.id) {
       _controller.text = widget.note?.content ?? '';
+      _saved = false;
     }
   }
 
@@ -45,29 +50,71 @@ class _DailyNoteEditorState extends State<DailyNoteEditor> {
     super.dispose();
   }
 
+  int get _wordCount => _controller.text.trim().isEmpty
+      ? 0
+      : _controller.text.trim().split(RegExp(r'\s+')).length;
+
   @override
   Widget build(BuildContext context) {
+    final lastEdited = widget.note?.updatedAt;
+    final lastEditedStr = lastEdited != null
+        ? 'Last edited ${DateFormat('MMM d, HH:mm').format(lastEdited)}'
+        : null;
+
     return SoftCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextField(
             controller: _controller,
-            minLines: 7,
+            minLines: 6,
             maxLines: 10,
             decoration: const InputDecoration(
               labelText: 'Notes',
-              hintText: 'Write a small note for today.',
+              hintText: 'Write a small note for today...',
             ),
           ),
-          const SizedBox(height: AppSpacing.md),
-          Align(
-            alignment: Alignment.centerRight,
-            child: FilledButton.icon(
-              onPressed: _save,
-              icon: const Icon(Icons.save_outlined),
-              label: const Text('Save Note'),
-            ),
+          const SizedBox(height: AppSpacing.sm),
+          Row(
+            children: [
+              Text(
+                '$_wordCount word${_wordCount == 1 ? '' : 's'}',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.textMuted,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              if (lastEditedStr != null && !_saved) ...[
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Text(
+                    lastEditedStr,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textMuted,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+              if (_saved)
+                const Text(
+                  'Saved!',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.mint,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              const Spacer(),
+              FilledButton.icon(
+                onPressed: _save,
+                icon: const Icon(Icons.save_outlined, size: 18),
+                label: const Text('Save'),
+              ),
+            ],
           ),
         ],
       ),
@@ -90,5 +137,6 @@ class _DailyNoteEditorState extends State<DailyNoteEditor> {
         version: (existing?.version ?? 0) + 1,
       ),
     );
+    setState(() => _saved = true);
   }
 }

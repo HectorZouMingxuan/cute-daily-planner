@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.8 — 2026-05-29
+
+**Improved notes editor**
+
+- Added live word count display below the text field
+- Shows "Last edited" timestamp for previously saved notes
+- Displays a "Saved!" confirmation after successful save
+- Cleaner footer row with word count, timestamp, and compact save button
+
 ## v1.7 — 2026-05-29
 
 **Enhanced task priority display**
