@@ -450,7 +450,22 @@ class CalendarScreen extends ConsumerWidget {
                                   todoController: todoController,
                                   selectedDate: calendarView.selectedDay,
                                 ),
-                                onToggle: todoController.toggleDone,
+                                onToggle: (todo) async {
+                                  await todoController.toggleDone(todo);
+                                  if (!context.mounted) return;
+                                  final currentTodos = ref.read(todoListProvider).value ?? [];
+                                  final dayTodos = currentTodos
+                                      .where((t) => _isSameDate(t.date, calendarView.selectedDay))
+                                      .toList();
+                                  if (dayTodos.isNotEmpty && dayTodos.every((t) => t.isDone)) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('All tasks completed for the day!'),
+                                        duration: Duration(seconds: 3),
+                                      ),
+                                    );
+                                  }
+                                },
                                 onDelete: (todo) {
                                   todoController.deleteTodo(todo);
                                   ScaffoldMessenger.of(context).showSnackBar(

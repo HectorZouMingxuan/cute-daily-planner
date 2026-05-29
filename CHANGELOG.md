@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.9 — 2026-05-29
+
+**Celebration on all tasks done**
+
+- Completing the last remaining task for the day now shows a congratulatory snackbar
+- Snackbar appears only when every task for the selected date is finished
+- No snackbar when toggling tasks that don't complete the full list
+
 ## v3.8 — 2026-05-29
 
 **Category colors on expense cards**
