@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/todo_item.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_radius.dart';
 import '../../theme/app_spacing.dart';
 import '../common/empty_state.dart';
 import '../common/soft_card.dart';
@@ -73,10 +74,24 @@ class TodoList extends StatelessWidget {
           ...todos.map(
             (todo) => Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-              child: TodoCard(
-                todo: todo,
-                onToggle: () => onToggle(todo),
-                onDelete: () => onDelete(todo),
+              child: Dismissible(
+                key: Key(todo.id),
+                direction: DismissDirection.endToStart,
+                background: Container(
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.only(right: AppSpacing.md),
+                  decoration: BoxDecoration(
+                    color: AppColors.danger.withValues(alpha: .85),
+                    borderRadius: BorderRadius.circular(AppRadius.medium),
+                  ),
+                  child: const Icon(Icons.delete_rounded, color: Colors.white, size: 20),
+                ),
+                onDismissed: (_) => onDelete(todo),
+                child: TodoCard(
+                  todo: todo,
+                  onToggle: () => onToggle(todo),
+                  onDelete: () => onDelete(todo),
+                ),
               ),
             ),
           ),

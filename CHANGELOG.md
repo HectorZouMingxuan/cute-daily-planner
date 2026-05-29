@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.1 — 2026-05-29
+
+**Swipe to delete task cards**
+
+- Task cards now support swipe-left-to-delete gesture
+- Red delete background with trash icon slides in on swipe
+- Existing delete button retained as fallback for non-swipe interaction
+
 ## v3.0 — 2026-05-29
 
 **Dark mode support**
