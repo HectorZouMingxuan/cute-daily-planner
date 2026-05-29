@@ -5,6 +5,7 @@ import '../../models/calendar_event.dart';
 import '../../models/mood_entry.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_radius.dart';
+import 'calendar_indicators.dart';
 
 class MonthView extends StatelessWidget {
   const MonthView({
@@ -217,16 +218,16 @@ class _DragTargetDayCell extends StatelessWidget {
                     alignment: WrapAlignment.center,
                     children: [
                       if (incompleteCount > 0)
-                        _TaskCountBadge(count: incompleteCount),
-                      if (allTasksDone) const _CheckMark(),
-                      if (mood != null) _MoodEmoji(mood: mood!),
+                        TaskCountBadge(count: incompleteCount),
+                      if (allTasksDone) const CheckMark(),
+                      if (mood != null) MoodEmoji(mood: mood!),
                       if (hasExpense && expenseNet!.startsWith('+'))
-                        _ExpenseLabel(
+                        ExpenseLabel(
                             total: expenseNet!, color: AppColors.mint),
                       if (hasExpense && expenseNet!.startsWith('-'))
-                        _ExpenseLabel(
+                        ExpenseLabel(
                             total: expenseNet!, color: AppColors.danger),
-                      if (hasEvents) const _EventBadge(),
+                      if (hasEvents) const EventBadge(),
                     ],
                   ),
                 ),
@@ -234,116 +235,6 @@ class _DragTargetDayCell extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class _TaskCountBadge extends StatelessWidget {
-  const _TaskCountBadge({required this.count});
-
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 11,
-      height: 11,
-      decoration: const BoxDecoration(
-        color: AppColors.yellow,
-        shape: BoxShape.circle,
-      ),
-      child: Center(
-        child: Text(
-          '$count',
-          style: const TextStyle(
-            fontSize: 6.5,
-            fontWeight: FontWeight.w900,
-            color: AppColors.ink,
-            height: 1,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _CheckMark extends StatelessWidget {
-  const _CheckMark();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Text(
-      '✓',
-      style: TextStyle(
-        fontSize: 9,
-        fontWeight: FontWeight.w900,
-        color: AppColors.mint,
-      ),
-    );
-  }
-}
-
-class _MoodEmoji extends StatelessWidget {
-  const _MoodEmoji({required this.mood});
-
-  final MoodOption mood;
-
-  static const _emojis = {
-    MoodOption.great: '🌟',
-    MoodOption.good: '☀️',
-    MoodOption.okay: '🍃',
-    MoodOption.tired: '🌙',
-    MoodOption.bad: '☁️',
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(_emojis[mood] ?? '', style: const TextStyle(fontSize: 8.5));
-  }
-}
-
-class _ExpenseLabel extends StatelessWidget {
-  const _ExpenseLabel({required this.total, required this.color});
-
-  final String total;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      total,
-      style: TextStyle(
-        fontSize: 7,
-        fontWeight: FontWeight.w700,
-        color: color,
-      ),
-    );
-  }
-}
-
-class _EventBadge extends StatelessWidget {
-  const _EventBadge();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 11,
-      height: 11,
-      decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: .5),
-        shape: BoxShape.circle,
-      ),
-      child: const Center(
-        child: Text(
-          'E',
-          style: TextStyle(
-            fontSize: 6.5,
-            fontWeight: FontWeight.w900,
-            color: AppColors.ink,
-            height: 1,
-          ),
-        ),
-      ),
     );
   }
 }
