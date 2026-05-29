@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.39 — 2026-05-29
+
+**Week number in weekly overview**
+
+- Weekly overview header now shows the ISO week number (e.g. "Week 22 · May 25 — May 31, 2026")
+- Provides quick orientation when browsing across multiple weeks
+- Useful for planning and referencing specific weeks
+
 ## v3.38 — 2026-05-29
 
 **Note count in monthly summary**

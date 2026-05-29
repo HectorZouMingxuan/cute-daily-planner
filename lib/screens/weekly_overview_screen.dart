@@ -39,7 +39,8 @@ class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
     final monday = today.subtract(Duration(days: today.weekday - 1));
     final weekStart = monday.add(Duration(days: _weekOffset * 7));
     final weekEnd = weekStart.add(const Duration(days: 6));
-    final weekRange = '${DateFormat('MMM d').format(weekStart)} — ${DateFormat('MMM d, yyyy').format(weekEnd)}';
+    final weekNumber = _isoWeekNumber(weekStart);
+    final weekRange = 'Week $weekNumber  ·  ${DateFormat('MMM d').format(weekStart)} — ${DateFormat('MMM d, yyyy').format(weekEnd)}';
     final isCurrentWeek = _weekOffset == 0;
 
     final events = eventList.value ?? const [];
@@ -278,6 +279,11 @@ class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
 
   bool _isSameDate(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
+
+  int _isoWeekNumber(DateTime date) {
+    final dayOfYear = int.parse(DateFormat('D').format(date));
+    return ((dayOfYear - date.weekday + 10) / 7).floor();
   }
 
   String? _deltaStr(int diff) {
