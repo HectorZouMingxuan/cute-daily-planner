@@ -427,6 +427,7 @@ class CalendarScreen extends ConsumerWidget {
                                 ),
                                 onToggle: todoController.toggleDone,
                                 onDelete: todoController.deleteTodo,
+                                onClearDone: () => todoController.clearDoneTodos(calendarView.selectedDay),
                               ),
                             ),
                           ),

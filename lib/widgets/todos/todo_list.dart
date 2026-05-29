@@ -12,12 +12,14 @@ class TodoList extends StatelessWidget {
     required this.todos,
     required this.onToggle,
     required this.onDelete,
+    this.onClearDone,
     super.key,
   });
 
   final List<TodoItem> todos;
   final ValueChanged<TodoItem> onToggle;
   final ValueChanged<TodoItem> onDelete;
+  final VoidCallback? onClearDone;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +45,21 @@ class TodoList extends StatelessWidget {
             ],
           ),
         ),
+        if (onClearDone != null && doneCount > 0) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton.icon(
+              onPressed: onClearDone,
+              icon: const Icon(Icons.clear_all_rounded, size: 16),
+              label: Text('Clear $doneCount done'),
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.textMuted,
+                textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ),
+        ],
         const SizedBox(height: AppSpacing.md),
         if (todos.isEmpty)
           const SoftCard(

@@ -42,4 +42,24 @@ class TodoListController extends AsyncNotifier<List<TodoItem>> {
       ),
     );
   }
+
+  Future<void> clearDoneTodos(DateTime date) async {
+    final todos = state.value ?? [];
+    for (final todo in todos) {
+      if (todo.isDone && _isSameDate(todo.date, date)) {
+        await _repository.saveTodo(
+          todo.copyWith(
+            deletedAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+            version: todo.version + 1,
+          ),
+        );
+      }
+    }
+    state = await AsyncValue.guard(_repository.getTodos);
+  }
+
+  bool _isSameDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
 }

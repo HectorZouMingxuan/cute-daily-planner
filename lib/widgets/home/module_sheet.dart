@@ -210,6 +210,7 @@ class TasksSheet extends StatelessWidget {
     required this.onAdd,
     required this.onToggle,
     required this.onDelete,
+    this.onClearDone,
     super.key,
   });
 
@@ -218,6 +219,7 @@ class TasksSheet extends StatelessWidget {
   final VoidCallback onAdd;
   final ValueChanged<TodoItem> onToggle;
   final ValueChanged<TodoItem> onDelete;
+  final VoidCallback? onClearDone;
 
   @override
   Widget build(BuildContext context) {
@@ -232,6 +234,7 @@ class TasksSheet extends StatelessWidget {
             todos: todos,
             onToggle: onToggle,
             onDelete: onDelete,
+            onClearDone: onClearDone,
           ),
         ),
         Padding(

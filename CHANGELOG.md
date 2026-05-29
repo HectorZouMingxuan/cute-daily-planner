@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.8 — 2026-05-29
+
+**Clear completed tasks button**
+
+- Task sheet now shows a "Clear X done" button when any tasks are completed
+- Bulk-deletes all completed tasks for the selected day in one tap
+- Button only visible when there are completed tasks to clear
+
 ## v2.7 — 2026-05-29
 
 **Week-over-week comparison deltas**
