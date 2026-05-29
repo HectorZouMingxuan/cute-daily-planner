@@ -527,12 +527,13 @@ class CalendarScreen extends ConsumerWidget {
                                 selectedDate: calendarView.selectedDay,
                                 mood: selectedMood,
                                 moodList: moodList.value ?? const [],
-                                onMoodChanged: (mood) async {
+                                onMoodChanged: (mood, note) async {
                                   await moodController.saveMood(
                                     _createMoodEntry(
                                       selectedMood,
                                       calendarView.selectedDay,
                                       mood,
+                                      note: note,
                                     ),
                                   );
                                 },
@@ -783,8 +784,9 @@ class CalendarScreen extends ConsumerWidget {
   MoodEntry _createMoodEntry(
     MoodEntry? existing,
     DateTime selectedDate,
-    MoodOption mood,
-  ) {
+    MoodOption mood, {
+    String? note,
+  }) {
     final now = DateTime.now();
     return MoodEntry(
       id:
@@ -793,7 +795,7 @@ class CalendarScreen extends ConsumerWidget {
       userId: existing?.userId ?? 'local-user',
       date: DateTime(selectedDate.year, selectedDate.month, selectedDate.day),
       mood: mood,
-      note: existing?.note ?? '',
+      note: note ?? existing?.note ?? '',
       createdAt: existing?.createdAt ?? now,
       updatedAt: now,
       syncStatus: SyncStatus.localOnly,

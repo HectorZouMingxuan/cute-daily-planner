@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.10 — 2026-05-29
+
+**Mood reflection notes**
+
+- Mood sheet now includes an optional note field for journaling why you feel that way
+- Notes are saved alongside the mood selection and persist across mood changes
+- Previously saved notes appear when reopening the mood sheet
+
 ## v3.9 — 2026-05-29
 
 **Celebration on all tasks done**

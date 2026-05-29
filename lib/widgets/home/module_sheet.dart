@@ -9,6 +9,7 @@ import '../../models/habit_check_in.dart';
 import '../../models/mood_entry.dart';
 import '../../models/todo_item.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_radius.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_text_styles.dart';
 import '../calendar/draggable_event_tile.dart';
@@ -290,7 +291,7 @@ class NotesSheet extends StatelessWidget {
   }
 }
 
-class MoodSheet extends StatelessWidget {
+class MoodSheet extends StatefulWidget {
   const MoodSheet({
     required this.selectedDate,
     required this.mood,
@@ -302,7 +303,34 @@ class MoodSheet extends StatelessWidget {
   final DateTime selectedDate;
   final MoodEntry? mood;
   final List<MoodEntry> moodList;
-  final ValueChanged<MoodOption> onMoodChanged;
+  final void Function(MoodOption mood, String note) onMoodChanged;
+
+  @override
+  State<MoodSheet> createState() => _MoodSheetState();
+}
+
+class _MoodSheetState extends State<MoodSheet> {
+  late final TextEditingController _noteController;
+
+  @override
+  void initState() {
+    super.initState();
+    _noteController = TextEditingController(text: widget.mood?.note ?? '');
+  }
+
+  @override
+  void didUpdateWidget(covariant MoodSheet oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.mood?.note != widget.mood?.note) {
+      _noteController.text = widget.mood?.note ?? '';
+    }
+  }
+
+  @override
+  void dispose() {
+    _noteController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -310,7 +338,7 @@ class MoodSheet extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _SheetHeader(title: 'Mood', date: selectedDate),
+        _SheetHeader(title: 'Mood', date: widget.selectedDate),
         const Divider(),
         Flexible(
           child: SingleChildScrollView(
@@ -321,19 +349,42 @@ class MoodSheet extends StatelessWidget {
                 Text('How are you feeling today?', style: AppTextStyles.body),
                 const SizedBox(height: AppSpacing.md),
                 MoodPicker(
-                  selectedMood: mood?.mood,
-                  onChanged: onMoodChanged,
+                  selectedMood: widget.mood?.mood,
+                  onChanged: (mood) => widget.onMoodChanged(mood, _noteController.text.trim()),
                 ),
-                if (mood != null) ...[
+                const SizedBox(height: AppSpacing.md),
+                TextField(
+                  controller: _noteController,
+                  maxLines: 2,
+                  decoration: InputDecoration(
+                    hintText: 'Add a note... (optional)',
+                    hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 13),
+                    contentPadding: const EdgeInsets.all(AppSpacing.sm + 2),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(AppRadius.small),
+                      borderSide: BorderSide(color: AppColors.border),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(AppRadius.small),
+                      borderSide: BorderSide(color: AppColors.border.withValues(alpha: .5)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(AppRadius.small),
+                      borderSide: const BorderSide(color: AppColors.primary),
+                    ),
+                  ),
+                  style: TextStyle(fontSize: 13, color: AppColors.textMain),
+                ),
+                if (widget.mood != null) ...[
                   const SizedBox(height: AppSpacing.md),
                   SoftCard(
                     child: Text(
-                      'Today feels ${mood!.mood.label}',
+                      'Today feels ${widget.mood!.mood.label}',
                       style: AppTextStyles.body,
                     ),
                   ),
                 ],
-                MoodTrendRow(moods: moodList, selectedDate: selectedDate),
+                MoodTrendRow(moods: widget.moodList, selectedDate: widget.selectedDate),
               ],
             ),
           ),
