@@ -8,6 +8,15 @@ import '../../theme/app_spacing.dart';
 import '../common/empty_state.dart';
 import '../common/soft_card.dart';
 
+const _habitIcons = {
+  'check': Icons.check_rounded,
+  'star': Icons.star_rounded,
+  'heart': Icons.favorite_rounded,
+  'bolt': Icons.bolt_rounded,
+  'flame': Icons.local_fire_department_rounded,
+  'book': Icons.menu_book_rounded,
+};
+
 class HabitCheckList extends StatelessWidget {
   const HabitCheckList({
     required this.habits,
@@ -82,7 +91,7 @@ class HabitCheckList extends StatelessWidget {
             ),
             secondary: CircleAvatar(
               backgroundColor: Color(habit.color).withValues(alpha: .45),
-              child: const Icon(Icons.check_rounded),
+              child: Icon(_habitIcons[habit.icon] ?? Icons.check_rounded),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.sm,

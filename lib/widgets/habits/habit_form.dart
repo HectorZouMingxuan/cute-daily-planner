@@ -19,6 +19,26 @@ class HabitForm extends StatefulWidget {
 class _HabitFormState extends State<HabitForm> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
+  String _selectedIcon = 'check';
+  Color _selectedColor = AppColors.mint;
+
+  static const _iconOptions = {
+    'check': Icons.check_rounded,
+    'star': Icons.star_rounded,
+    'heart': Icons.favorite_rounded,
+    'bolt': Icons.bolt_rounded,
+    'flame': Icons.local_fire_department_rounded,
+    'book': Icons.menu_book_rounded,
+  };
+
+  static const _colorOptions = [
+    AppColors.mint,
+    AppColors.sage,
+    AppColors.pink,
+    AppColors.lavender,
+    AppColors.yellow,
+    AppColors.primary,
+  ];
 
   @override
   void dispose() {
@@ -49,6 +69,49 @@ class _HabitFormState extends State<HabitForm> {
                 return null;
               },
             ),
+            const SizedBox(height: AppSpacing.md),
+            Text('Icon', style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
+            const SizedBox(height: AppSpacing.sm),
+            Wrap(
+              spacing: AppSpacing.sm,
+              children: _iconOptions.entries.map((entry) {
+                final selected = _selectedIcon == entry.key;
+                return GestureDetector(
+                  onTap: () => setState(() => _selectedIcon = entry.key),
+                  child: CircleAvatar(
+                    backgroundColor: selected
+                        ? AppColors.primary.withValues(alpha: .3)
+                        : AppColors.surface,
+                    child: Icon(entry.value,
+                        size: 20,
+                        color: selected ? AppColors.primary : AppColors.textMain),
+                  ),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text('Color', style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
+            const SizedBox(height: AppSpacing.sm),
+            Wrap(
+              spacing: AppSpacing.sm,
+              children: _colorOptions.map((color) {
+                final selected = _selectedColor == color;
+                return GestureDetector(
+                  onTap: () => setState(() => _selectedColor = color),
+                  child: Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: .45),
+                      shape: BoxShape.circle,
+                      border: selected
+                          ? Border.all(color: color, width: 2.5)
+                          : null,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
             const SizedBox(height: AppSpacing.lg),
             Align(
               alignment: Alignment.centerRight,
@@ -68,8 +131,8 @@ class _HabitFormState extends State<HabitForm> {
         id: const Uuid().v4(),
         userId: 'local-user',
         title: _titleController.text.trim(),
-        icon: 'check',
-        color: AppColors.mint.toARGB32(),
+        icon: _selectedIcon,
+        color: _selectedColor.toARGB32(),
         createdAt: now,
         updatedAt: now,
         syncStatus: SyncStatus.localOnly,

@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.11 — 2026-05-29
+
+**Habit icon and color customization**
+
+- Habit form now lets you pick an icon (check, star, heart, bolt, flame, book) and color
+- Each habit's circle avatar in the checklist reflects its chosen icon and color
+- Existing habits retain their default check icon and mint color
+
 ## v3.10 — 2026-05-29
 
 **Mood reflection notes**
