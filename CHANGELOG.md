@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.21 — 2026-05-29
+
+**Word count in note module subtitle**
+
+- Notes module card now shows word count alongside the preview (e.g. "Groceries list... · 45 words")
+- Lets users gauge how much they've written without opening the editor
+- Matches the word count display already present inside the note editor
+
 ## v3.20 — 2026-05-29
 
 **Quick actions on calendar day long-press**

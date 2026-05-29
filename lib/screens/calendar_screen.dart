@@ -729,8 +729,10 @@ class CalendarScreen extends ConsumerWidget {
 
   String _notePreview(String content) {
     final trimmed = content.trim();
-    if (trimmed.length <= 28) return trimmed;
-    return '${trimmed.substring(0, 28)}...';
+    final wordCount = trimmed.isEmpty ? 0 : trimmed.split(RegExp(r'\s+')).length;
+    final wordsLabel = '$wordCount word${wordCount == 1 ? '' : 's'}';
+    if (trimmed.length <= 22) return '$trimmed  ·  $wordsLabel';
+    return '${trimmed.substring(0, 22)}...  ·  $wordsLabel';
   }
 
   String _habitSubtitle(int checked, int total) {
