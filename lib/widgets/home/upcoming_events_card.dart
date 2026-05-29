@@ -48,6 +48,12 @@ class UpcomingEventsCard extends StatelessWidget {
                       ? 'Tomorrow'
                       : DateFormat('EEE, MMM d').format(event.startAt);
               final timeLabel = event.isAllDay ? 'All day' : DateFormat('HH:mm').format(event.startAt);
+              final durationLabel = event.isAllDay
+                  ? null
+                  : _formatDuration(event.endAt.difference(event.startAt));
+              final subtitle = durationLabel != null
+                  ? '$dayLabel  ·  $timeLabel  ·  $durationLabel'
+                  : '$dayLabel  ·  $timeLabel';
               final color = Color(event.color);
 
               return Padding(
@@ -74,7 +80,7 @@ class UpcomingEventsCard extends StatelessWidget {
                             style:  TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.textMain),
                           ),
                           Text(
-                            '$dayLabel  ·  $timeLabel',
+                            subtitle,
                             style:  TextStyle(fontSize: 11, color: AppColors.textMuted, fontWeight: FontWeight.w600),
                           ),
                         ],
@@ -89,4 +95,13 @@ class UpcomingEventsCard extends StatelessWidget {
       ],
     );
   }
+}
+
+String _formatDuration(Duration d) {
+  final hours = d.inHours;
+  final minutes = d.inMinutes.remainder(60);
+  if (hours > 0 && minutes > 0) return '${hours}h ${minutes}m';
+  if (hours > 0) return '${hours}h';
+  if (minutes > 0) return '${minutes}m';
+  return '';
 }

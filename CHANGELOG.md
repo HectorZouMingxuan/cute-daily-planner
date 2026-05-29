@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.27 — 2026-05-29
+
+**Event duration in upcoming preview**
+
+- Upcoming events section on the home screen now shows event duration alongside the day and time
+- Format: "Today · 14:00 · 1h 30m" or "Tomorrow · 10:00 · 2h"
+- Consistent with the event card duration display added in v3.15
+
 ## v3.26 — 2026-05-29
 
 **Pending habit visibility in weekly overview**
