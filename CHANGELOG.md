@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.29 — 2026-05-29
+
+**"Today" label in selected date title**
+
+- When the selected calendar day is today, the date title now shows "Today, May 29" instead of "Friday, May 29"
+- Makes it instantly clear you're viewing the current day
+- Other days continue to show the full weekday name for context
+
 ## v3.28 — 2026-05-29
 
 **Habit completions in monthly summary**

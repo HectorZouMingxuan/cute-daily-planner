@@ -66,9 +66,13 @@ class CalendarScreen extends ConsumerWidget {
     final syncState = ref.watch(syncProvider);
     final syncController = ref.read(syncProvider.notifier);
     final monthTitle = DateFormat('MMMM yyyy').format(calendarView.focusedDay);
-    final selectedDateTitle = DateFormat(
-      'EEEE, MMMM d',
-    ).format(calendarView.selectedDay);
+    final now = DateTime.now();
+    final isToday = now.year == calendarView.selectedDay.year &&
+        now.month == calendarView.selectedDay.month &&
+        now.day == calendarView.selectedDay.day;
+    final selectedDateTitle = isToday
+        ? 'Today, ${DateFormat('MMM d').format(calendarView.selectedDay)}'
+        : DateFormat('EEEE, MMMM d').format(calendarView.selectedDay);
 
     final monthlySummary = _monthlySummary(
       calendarView.focusedDay,
