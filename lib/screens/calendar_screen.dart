@@ -14,6 +14,7 @@ import '../models/mood_entry.dart';
 import '../models/sync_metadata.dart';
 import '../models/todo_item.dart';
 import '../providers/calendar_view_provider.dart';
+import '../providers/auth_provider.dart';
 import '../providers/user_provider.dart';
 import '../providers/daily_note_provider.dart';
 import '../providers/event_provider.dart';
@@ -38,27 +39,16 @@ import '../widgets/events/event_form.dart';
 import '../widgets/expenses/expense_form.dart';
 import '../widgets/habits/habit_form.dart';
 import '../widgets/todos/todo_form.dart';
-import '../app.dart';
 import 'settings_screen.dart';
 
 class CalendarScreen extends ConsumerWidget {
-  const CalendarScreen({super.key, this.username});
-
-  final String? username;
+  const CalendarScreen({super.key});
 
   static const _recurrenceCalculator = RecurrenceCalculator();
   static const _dragEventController = DragEventController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final effectiveUserId =
-        (username != null && username!.isNotEmpty) ? username! : 'local-user';
-    if (ref.read(currentUserIdProvider) != effectiveUserId) {
-      Future.microtask(
-        () => ref.read(currentUserIdProvider.notifier).set(effectiveUserId),
-      );
-    }
-
     final calendarView = ref.watch(calendarViewProvider);
     final calendarController = ref.read(calendarViewProvider.notifier);
     final eventList = ref.watch(eventListProvider);
@@ -101,11 +91,16 @@ class CalendarScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('Cute Daily Planner', style: TextStyle(fontSize: 16)),
-            if (username != null && username!.isNotEmpty)
-              Text(
-                _greeting(username!),
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
-              ),
+            () {
+              final authUser = ref.watch(authStateProvider).asData?.value;
+              if (authUser != null) {
+                return Text(
+                  _greeting(authUser.displayName),
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                );
+              }
+              return const SizedBox.shrink();
+            }(),
           ],
         ),
         backgroundColor: AppColors.appBarBg,
@@ -114,7 +109,7 @@ class CalendarScreen extends ConsumerWidget {
           IconButton(
             tooltip: 'Weekly overview',
             onPressed: () {
-              Navigator.of(context).pushNamed(CuteCalendarApp.weeklyRoute);
+              Navigator.of(context).pushNamed('/weekly');
             },
             icon: const Icon(Icons.view_week_rounded),
           ),
@@ -138,9 +133,7 @@ class CalendarScreen extends ConsumerWidget {
           IconButton(
             tooltip: 'Logout',
             onPressed: () {
-              Navigator.of(context).pushReplacementNamed(
-                CuteCalendarApp.loginRoute,
-              );
+              ref.read(authControllerProvider).signOut();
             },
             icon: Icon(Icons.logout_rounded),
           ),
@@ -625,6 +618,7 @@ class CalendarScreen extends ConsumerWidget {
                                       selectedMood,
                                       calendarView.selectedDay,
                                       mood,
+                                      userId: ref.read(currentUserIdProvider),
                                       note: note,
                                     ),
                                   );
@@ -956,6 +950,7 @@ class CalendarScreen extends ConsumerWidget {
     MoodEntry? existing,
     DateTime selectedDate,
     MoodOption mood, {
+    required String userId,
     String? note,
   }) {
     final now = DateTime.now();
@@ -963,7 +958,7 @@ class CalendarScreen extends ConsumerWidget {
       id:
           existing?.id ??
           '${selectedDate.year}-${selectedDate.month}-${selectedDate.day}',
-      userId: existing?.userId ?? 'local-user',
+      userId: existing?.userId ?? userId,
       date: DateTime(selectedDate.year, selectedDate.month, selectedDate.day),
       mood: mood,
       note: note ?? existing?.note ?? '',

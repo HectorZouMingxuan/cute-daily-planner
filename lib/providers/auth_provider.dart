@@ -1,31 +1,47 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/user_profile.dart';
 import '../repositories/auth_repository.dart';
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  return createAuthRepository();
+  return createAuthRepository(firestore: FirebaseFirestore.instance);
 });
 
-final authProvider = AsyncNotifierProvider<AuthController, UserProfile?>(
-  AuthController.new,
-);
+final authStateProvider = StreamProvider<UserProfile?>((ref) {
+  return ref.watch(authRepositoryProvider).authStateChanges;
+});
 
-class AuthController extends AsyncNotifier<UserProfile?> {
-  AuthRepository get _repository => ref.read(authRepositoryProvider);
+final authControllerProvider = Provider<AuthController>((ref) {
+  return AuthController(ref.read(authRepositoryProvider));
+});
 
-  @override
-  Future<UserProfile?> build() async {
-    return _repository.currentUser;
+class AuthController {
+  AuthController(this._repository);
+
+  final AuthRepository _repository;
+
+  Future<UserProfile> signInWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) {
+    return _repository.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
   }
 
-  Future<void> signInAnonymously() async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(_repository.signInAnonymously);
+  Future<UserProfile> createUserWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) {
+    return _repository.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
   }
 
-  Future<void> signOut() async {
-    await _repository.signOut();
-    state = const AsyncData(null);
+  Future<void> signOut() {
+    return _repository.signOut();
   }
 }

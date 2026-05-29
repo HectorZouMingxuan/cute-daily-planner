@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../models/expense_entry.dart';
 import '../../models/sync_metadata.dart';
+import '../../providers/user_provider.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_text_styles.dart';
 
-class ExpenseForm extends StatefulWidget {
+class ExpenseForm extends ConsumerStatefulWidget {
   const ExpenseForm({
     required this.selectedDate,
     required this.onSave,
@@ -21,10 +23,10 @@ class ExpenseForm extends StatefulWidget {
   final ValueChanged<ExpenseEntry>? onDelete;
 
   @override
-  State<ExpenseForm> createState() => _ExpenseFormState();
+  ConsumerState<ExpenseForm> createState() => _ExpenseFormState();
 }
 
-class _ExpenseFormState extends State<ExpenseForm> {
+class _ExpenseFormState extends ConsumerState<ExpenseForm> {
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
   final _noteController = TextEditingController();
@@ -161,7 +163,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
     widget.onSave(
       ExpenseEntry(
         id: existing?.id ?? const Uuid().v4(),
-        userId: existing?.userId ?? 'local-user',
+        userId: existing?.userId ?? ref.read(currentUserIdProvider),
         amount: double.parse(_amountController.text),
         type: _type,
         category: _category,

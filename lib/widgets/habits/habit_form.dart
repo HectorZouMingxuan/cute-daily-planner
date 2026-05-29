@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../models/habit.dart';
 import '../../models/sync_metadata.dart';
+import '../../providers/user_provider.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_text_styles.dart';
 
-class HabitForm extends StatefulWidget {
+class HabitForm extends ConsumerStatefulWidget {
   const HabitForm({required this.onSave, super.key});
 
   final ValueChanged<Habit> onSave;
 
   @override
-  State<HabitForm> createState() => _HabitFormState();
+  ConsumerState<HabitForm> createState() => _HabitFormState();
 }
 
-class _HabitFormState extends State<HabitForm> {
+class _HabitFormState extends ConsumerState<HabitForm> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   String _selectedIcon = 'check';
@@ -129,7 +131,7 @@ class _HabitFormState extends State<HabitForm> {
     widget.onSave(
       Habit(
         id: const Uuid().v4(),
-        userId: 'local-user',
+        userId: ref.read(currentUserIdProvider),
         title: _titleController.text.trim(),
         icon: _selectedIcon,
         color: _selectedColor.toARGB32(),

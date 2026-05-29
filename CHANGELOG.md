@@ -1,5 +1,36 @@
 # Changelog
 
+## v4.3 — 2026-05-29
+
+**Firebase Email/Password Authentication**
+
+- Replaced username-only login with Firebase Email/Password authentication
+- Login screen now has email + password fields, login/register toggle, validation, and inline error display
+- Auth state (via `authStateChanges` stream) controls routing: unauthenticated users see login, authenticated users go to calendar
+- Logout button calls `FirebaseAuth.instance.signOut()` and returns to login screen
+- New `AuthGate` widget watches auth state to gate between login and calendar screens
+- `FirebaseAuthApi` gained `signInWithEmailAndPassword`, `createUserWithEmailAndPassword`, and `authStateChanges` stream
+- `AuthRepository` creates a Firestore user profile document (`users/{uid}`) on registration with email, displayName, createdAt, updatedAt
+- `currentUserIdProvider` now derives from auth state (returns auth UID), replacing the old manually-set username approach
+- All data forms (event, task, expense, habit, mood) now use the authenticated UID for new items
+- Firestore data paths are now `users/{uid}/events`, `users/{uid}/tasks`, etc. for authenticated users
+- Existing local-only data and username-based Firestore data are preserved; no automatic migration
+- Greeting in calendar app bar uses email prefix (or displayName if available)
+- Suggested Firestore security rules updated for uid-based access control
+- Calendar screen simplified: removed username parameter, login route constant, and manual user ID setting
+
+**Suggested Firestore rules:**
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+```
+
 ## v4.2 — 2026-05-29
 
 **Firebase Firestore integration for Events**

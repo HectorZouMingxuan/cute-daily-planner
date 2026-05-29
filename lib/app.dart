@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'providers/auth_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/calendar_screen.dart';
 import 'screens/login_screen.dart';
@@ -9,10 +10,6 @@ import 'theme/app_theme.dart';
 
 class CuteCalendarApp extends ConsumerWidget {
   const CuteCalendarApp({super.key});
-
-  static const loginRoute = '/';
-  static const calendarRoute = '/calendar';
-  static const weeklyRoute = '/weekly';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,28 +21,30 @@ class CuteCalendarApp extends ConsumerWidget {
       themeMode: themeMode,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      initialRoute: loginRoute,
-      onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case loginRoute:
-            return MaterialPageRoute(
-              builder: (_) => const LoginScreen(),
-            );
-          case calendarRoute:
-            final username = settings.arguments as String? ?? '';
-            return MaterialPageRoute(
-              builder: (_) => CalendarScreen(username: username),
-            );
-          case weeklyRoute:
-            return MaterialPageRoute(
-              builder: (_) => const WeeklyOverviewScreen(),
-            );
-          default:
-            return MaterialPageRoute(
-              builder: (_) => const LoginScreen(),
-            );
-        }
+      home: const AuthGate(),
+      routes: {
+        '/weekly': (_) => const WeeklyOverviewScreen(),
       },
+    );
+  }
+}
+
+class AuthGate extends ConsumerWidget {
+  const AuthGate({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authStateProvider);
+
+    return authState.when(
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      data: (user) {
+        if (user == null) return const LoginScreen();
+        return const CalendarScreen();
+      },
+      error: (_, _) => const LoginScreen(),
     );
   }
 }

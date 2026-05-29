@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../models/sync_metadata.dart';
 import '../../models/todo_item.dart';
+import '../../providers/user_provider.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_text_styles.dart';
 
-class TodoForm extends StatefulWidget {
+class TodoForm extends ConsumerStatefulWidget {
   const TodoForm({required this.selectedDate, required this.onSave, super.key});
 
   final DateTime selectedDate;
   final ValueChanged<TodoItem> onSave;
 
   @override
-  State<TodoForm> createState() => _TodoFormState();
+  ConsumerState<TodoForm> createState() => _TodoFormState();
 }
 
-class _TodoFormState extends State<TodoForm> {
+class _TodoFormState extends ConsumerState<TodoForm> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   TodoPriority _priority = TodoPriority.medium;
@@ -85,7 +87,7 @@ class _TodoFormState extends State<TodoForm> {
     widget.onSave(
       TodoItem(
         id: const Uuid().v4(),
-        userId: 'local-user',
+        userId: ref.read(currentUserIdProvider),
         title: _titleController.text.trim(),
         date: DateTime(date.year, date.month, date.day),
         isDone: false,
