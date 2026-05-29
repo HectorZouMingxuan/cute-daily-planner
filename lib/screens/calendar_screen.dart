@@ -27,6 +27,7 @@ import '../widgets/common/app_bottom_sheet.dart';
 import '../widgets/common/soft_card.dart';
 import '../widgets/common/sync_status_badge.dart';
 import '../widgets/calendar/month_view.dart';
+import '../widgets/home/daily_summary_card.dart';
 import '../widgets/home/module_card.dart';
 import '../widgets/home/module_sheet.dart';
 import '../widgets/events/event_form.dart';
@@ -255,60 +256,72 @@ class CalendarScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 Text(selectedDateTitle, style: AppTextStyles.sectionTitle),
-                const SizedBox(height: AppSpacing.md),
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final cardWidth =
-                        (constraints.maxWidth - AppSpacing.md) / 2;
-                    final selectedEvents = _eventsForDay(
-                      eventList.value ?? const [],
-                      calendarView.selectedDay,
-                    );
-                    final selectedExpenses = (expenseList.value ?? const [])
-                        .where(
-                          (e) =>
-                              _isSameDate(e.date, calendarView.selectedDay),
-                        )
-                        .toList();
-                    final selectedTodos = (todoList.value ?? const [])
-                        .where(
-                          (t) =>
-                              _isSameDate(t.date, calendarView.selectedDay),
-                        )
-                        .toList();
-                    final selectedNote =
-                        (noteList.value ?? const [])
-                            .where(
-                              (n) => _isSameDate(
-                                n.date,
-                                calendarView.selectedDay,
-                              ),
-                            )
-                            .firstOrNull;
-                    final selectedMood =
-                        (moodList.value ?? const [])
-                            .where(
-                              (m) => _isSameDate(
-                                m.date,
-                                calendarView.selectedDay,
-                              ),
-                            )
-                            .firstOrNull;
-                    final habits = habitState.valueOrNullForUi.habits;
-                    final habitCheckIns = habitState.valueOrNullForUi.checkIns;
+                const SizedBox(height: AppSpacing.sm),
+                () {
+                  final selectedEvents = _eventsForDay(
+                    eventList.value ?? const [],
+                    calendarView.selectedDay,
+                  );
+                  final selectedExpenses = (expenseList.value ?? const [])
+                      .where(
+                        (e) => _isSameDate(e.date, calendarView.selectedDay),
+                      )
+                      .toList();
+                  final selectedTodos = (todoList.value ?? const [])
+                      .where(
+                        (t) => _isSameDate(t.date, calendarView.selectedDay),
+                      )
+                      .toList();
+                  final selectedNote =
+                      (noteList.value ?? const [])
+                          .where(
+                            (n) => _isSameDate(
+                              n.date,
+                              calendarView.selectedDay,
+                            ),
+                          )
+                          .firstOrNull;
+                  final selectedMood =
+                      (moodList.value ?? const [])
+                          .where(
+                            (m) => _isSameDate(
+                              m.date,
+                              calendarView.selectedDay,
+                            ),
+                          )
+                          .firstOrNull;
+                  final habits = habitState.valueOrNullForUi.habits;
+                  final habitCheckIns = habitState.valueOrNullForUi.checkIns;
+                  final taskDoneCount = selectedTodos.where((t) => t.isDone).length;
+                  final taskTotal = selectedTodos.length;
+                  final expenseNet = selectedExpenses.fold<double>(
+                    0,
+                    (sum, e) => e.type == ExpenseType.income
+                        ? sum + e.amount
+                        : sum - e.amount,
+                  );
+                  final habitsCheckedToday = habitCheckIns
+                      .where((c) => _isSameDate(c.date, calendarView.selectedDay) && c.isDone)
+                      .length;
+                  final habitsTotal = habits.length;
 
-                    final taskDoneCount = selectedTodos.where((t) => t.isDone).length;
-                    final taskTotal = selectedTodos.length;
-                    final expenseNet = selectedExpenses.fold<double>(
-                      0,
-                      (sum, e) => e.type == ExpenseType.income
-                          ? sum + e.amount
-                          : sum - e.amount,
-                    );
-                    final habitsCheckedToday = habitCheckIns
-                        .where((c) => _isSameDate(c.date, calendarView.selectedDay) && c.isDone)
-                        .length;
-                    final habitsTotal = habits.length;
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      DailySummaryCard(
+                        moodLabel: selectedMood?.mood.label,
+                        expenseNet: expenseNet,
+                        taskDone: taskDoneCount,
+                        taskTotal: taskTotal,
+                        eventCount: selectedEvents.length,
+                        habitsChecked: habitsCheckedToday,
+                        habitsTotal: habitsTotal,
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final cardWidth =
+                              (constraints.maxWidth - AppSpacing.md) / 2;
 
                     return Wrap(
                       spacing: AppSpacing.md,
@@ -498,6 +511,9 @@ class CalendarScreen extends ConsumerWidget {
                     );
                   },
                 ),
+                  ],
+                );
+              }(),
               ],
             ),
           ],

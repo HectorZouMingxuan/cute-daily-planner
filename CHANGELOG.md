@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.2 — 2026-05-29
+
+**Daily summary card + smooth tap feedback**
+
+- Added DailySummaryCard widget between the date title and module grid
+  - Shows mood, event count, task completion, net expense, and habit progress in compact chips
+  - Hidden when no data exists for the selected day (clean empty state)
+- Module cards now have smooth press animation (scale to 96% with 120ms ease-out)
+- Improved card tap feedback replacing InkWell with GestureDetector + AnimatedScale
+
 ## v1.1 — 2026-05-29
 
 **Enhanced module card subtitles**
