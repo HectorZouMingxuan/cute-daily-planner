@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 
 import '../controllers/drag_event_controller.dart';
 import '../models/calendar_event.dart';
+import '../models/daily_note.dart';
 import '../models/expense_entry.dart';
 import '../models/habit.dart';
 import '../models/habit_check_in.dart';
@@ -80,6 +81,7 @@ class CalendarScreen extends ConsumerWidget {
       todoList.value ?? const [],
       expenseList.value ?? const [],
       habitState.valueOrNullForUi.checkIns,
+      noteList.value ?? const [],
     );
 
     PersistentBottomSheetController? eventsSheet;
@@ -694,6 +696,7 @@ class CalendarScreen extends ConsumerWidget {
     List<TodoItem> todos,
     List<ExpenseEntry> expenses,
     List<HabitCheckIn> checkIns,
+    List<DailyNote> notes,
   ) {
     final month = focusedDay.month;
     final year = focusedDay.year;
@@ -714,6 +717,10 @@ class CalendarScreen extends ConsumerWidget {
         .where((c) => c.date.month == month && c.date.year == year && c.isDone)
         .length;
 
+    final monthNotes = notes
+        .where((n) => n.date.month == month && n.date.year == year && n.content.trim().isNotEmpty)
+        .length;
+
     final parts = <String>[];
     if (monthTodos.isNotEmpty) {
       final done = monthTodos.where((t) => t.isDone).length;
@@ -722,6 +729,7 @@ class CalendarScreen extends ConsumerWidget {
     if (monthEvents > 0) parts.add('$monthEvents events');
     if (net != 0) parts.add('${net > 0 ? "+" : ""}${net.toStringAsFixed(0)} net');
     if (monthCheckIns > 0) parts.add('$monthCheckIns habits done');
+    if (monthNotes > 0) parts.add('$monthNotes notes');
 
     return parts.isEmpty ? null : parts.join('  ·  ');
   }

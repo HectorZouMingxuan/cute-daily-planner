@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.38 — 2026-05-29
+
+**Note count in monthly summary**
+
+- The monthly summary line on the calendar now includes the number of notes written (e.g. "12 notes")
+- Only counts notes with content; empty notes are excluded
+- Auto-hides when no notes exist for the viewed month
+
 ## v3.37 — 2026-05-29
 
 **Habit module subtitle for all-done state**
