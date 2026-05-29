@@ -462,6 +462,7 @@ class CalendarScreen extends ConsumerWidget {
                               child: MoodSheet(
                                 selectedDate: calendarView.selectedDay,
                                 mood: selectedMood,
+                                moodList: moodList.value ?? const [],
                                 onMoodChanged: (mood) async {
                                   await moodController.saveMood(
                                     _createMoodEntry(

@@ -18,6 +18,7 @@ import '../expenses/expense_card.dart';
 import '../expenses/expense_summary_card.dart';
 import '../habits/habit_check_list.dart';
 import '../mood/mood_picker.dart';
+import '../mood/mood_trend_row.dart';
 import '../notes/daily_note_editor.dart';
 import '../todos/todo_list.dart';
 
@@ -283,12 +284,14 @@ class MoodSheet extends StatelessWidget {
   const MoodSheet({
     required this.selectedDate,
     required this.mood,
+    required this.moodList,
     required this.onMoodChanged,
     super.key,
   });
 
   final DateTime selectedDate;
   final MoodEntry? mood;
+  final List<MoodEntry> moodList;
   final ValueChanged<MoodOption> onMoodChanged;
 
   @override
@@ -299,27 +302,30 @@ class MoodSheet extends StatelessWidget {
       children: [
         _SheetHeader(title: 'Mood', date: selectedDate),
         const Divider(),
-        Padding(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('How are you feeling today?', style: AppTextStyles.body),
-              const SizedBox(height: AppSpacing.md),
-              MoodPicker(
-                selectedMood: mood?.mood,
-                onChanged: onMoodChanged,
-              ),
-              if (mood != null) ...[
+        Flexible(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('How are you feeling today?', style: AppTextStyles.body),
                 const SizedBox(height: AppSpacing.md),
-                SoftCard(
-                  child: Text(
-                    'Today feels ${mood!.mood.label}',
-                    style: AppTextStyles.body,
-                  ),
+                MoodPicker(
+                  selectedMood: mood?.mood,
+                  onChanged: onMoodChanged,
                 ),
+                if (mood != null) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  SoftCard(
+                    child: Text(
+                      'Today feels ${mood!.mood.label}',
+                      style: AppTextStyles.body,
+                    ),
+                  ),
+                ],
+                MoodTrendRow(moods: moodList, selectedDate: selectedDate),
               ],
-            ],
+            ),
           ),
         ),
       ],

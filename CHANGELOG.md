@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.3 — 2026-05-29
+
+**Mood trend display in mood sheet**
+
+- Mood bottom sheet now shows a 7-day trend row with emoji icons
+- Each day displays its mood emoji (or a dot for days with no entry)
+- Today is highlighted with a dot indicator for quick orientation
+- Day-of-week labels below each column
+- Trend row auto-hides when no mood data exists in the last 7 days
+
 ## v1.2 — 2026-05-29
 
 **Daily summary card + smooth tap feedback**
