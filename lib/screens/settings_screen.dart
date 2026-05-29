@@ -8,6 +8,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/common/app_notification.dart';
 import '../widgets/common/soft_card.dart';
+import '../widgets/common/responsive_wrapper.dart';
 import '../widgets/common/sync_status_badge.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -22,8 +23,9 @@ class SettingsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
-      body: ListView(
-        padding: const EdgeInsets.all(AppSpacing.md),
+      body: ResponsiveWrapper(
+        child: ListView(
+          padding: const EdgeInsets.all(AppSpacing.md),
         children: [
           SoftCard(
             padding: const EdgeInsets.all(AppSpacing.md),
@@ -103,9 +105,10 @@ class SettingsScreen extends ConsumerWidget {
               children: [
                 const Text('Your cute daily planner and habit tracker.'),
               ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

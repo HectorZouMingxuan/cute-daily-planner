@@ -11,9 +11,11 @@ import '../providers/mood_provider.dart';
 import '../providers/todo_provider.dart';
 import '../recurrence/recurrence_calculator.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_date_utils.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
+import '../widgets/common/responsive_wrapper.dart';
 import '../widgets/common/soft_card.dart';
 
 class WeeklyOverviewScreen extends ConsumerStatefulWidget {
@@ -70,7 +72,7 @@ class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
       totalEvents += dayEvents;
 
       final dayExpenses = expenses
-          .where((e) => _isSameDate(e.date, day))
+          .where((e) => AppDateUtils.isSameDate(e.date, day))
           .toList();
       for (final e in dayExpenses) {
         if (e.type == ExpenseType.income) {
@@ -81,26 +83,26 @@ class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
       }
 
       final dayTodos = todos
-          .where((t) => _isSameDate(t.date, day))
+          .where((t) => AppDateUtils.isSameDate(t.date, day))
           .toList();
       totalTasks += dayTodos.length;
       totalTasksDone += dayTodos.where((t) => t.isDone).length;
 
       final dayMood = moods
-          .where((m) => _isSameDate(m.date, day))
+          .where((m) => AppDateUtils.isSameDate(m.date, day))
           .firstOrNull;
       if (dayMood != null) {
         moodCounts[dayMood.mood] = (moodCounts[dayMood.mood] ?? 0) + 1;
       }
 
       final dayCheckIns = checkIns
-          .where((c) => _isSameDate(c.date, day) && c.isDone)
+          .where((c) => AppDateUtils.isSameDate(c.date, day) && c.isDone)
           .length;
       habitDaysChecked += dayCheckIns;
 
       return _DayRow(
         day: day,
-        isToday: _isSameDate(day, today),
+        isToday: AppDateUtils.isSameDate(day, today),
         eventCount: dayEvents,
         expenseDay: dayExpenses,
         todoDone: dayTodos.where((t) => t.isDone).length,
@@ -121,7 +123,7 @@ class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
     for (int i = 0; i < 7; i++) {
       final day = prevWeekStart.add(Duration(days: i));
       prevEvents += events.where((e) => _recurrenceCalculator.occursOn(e, day)).length;
-      final dayExpenses = expenses.where((e) => _isSameDate(e.date, day)).toList();
+      final dayExpenses = expenses.where((e) => AppDateUtils.isSameDate(e.date, day)).toList();
       for (final e in dayExpenses) {
         if (e.type == ExpenseType.income) {
           prevIncome += e.amount;
@@ -129,9 +131,9 @@ class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
           prevSpending += e.amount;
         }
       }
-      final dayTodos = todos.where((t) => _isSameDate(t.date, day)).toList();
+      final dayTodos = todos.where((t) => AppDateUtils.isSameDate(t.date, day)).toList();
       prevTasksDone += dayTodos.where((t) => t.isDone).length;
-      prevHabitsChecked += checkIns.where((c) => _isSameDate(c.date, day) && c.isDone).length;
+      prevHabitsChecked += checkIns.where((c) => AppDateUtils.isSameDate(c.date, day) && c.isDone).length;
     }
 
     final avgMood = moodCounts.entries.isEmpty
@@ -185,8 +187,9 @@ class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
                 ),
               ),
             ),
-            ListView(
-              padding: const EdgeInsets.all(AppSpacing.md),
+            ResponsiveWrapper(
+              child: ListView(
+                padding: const EdgeInsets.all(AppSpacing.md),
               children: [
                 Text(weekRange, style: AppTextStyles.sectionTitle),
                 const SizedBox(height: AppSpacing.sm),
@@ -271,14 +274,11 @@ class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
                 ],
               ],
             ),
+          ),
           ],
         ),
       ),
     );
-  }
-
-  bool _isSameDate(DateTime a, DateTime b) {
-    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
   int _isoWeekNumber(DateTime date) {

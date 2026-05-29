@@ -7,7 +7,7 @@ import '../../models/sync_metadata.dart';
 import '../../providers/user_provider.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
-import '../../theme/app_text_styles.dart';
+import '../common/form_shell.dart';
 
 class HabitForm extends ConsumerStatefulWidget {
   const HabitForm({required this.onSave, super.key});
@@ -50,28 +50,18 @@ class _HabitFormState extends ConsumerState<HabitForm> {
 
   @override
   Widget build(BuildContext context) {
-    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20, 12, 20, bottomInset + 20),
+    return FormShell(
+      title: 'Add Habit',
+      actions: Align(
+        alignment: Alignment.centerRight,
+        child: FilledButton(onPressed: _save, child: const Text('Save')),
+      ),
       child: Form(
         key: _formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Container(
-                width: 44,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: AppColors.border,
-                  borderRadius: BorderRadius.circular(999),
-                ),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            Text('Add Habit', style: AppTextStyles.title),
-            const SizedBox(height: AppSpacing.md),
             TextFormField(
               controller: _titleController,
               decoration: const InputDecoration(labelText: 'Habit title'),
@@ -124,11 +114,6 @@ class _HabitFormState extends ConsumerState<HabitForm> {
                   ),
                 );
               }).toList(),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            Align(
-              alignment: Alignment.centerRight,
-              child: FilledButton(onPressed: _save, child: const Text('Save')),
             ),
           ],
         ),

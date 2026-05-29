@@ -11,6 +11,8 @@ import '../../providers/user_provider.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_text_styles.dart';
+import '../common/app_notification.dart';
+import '../common/form_shell.dart';
 import 'color_picker.dart';
 import 'recurrence_picker.dart';
 import 'reminder_picker.dart';
@@ -45,7 +47,6 @@ class _EventFormState extends ConsumerState<EventForm> {
   late Color _color;
   late EventReminder _reminder;
   late RecurrenceRule _recurrenceRule;
-  String? _errorText;
 
   @override
   void initState() {
@@ -77,10 +78,21 @@ class _EventFormState extends ConsumerState<EventForm> {
   @override
   Widget build(BuildContext context) {
     final editing = widget.event != null;
-    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20, 12, 20, bottomInset + 20),
+    return FormShell(
+      title: editing ? 'Edit Event' : 'Add Event',
+      actions: Row(
+        children: [
+          if (editing)
+            TextButton.icon(
+              onPressed: _delete,
+              icon: const Icon(Icons.delete_outline_rounded),
+              label: const Text('Delete Event'),
+            ),
+          const Spacer(),
+          FilledButton(onPressed: _save, child: const Text('Save')),
+        ],
+      ),
       child: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -88,22 +100,6 @@ class _EventFormState extends ConsumerState<EventForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Center(
-                child: Container(
-                  width: 44,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: AppColors.border,
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              Text(
-                editing ? 'Edit Event' : 'Add Event',
-                style: AppTextStyles.title,
-              ),
-              const SizedBox(height: AppSpacing.md),
               TextFormField(
                 controller: _titleController,
                 textInputAction: TextInputAction.next,
@@ -161,29 +157,6 @@ class _EventFormState extends ConsumerState<EventForm> {
               RecurrencePicker(
                 selectedRule: _recurrenceRule,
                 onChanged: (rule) => setState(() => _recurrenceRule = rule),
-              ),
-              if (_errorText != null) ...[
-                const SizedBox(height: AppSpacing.md),
-                Text(
-                  _errorText!,
-                  style: const TextStyle(
-                    color: AppColors.danger,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-              const SizedBox(height: AppSpacing.lg),
-              Row(
-                children: [
-                  if (editing)
-                    TextButton.icon(
-                      onPressed: _delete,
-                      icon: const Icon(Icons.delete_outline_rounded),
-                      label: const Text('Delete Event'),
-                    ),
-                  const Spacer(),
-                  FilledButton(onPressed: _save, child: const Text('Save')),
-                ],
               ),
             ],
           ),
@@ -244,12 +217,9 @@ class _EventFormState extends ConsumerState<EventForm> {
   }
 
   void _save() {
-    setState(() => _errorText = null);
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
     if (!_endAt.isAfter(_startAt)) {
-      setState(() => _errorText = 'End time must be after start time');
+      AppNotification.error(context, 'End time must be after start time');
       return;
     }
 

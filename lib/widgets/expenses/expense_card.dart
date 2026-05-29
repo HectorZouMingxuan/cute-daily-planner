@@ -70,7 +70,7 @@ class ExpenseCard extends StatelessWidget {
               Text(
                 '$sign${expense.amount.toStringAsFixed(2)}',
                 style: TextStyle(
-                  color: isIncome ? Colors.green.shade700 : AppColors.danger,
+                  color: isIncome ? AppColors.mint : AppColors.danger,
                   fontWeight: FontWeight.w900,
                 ),
               ),

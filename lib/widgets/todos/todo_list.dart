@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/todo_item.dart';
 import '../../providers/todo_provider.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_date_utils.dart';
 import '../../theme/app_radius.dart';
 import '../../theme/app_spacing.dart';
 import '../common/empty_state.dart';
@@ -50,7 +51,7 @@ class TodoList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final allTodos = ref.watch(todoListProvider).value ?? [];
     final todos = allTodos
-        .where((t) => _isSameDate(t.date, selectedDate))
+        .where((t) => AppDateUtils.isSameDate(t.date, selectedDate))
         .toList();
 
     final doneCount = todos.where((todo) => todo.isDone).length;
@@ -136,6 +137,14 @@ class TodoList extends ConsumerWidget {
               message: 'No tasks yet',
             ),
           )
+        else if (doneCount == todos.length)
+          const SoftCard(
+            child: EmptyState(
+              icon: Icons.celebration_outlined,
+              title: 'All done!',
+              message: 'Every task is complete — great work!',
+            ),
+          )
         else
           ...todos.map(
             (todo) => Padding(
@@ -165,7 +174,4 @@ class TodoList extends ConsumerWidget {
     );
   }
 
-  bool _isSameDate(DateTime a, DateTime b) {
-    return a.year == b.year && a.month == b.month && a.day == b.day;
-  }
 }

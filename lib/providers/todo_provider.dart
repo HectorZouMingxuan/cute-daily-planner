@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/todo_item.dart';
 import '../repositories/todo_repository.dart';
+import '../theme/app_date_utils.dart';
 import 'user_provider.dart';
 
 final todoRepositoryProvider = Provider<TodoRepository>((ref) {
@@ -57,7 +58,7 @@ class TodoListController extends AsyncNotifier<List<TodoItem>> {
   Future<void> clearDoneTodos(DateTime date) async {
     final todos = state.value ?? [];
     for (final todo in todos) {
-      if (todo.isDone && _isSameDate(todo.date, date)) {
+      if (todo.isDone && AppDateUtils.isSameDate(todo.date, date)) {
         await _repository.saveTodo(
           todo.copyWith(
             deletedAt: DateTime.now(),
@@ -87,7 +88,4 @@ class TodoListController extends AsyncNotifier<List<TodoItem>> {
     await refreshTodos();
   }
 
-  bool _isSameDate(DateTime a, DateTime b) {
-    return a.year == b.year && a.month == b.month && a.day == b.day;
-  }
 }

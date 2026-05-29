@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -25,17 +23,22 @@ import '../providers/sync_provider.dart';
 import '../providers/todo_provider.dart';
 import '../recurrence/recurrence_calculator.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_date_utils.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
 import '../widgets/common/app_bottom_sheet.dart';
 import '../widgets/common/app_notification.dart';
 import '../widgets/common/soft_card.dart';
+import '../widgets/common/responsive_wrapper.dart';
 import '../widgets/common/sync_status_badge.dart';
 import '../widgets/calendar/month_view.dart';
 import '../widgets/home/daily_summary_card.dart';
-import '../widgets/home/module_card.dart';
 import '../widgets/home/upcoming_events_card.dart';
+import '../widgets/home/calendar_background.dart';
+import '../widgets/home/calendar_header.dart';
+import '../widgets/home/module_card.dart';
 import '../widgets/home/module_sheet.dart';
+import '../widgets/calendar/month_picker_dialog.dart';
 import '../widgets/events/event_form.dart';
 import '../widgets/expenses/expense_form.dart';
 import '../widgets/habits/habit_form.dart';
@@ -162,70 +165,21 @@ class CalendarScreen extends ConsumerWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            Positioned.fill(
-              child: ImageFiltered(
-                imageFilter: ImageFilter.blur(sigmaX: 1.2, sigmaY: 1.2),
-                child: Image.asset(
-                  'assets/images/background.jpg',
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: AppColors.backgroundOverlay,
-                ),
-              ),
-            ),
-            ListView(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => _showMonthPicker(
-                          context,
-                          calendarView.focusedDay,
-                          calendarController,
-                        ),
-                        child: Text(monthTitle, style: AppTextStyles.title),
-                      ),
-                    ),
-                    IconButton(
-                      tooltip: 'Previous month',
-                      onPressed: calendarController.goToPreviousMonth,
-                      icon: const Icon(Icons.chevron_left_rounded),
-                    ),
-                    IconButton(
-                      tooltip: 'Next month',
-                      onPressed: calendarController.goToNextMonth,
-                      icon: const Icon(Icons.chevron_right_rounded),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: FilledButton.tonalIcon(
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: AppColors.ink,
-                    ),
-                    onPressed: calendarController.goToToday,
-                    icon: Icon(Icons.today_outlined),
-                    label: Text('Today'),
+            const CalendarBackground(),
+            ResponsiveWrapper(
+              child: ListView(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                children: [
+                CalendarHeader(
+                  monthTitle: monthTitle,
+                  monthlySummary: monthlySummary,
+                  calendarController: calendarController,
+                  onMonthTap: () => showMonthPickerDialog(
+                    context,
+                    calendarView.focusedDay,
+                    calendarController,
                   ),
                 ),
-                if (monthlySummary != null) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    monthlySummary,
-                    style:  TextStyle(fontSize: 12, color: AppColors.textMuted, fontWeight: FontWeight.w600),
-                  ),
-                ],
-                const SizedBox(height: AppSpacing.md),
                 Stack(
                   children: [
                     Positioned(
@@ -266,13 +220,13 @@ class CalendarScreen extends ConsumerWidget {
                               _eventsForDay(eventList.value ?? const [], day),
                           incompleteTaskLoader: (day) {
                             final tasks = (todoList.value ?? const [])
-                                .where((t) => _isSameDate(t.date, day))
+                                .where((t) => AppDateUtils.isSameDate(t.date, day))
                                 .toList();
                             return tasks.where((t) => !t.isDone).length;
                           },
                           allTasksDoneLoader: (day) {
                             final tasks = (todoList.value ?? const [])
-                                .where((t) => _isSameDate(t.date, day))
+                                .where((t) => AppDateUtils.isSameDate(t.date, day))
                                 .toList();
                             return tasks.isNotEmpty &&
                                 tasks.every((t) => t.isDone);
@@ -284,14 +238,14 @@ class CalendarScreen extends ConsumerWidget {
                           moodLoader: (day) {
                             final entry = (moodList.value ?? const [])
                                 .where(
-                                    (m) => _isSameDate(m.date, day))
+                                    (m) => AppDateUtils.isSameDate(m.date, day))
                                 .firstOrNull;
                             return entry?.mood;
                           },
                           expenseNetLoader: (day) {
                             final entries = (expenseList.value ?? const [])
                                 .where(
-                                    (e) => _isSameDate(e.date, day))
+                                    (e) => AppDateUtils.isSameDate(e.date, day))
                                 .toList();
                             if (entries.isEmpty) return null;
                             final net = entries.fold<double>(
@@ -365,7 +319,7 @@ class CalendarScreen extends ConsumerWidget {
                                       onTap: () {
                                         Navigator.pop(ctx);
                                         final dayNote = (noteList.value ?? const [])
-                                            .where((n) => _isSameDate(n.date, day))
+                                            .where((n) => AppDateUtils.isSameDate(n.date, day))
                                             .firstOrNull;
                                         showAppBottomSheet(
                                           context: context,
@@ -400,18 +354,18 @@ class CalendarScreen extends ConsumerWidget {
                   )..sort((a, b) => a.startAt.compareTo(b.startAt));
                   final selectedExpenses = (expenseList.value ?? const [])
                       .where(
-                        (e) => _isSameDate(e.date, calendarView.selectedDay),
+                        (e) => AppDateUtils.isSameDate(e.date, calendarView.selectedDay),
                       )
                       .toList();
                   final selectedTodos = (todoList.value ?? const [])
                       .where(
-                        (t) => _isSameDate(t.date, calendarView.selectedDay),
+                        (t) => AppDateUtils.isSameDate(t.date, calendarView.selectedDay),
                       )
                       .toList();
                   final selectedNote =
                       (noteList.value ?? const [])
                           .where(
-                            (n) => _isSameDate(
+                            (n) => AppDateUtils.isSameDate(
                               n.date,
                               calendarView.selectedDay,
                             ),
@@ -420,7 +374,7 @@ class CalendarScreen extends ConsumerWidget {
                   final selectedMood =
                       (moodList.value ?? const [])
                           .where(
-                            (m) => _isSameDate(
+                            (m) => AppDateUtils.isSameDate(
                               m.date,
                               calendarView.selectedDay,
                             ),
@@ -437,7 +391,7 @@ class CalendarScreen extends ConsumerWidget {
                         : sum - e.amount,
                   );
                   final habitsCheckedToday = habitCheckIns
-                      .where((c) => _isSameDate(c.date, calendarView.selectedDay) && c.isDone)
+                      .where((c) => AppDateUtils.isSameDate(c.date, calendarView.selectedDay) && c.isDone)
                       .length;
                   final habitsTotal = habits.length;
 
@@ -562,7 +516,7 @@ class CalendarScreen extends ConsumerWidget {
                                   );
                                   final currentTodos = ref.read(todoListProvider).value ?? [];
                                   final dayTodos = currentTodos
-                                      .where((t) => _isSameDate(t.date, calendarView.selectedDay))
+                                      .where((t) => AppDateUtils.isSameDate(t.date, calendarView.selectedDay))
                                       .toList();
                                   if (dayTodos.isNotEmpty && dayTodos.every((t) => t.isDone)) {
                                     AppNotification.success(
@@ -681,7 +635,8 @@ class CalendarScreen extends ConsumerWidget {
                   ],
                 );
               }(),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -751,10 +706,6 @@ class CalendarScreen extends ConsumerWidget {
     return parts.isEmpty ? null : parts.join('  ·  ');
   }
 
-  bool _isSameDate(DateTime a, DateTime b) {
-    return a.year == b.year && a.month == b.month && a.day == b.day;
-  }
-
   List<CalendarEvent> _eventsForDay(List<CalendarEvent> events, DateTime day) {
     return events
         .where((event) => _recurrenceCalculator.occursOn(event, day))
@@ -810,66 +761,6 @@ class CalendarScreen extends ConsumerWidget {
         .map((e) => _recurrenceCalculator.occurrenceFor(e, today))
         .toList()
       ..sort((a, b) => a.startAt.compareTo(b.startAt));
-  }
-
-  void _showMonthPicker(
-    BuildContext context,
-    DateTime focusedDay,
-    CalendarViewController controller,
-  ) {
-    final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    var year = focusedDay.year;
-
-    showDialog(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setDialogState) => AlertDialog(
-          title: Row(
-            children: [
-              GestureDetector(
-                onTap: () => setDialogState(() => year--),
-                child: const Icon(Icons.chevron_left_rounded),
-              ),
-              Expanded(
-                child: Text('$year', textAlign: TextAlign.center),
-              ),
-              GestureDetector(
-                onTap: () => setDialogState(() => year++),
-                child: const Icon(Icons.chevron_right_rounded),
-              ),
-            ],
-          ),
-          content: SizedBox(
-            width: 280,
-            child: Wrap(
-              spacing: 4,
-              runSpacing: 4,
-              children: List.generate(12, (i) {
-                final isCurrent = i == focusedDay.month - 1 && year == focusedDay.year;
-                return SizedBox(
-                  width: 64,
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: isCurrent
-                          ? AppColors.primary.withValues(alpha: .35)
-                          : null,
-                    ),
-                    onPressed: () {
-                      controller.goToMonth(DateTime(year, i + 1));
-                      Navigator.pop(ctx);
-                    },
-                    child: Text(months[i]),
-                  ),
-                );
-              }),
-            ),
-          ),
-        ),
-      ),
-    );
   }
 
   Future<void> _openEventForm({

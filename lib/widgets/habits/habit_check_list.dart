@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/habit.dart';
 import '../../models/habit_check_in.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_date_utils.dart';
 import '../../theme/app_radius.dart';
 import '../../theme/app_spacing.dart';
 import '../common/empty_state.dart';
@@ -47,7 +48,7 @@ class HabitCheckList extends StatelessWidget {
 
     final allDone = habits.every((h) {
       final ci = checkIns.where((c) =>
-          c.habitId == h.id && _isSameDate(c.date, selectedDate)).firstOrNull;
+          c.habitId == h.id && AppDateUtils.isSameDate(c.date, selectedDate)).firstOrNull;
       return ci?.isDone ?? false;
     });
 
@@ -56,7 +57,7 @@ class HabitCheckList extends StatelessWidget {
         ...habits.map((habit) {
           final checkIn = checkIns.where((item) {
             return item.habitId == habit.id &&
-                _isSameDate(item.date, selectedDate);
+                AppDateUtils.isSameDate(item.date, selectedDate);
           }).firstOrNull;
           final done = checkIn?.isDone ?? false;
           final streak = _calculateStreak(habit.id, selectedDate);
@@ -141,10 +142,6 @@ class HabitCheckList extends StatelessWidget {
     );
   }
 
-  bool _isSameDate(DateTime a, DateTime b) {
-    return a.year == b.year && a.month == b.month && a.day == b.day;
-  }
-
   int _calculateStreak(String habitId, DateTime fromDate) {
     final doneDates = checkIns
         .where((c) => c.habitId == habitId && c.isDone)
@@ -189,7 +186,7 @@ class _WeekDots extends StatelessWidget {
       children: List.generate(7, (i) {
         final day = monday.add(Duration(days: i));
         final isDone = doneSet.contains(day);
-        final isToday = _isSameDate(day, selectedDate);
+        final isToday = AppDateUtils.isSameDate(day, selectedDate);
         return Container(
           width: 10,
           height: 10,
@@ -208,7 +205,4 @@ class _WeekDots extends StatelessWidget {
     );
   }
 
-  bool _isSameDate(DateTime a, DateTime b) {
-    return a.year == b.year && a.month == b.month && a.day == b.day;
-  }
 }

@@ -23,7 +23,7 @@ class MoodPicker extends StatelessWidget {
       children: MoodOption.values.map((mood) {
         final selected = selectedMood == mood;
         return ChoiceChip(
-          label: Text(mood.label),
+          label: Text('${_emojiFor(mood)}  ${mood.label}'),
           selected: selected,
           avatar: Icon(_iconFor(mood), size: 16),
           selectedColor: AppColors.lavender.withValues(alpha: .55),
@@ -47,6 +47,16 @@ class MoodPicker extends StatelessWidget {
       MoodOption.okay => Icons.eco_outlined,
       MoodOption.tired => Icons.nights_stay_outlined,
       MoodOption.bad => Icons.cloud_outlined,
+    };
+  }
+
+  String _emojiFor(MoodOption mood) {
+    return switch (mood) {
+      MoodOption.great => '🌟',
+      MoodOption.good => '☀️',
+      MoodOption.okay => '🍃',
+      MoodOption.tired => '🌙',
+      MoodOption.bad => '☁️',
     };
   }
 }

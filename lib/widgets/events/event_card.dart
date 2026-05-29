@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../models/calendar_event.dart';
 import '../../models/sync_metadata.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_date_utils.dart';
 import '../../theme/app_radius.dart';
 import '../../theme/app_spacing.dart';
 import '../common/sync_status_badge.dart';
@@ -22,7 +23,7 @@ class EventCard extends StatelessWidget {
 
     final durationLabel = event.isAllDay
         ? null
-        : _formatDuration(event.endAt.difference(event.startAt));
+        : AppDateUtils.formatDuration(event.endAt.difference(event.startAt));
 
     return Card(
       child: InkWell(
@@ -114,11 +115,3 @@ class EventCard extends StatelessWidget {
   }
 }
 
-String _formatDuration(Duration d) {
-  final hours = d.inHours;
-  final minutes = d.inMinutes.remainder(60);
-  if (hours > 0 && minutes > 0) return '${hours}h ${minutes}m';
-  if (hours > 0) return '${hours}h';
-  if (minutes > 0) return '${minutes}m';
-  return '';
-}

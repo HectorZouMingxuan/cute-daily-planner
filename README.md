@@ -1,28 +1,29 @@
 # Cute Daily Planner
 
-A clean, cute, simple Flutter daily planner with an English-first UI.
+A cute, modern Flutter daily planner with Firebase Auth, Firestore sync, and local Hive persistence.
 
 ## Features
 
-- Month calendar view
-- Today button and month navigation
-- Selected date event list
-- Add, edit, and delete events
-- Local persistence with Hive
-- Project-folder JSON persistence for file-system builds at `data/calendar_events.json`
-- Reminder picker with native notification scheduling where supported
-- Recurring events: daily, weekly, monthly, yearly
-- Drag and drop events to another date
-- Offline-first sync structure
-- Firebase Auth and Firestore API structure
-- Planner Firestore API structure for expenses, todos, notes, moods, habits, and habit check-ins
-- Sync status display and retry action
-- Daily dashboard tabs: Plan, Money, Tasks, Notes
-- Daily expense tracking
-- Daily todo list
-- Daily notes
-- Mood tracking
-- Habit tracker
+- **Calendar** — month view with task/mood/expense indicators, drag-and-drop events
+- **Events** — create, edit, delete with reminders, recurrence, color picker
+- **Tasks** — daily todo list with priority levels, swipe-to-delete, clear-done
+- **Expenses** — income/expense tracking with categories, weekly bar chart
+- **Notes** — daily note editor with word count
+- **Mood** — 5-level mood tracker with weekly trend
+- **Habits** — habit tracker with streak counting and week dots
+- **Weekly Overview** — aggregated stats, day-by-day breakdown, spending by category
+- **Dark Mode** — theme toggle with per-account Firestore persistence
+- **Firebase Auth** — email/password sign-in and registration
+- **Cloud Sync** — Firestore write-through for all modules, Hive local fallback
+- **Notifications** — SnackBar-based feedback system (success, error, info, confirm)
+
+## Architecture
+
+- **State management:** Riverpod (`AsyncNotifierProvider`, `NotifierProvider`)
+- **Auth:** Firebase Authentication
+- **Cloud:** Cloud Firestore (`users/{userId}/{collection}`)
+- **Local:** Hive
+- **UI:** Material 3 with theme-aware design tokens, glassmorphic cards, responsive layout
 
 ## Run
 
@@ -35,55 +36,37 @@ For web:
 
 ```bash
 flutter run -d chrome
-```
-
-Build web:
-
-```bash
 flutter build web
 ```
 
 ## Firebase Setup
 
-Cloud sync is scaffolded but not configured with project credentials.
-
-To enable Firebase:
-
-1. Create a Firebase project.
-2. Enable Firebase Auth.
-3. Enable Cloud Firestore.
-4. Run FlutterFire configuration:
+1. Create a Firebase project
+2. Enable Authentication (Email/Password) and Cloud Firestore
+3. Run FlutterFire configuration:
 
 ```bash
 dart pub global activate flutterfire_cli
 flutterfire configure
 ```
 
-5. Import and initialize the generated `firebase_options.dart` in `lib/main.dart`:
-
-```dart
-await Firebase.initializeApp(
-  options: DefaultFirebaseOptions.currentPlatform,
-);
-```
-
 Do not hardcode Firebase secrets in source files.
 
-Planned Firestore paths:
+### Firestore Data Structure
 
-```txt
-users/{userId}/events
-users/{userId}/expenses
-users/{userId}/todos
-users/{userId}/notes
-users/{userId}/moods
-users/{userId}/habits
-users/{userId}/habitCheckIns
+```
+users/{userId}/
+  events/
+  expenses/
+  todos/
+  notes/
+  moods/
+  habits/
+  habitCheckIns/
 ```
 
 ## Notes
 
-- Web browsers cannot directly write into the project folder. Web builds keep using browser storage. File-system builds use JSON files in `data/`.
-- Windows desktop was removed from this generated project because this machine does not have Windows Developer Mode symlink support enabled for Flutter plugins.
-- Web builds are verified.
-- Native notification behavior should be verified on a real Android or iOS device.
+- Web builds use browser storage; desktop builds use JSON files in `data/`
+- Windows desktop requires Developer Mode for symlink support
+- Native notifications should be verified on a real Android or iOS device

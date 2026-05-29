@@ -14,6 +14,7 @@ import '../../theme/app_spacing.dart';
 import '../../theme/app_text_styles.dart';
 import '../calendar/draggable_event_tile.dart';
 import '../common/empty_state.dart';
+import '../common/section_header.dart';
 import '../common/soft_card.dart';
 import '../expenses/expense_card.dart';
 import '../expenses/expense_summary_bar.dart';
@@ -23,52 +24,6 @@ import '../mood/mood_picker.dart';
 import '../mood/mood_trend_row.dart';
 import '../notes/daily_note_editor.dart';
 import '../todos/todo_list.dart';
-
-class _SheetHeader extends StatelessWidget {
-  const _SheetHeader({required this.title, required this.date});
-
-  final String title;
-  final DateTime date;
-
-  @override
-  Widget build(BuildContext context) {
-    final formatted = DateFormat('EEE, MMM d').format(date);
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.md,
-        AppSpacing.md,
-        AppSpacing.md,
-        AppSpacing.sm,
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 4,
-            height: 24,
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: AppTextStyles.sectionTitle),
-                Text(formatted, style: AppTextStyles.muted),
-              ],
-            ),
-          ),
-          IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(Icons.close_rounded),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class EventsSheet extends StatelessWidget {
   const EventsSheet({
@@ -90,7 +45,7 @@ class EventsSheet extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _SheetHeader(title: 'Events', date: selectedDate),
+        SectionHeader(title: 'Events', subtitle: DateFormat('EEE, MMM d').format(selectedDate), trailing: IconButton(onPressed: () => Navigator.of(context).pop(), icon: const Icon(Icons.close_rounded))),
         const Divider(),
         Flexible(
           child: SingleChildScrollView(
@@ -154,7 +109,7 @@ class ExpensesSheet extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _SheetHeader(title: 'Expenses', date: selectedDate),
+        SectionHeader(title: 'Expenses', subtitle: DateFormat('EEE, MMM d').format(selectedDate), trailing: IconButton(onPressed: () => Navigator.of(context).pop(), icon: const Icon(Icons.close_rounded))),
         const Divider(),
         Flexible(
           child: SingleChildScrollView(
@@ -228,7 +183,7 @@ class TasksSheet extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _SheetHeader(title: 'Tasks', date: selectedDate),
+        SectionHeader(title: 'Tasks', subtitle: DateFormat('EEE, MMM d').format(selectedDate), trailing: IconButton(onPressed: () => Navigator.of(context).pop(), icon: const Icon(Icons.close_rounded))),
         const Divider(),
         Flexible(
           child: TodoList(
@@ -272,7 +227,7 @@ class NotesSheet extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _SheetHeader(title: 'Notes', date: selectedDate),
+        SectionHeader(title: 'Notes', subtitle: DateFormat('EEE, MMM d').format(selectedDate), trailing: IconButton(onPressed: () => Navigator.of(context).pop(), icon: const Icon(Icons.close_rounded))),
         const Divider(),
         Flexible(
           child: SingleChildScrollView(
@@ -336,7 +291,7 @@ class _MoodSheetState extends State<MoodSheet> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _SheetHeader(title: 'Mood', date: widget.selectedDate),
+        SectionHeader(title: 'Mood', subtitle: DateFormat('EEE, MMM d').format(widget.selectedDate), trailing: IconButton(onPressed: () => Navigator.of(context).pop(), icon: const Icon(Icons.close_rounded))),
         const Divider(),
         Flexible(
           child: SingleChildScrollView(
@@ -424,7 +379,7 @@ class HabitsSheet extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _SheetHeader(title: 'Habits', date: selectedDate),
+        SectionHeader(title: 'Habits', subtitle: DateFormat('EEE, MMM d').format(selectedDate), trailing: IconButton(onPressed: () => Navigator.of(context).pop(), icon: const Icon(Icons.close_rounded))),
         const Divider(),
         Flexible(
           child: SingleChildScrollView(

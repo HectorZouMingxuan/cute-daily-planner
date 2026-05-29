@@ -5,7 +5,7 @@ import '../../theme/app_spacing.dart';
 import '../../theme/app_text_styles.dart';
 import '../common/soft_card.dart';
 
-class ModuleCard extends StatefulWidget {
+class ModuleCard extends StatelessWidget {
   const ModuleCard({
     required this.icon,
     required this.title,
@@ -22,25 +22,13 @@ class ModuleCard extends StatefulWidget {
   final String? subtitle;
 
   @override
-  State<ModuleCard> createState() => _ModuleCardState();
-}
-
-class _ModuleCardState extends State<ModuleCard> {
-  bool _pressed = false;
-
-  @override
   Widget build(BuildContext context) {
-    return AnimatedScale(
-      scale: _pressed ? 0.96 : 1.0,
-      duration: const Duration(milliseconds: 120),
-      curve: Curves.easeOutCubic,
-      child: GestureDetector(
-        onTapDown: (_) => setState(() => _pressed = true),
-        onTapUp: (_) {
-          setState(() => _pressed = false);
-          widget.onTap();
-        },
-        onTapCancel: () => setState(() => _pressed = false),
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(AppRadius.medium),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(AppRadius.medium),
+        onTap: onTap,
         child: SoftCard(
           padding: const EdgeInsets.all(AppSpacing.md),
           child: Column(
@@ -51,16 +39,16 @@ class _ModuleCardState extends State<ModuleCard> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: widget.color.withValues(alpha: .2),
+                  color: color.withValues(alpha: .2),
                   borderRadius: BorderRadius.circular(AppRadius.small),
                 ),
-                child: Icon(widget.icon, color: widget.color, size: 22),
+                child: Icon(icon, color: color, size: 22),
               ),
               const SizedBox(height: AppSpacing.sm),
-              Text(widget.title, style: AppTextStyles.sectionTitle),
-              if (widget.subtitle != null) ...[
+              Text(title, style: AppTextStyles.sectionTitle),
+              if (subtitle != null) ...[
                 const SizedBox(height: 2),
-                Text(widget.subtitle!, style: AppTextStyles.muted),
+                Text(subtitle!, style: AppTextStyles.muted),
               ],
             ],
           ),

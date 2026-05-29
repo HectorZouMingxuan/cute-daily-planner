@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../../models/calendar_event.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_date_utils.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_text_styles.dart';
 import '../common/soft_card.dart';
@@ -50,7 +51,7 @@ class UpcomingEventsCard extends StatelessWidget {
               final timeLabel = event.isAllDay ? 'All day' : DateFormat('HH:mm').format(event.startAt);
               final durationLabel = event.isAllDay
                   ? null
-                  : _formatDuration(event.endAt.difference(event.startAt));
+                  : AppDateUtils.formatDuration(event.endAt.difference(event.startAt));
               final subtitle = durationLabel != null
                   ? '$dayLabel  ·  $timeLabel  ·  $durationLabel'
                   : '$dayLabel  ·  $timeLabel';
@@ -97,11 +98,3 @@ class UpcomingEventsCard extends StatelessWidget {
   }
 }
 
-String _formatDuration(Duration d) {
-  final hours = d.inHours;
-  final minutes = d.inMinutes.remainder(60);
-  if (hours > 0 && minutes > 0) return '${hours}h ${minutes}m';
-  if (hours > 0) return '${hours}h';
-  if (minutes > 0) return '${minutes}m';
-  return '';
-}

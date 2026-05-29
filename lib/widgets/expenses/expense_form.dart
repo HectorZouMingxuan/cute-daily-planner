@@ -5,9 +5,8 @@ import 'package:uuid/uuid.dart';
 import '../../models/expense_entry.dart';
 import '../../models/sync_metadata.dart';
 import '../../providers/user_provider.dart';
-import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
-import '../../theme/app_text_styles.dart';
+import '../common/form_shell.dart';
 
 class ExpenseForm extends ConsumerStatefulWidget {
   const ExpenseForm({
@@ -56,10 +55,21 @@ class _ExpenseFormState extends ConsumerState<ExpenseForm> {
   @override
   Widget build(BuildContext context) {
     final editing = widget.expense != null;
-    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20, 12, 20, bottomInset + 20),
+    return FormShell(
+      title: editing ? 'Edit Expense' : 'Add Expense',
+      actions: Row(
+        children: [
+          if (editing)
+            TextButton.icon(
+              onPressed: () => widget.onDelete?.call(widget.expense!),
+              icon: const Icon(Icons.delete_outline_rounded),
+              label: const Text('Delete'),
+            ),
+          const Spacer(),
+          FilledButton(onPressed: _save, child: const Text('Save')),
+        ],
+      ),
       child: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -67,22 +77,6 @@ class _ExpenseFormState extends ConsumerState<ExpenseForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Center(
-                child: Container(
-                  width: 44,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: AppColors.border,
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              Text(
-                editing ? 'Edit Expense' : 'Add Expense',
-                style: AppTextStyles.title,
-              ),
-              const SizedBox(height: AppSpacing.md),
               SegmentedButton<ExpenseType>(
                 segments: ExpenseType.values
                     .map(
@@ -145,19 +139,6 @@ class _ExpenseFormState extends ConsumerState<ExpenseForm> {
               TextFormField(
                 controller: _noteController,
                 decoration: const InputDecoration(labelText: 'Note'),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              Row(
-                children: [
-                  if (editing)
-                    TextButton.icon(
-                      onPressed: () => widget.onDelete?.call(widget.expense!),
-                      icon: const Icon(Icons.delete_outline_rounded),
-                      label: const Text('Delete'),
-                    ),
-                  const Spacer(),
-                  FilledButton(onPressed: _save, child: const Text('Save')),
-                ],
               ),
             ],
           ),

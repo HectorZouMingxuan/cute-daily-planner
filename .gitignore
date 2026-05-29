@@ -36,3 +36,7 @@ Thumbs.db
 # Local Firebase config
 lib/firebase_options.dart
 .claude/settings.local.json
+
+# Local config files
+lib/firebase_options.dart
+.claude/settings.local.json

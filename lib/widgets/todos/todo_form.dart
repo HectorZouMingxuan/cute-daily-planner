@@ -5,9 +5,8 @@ import 'package:uuid/uuid.dart';
 import '../../models/sync_metadata.dart';
 import '../../models/todo_item.dart';
 import '../../providers/user_provider.dart';
-import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
-import '../../theme/app_text_styles.dart';
+import '../common/form_shell.dart';
 
 class TodoForm extends ConsumerStatefulWidget {
   const TodoForm({required this.selectedDate, required this.onSave, super.key});
@@ -32,29 +31,18 @@ class _TodoFormState extends ConsumerState<TodoForm> {
 
   @override
   Widget build(BuildContext context) {
-    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20, 12, 20, bottomInset + 20),
+    return FormShell(
+      title: 'Add Task',
+      actions: Align(
+        alignment: Alignment.centerRight,
+        child: FilledButton(onPressed: _save, child: const Text('Save')),
+      ),
       child: Form(
         key: _formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Container(
-                width: 44,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: AppColors.border,
-                  borderRadius: BorderRadius.circular(999),
-                ),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            Text('Add Task', style: AppTextStyles.title),
-            const SizedBox(height: AppSpacing.md),
             TextFormField(
               controller: _titleController,
               decoration: const InputDecoration(labelText: 'Task title'),
@@ -80,11 +68,6 @@ class _TodoFormState extends ConsumerState<TodoForm> {
               onChanged: (value) {
                 if (value != null) setState(() => _priority = value);
               },
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            Align(
-              alignment: Alignment.centerRight,
-              child: FilledButton(onPressed: _save, child: const Text('Save')),
             ),
           ],
         ),
