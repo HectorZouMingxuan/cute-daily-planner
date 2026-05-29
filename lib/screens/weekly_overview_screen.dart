@@ -546,7 +546,7 @@ class _CategoryBar extends StatelessWidget {
               widthFactor: ratio,
               child: Container(
                 decoration: BoxDecoration(
-                  color: AppColors.danger.withValues(alpha: .55),
+                  color: category.color.withValues(alpha: .65),
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
@@ -559,7 +559,7 @@ class _CategoryBar extends StatelessWidget {
           child: Text(
             '-${amount.toStringAsFixed(0)}',
             textAlign: TextAlign.end,
-            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.danger),
+            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: category.color),
           ),
         ),
       ],

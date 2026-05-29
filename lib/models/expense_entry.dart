@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import 'sync_metadata.dart';
 
 enum ExpenseType {
@@ -29,6 +31,17 @@ enum ExpenseCategory {
     ExpenseCategory.study => 'Study',
     ExpenseCategory.entertainment => 'Entertainment',
     ExpenseCategory.other => 'Other',
+  };
+
+  Color get color => switch (this) {
+    ExpenseCategory.food => const Color(0xFFE8A94E),
+    ExpenseCategory.transport => const Color(0xFF6BA3B8),
+    ExpenseCategory.shopping => const Color(0xFFDFA7A0),
+    ExpenseCategory.bills => const Color(0xFFC85B63),
+    ExpenseCategory.health => const Color(0xFF9DBB9A),
+    ExpenseCategory.study => const Color(0xFFB9A7CF),
+    ExpenseCategory.entertainment => const Color(0xFFD8A84E),
+    ExpenseCategory.other => const Color(0xFF909890),
   };
 }
 

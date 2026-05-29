@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.6 — 2026-05-29
+
+**Colored expense categories**
+
+- Each expense category now has a distinct color (Food=amber, Transport=blue, Shopping=pink, Bills=red, Health=green, Study=purple, Entertainment=gold)
+- Category breakdown bars in weekly overview now use per-category colors instead of uniform red
+- Amount labels also match category color for clearer visual grouping
+
 ## v3.5 — 2026-05-29
 
 **Weekly habit completion dots**
