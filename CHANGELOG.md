@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.3.1 — 2026-05-29
+
+**Fix: Register/Create Account option always visible**
+
+- Toggle between login and register mode ("Create Account" / "Log In") is now always visible, even when an error is displayed
+- The register option is now more prominent: bold white "Create Account" text button in a row, easier to spot than the previous dimmed inline text
+- Fixed a bug where the mode toggle was hidden behind the error message conditional branch
+
 ## v4.3 — 2026-05-29
 
 **Firebase Email/Password Authentication**

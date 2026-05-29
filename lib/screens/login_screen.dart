@@ -32,7 +32,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
-    _entrances = List.generate(7, (i) {
+    _entrances = List.generate(8, (i) {
       final start = i * 0.10;
       return CurvedAnimation(
         parent: _animController,
@@ -196,7 +196,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         ),
                       ),
                       if (_errorText != null) ...[
-                        const SizedBox(height: AppSpacing.md),
+                        const SizedBox(height: AppSpacing.sm),
                         _buildAnimated(
                           5,
                           Text(
@@ -209,23 +209,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                             ),
                           ),
                         ),
-                        const SizedBox(height: AppSpacing.sm),
-                        _buildAnimated(6, _AuthButton(loading: _loading, onPressed: _submit, isRegistering: _isRegistering)),
-                      ] else ...[
-                        const SizedBox(height: AppSpacing.md),
-                        _buildAnimated(5, _AuthButton(loading: _loading, onPressed: _submit, isRegistering: _isRegistering)),
-                        const SizedBox(height: AppSpacing.sm),
-                        _buildAnimated(
-                          6,
-                          _ToggleText(
-                            isRegistering: _isRegistering,
-                            onTap: () => setState(() {
-                              _isRegistering = !_isRegistering;
-                              _errorText = null;
-                            }),
-                          ),
-                        ),
                       ],
+                      const SizedBox(height: AppSpacing.md),
+                      _buildAnimated(
+                        6,
+                        _AuthButton(
+                          loading: _loading,
+                          onPressed: _submit,
+                          isRegistering: _isRegistering,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      _buildAnimated(
+                        7,
+                        _ToggleRow(
+                          isRegistering: _isRegistering,
+                          onToggle: () => setState(() {
+                            _isRegistering = !_isRegistering;
+                            _errorText = null;
+                          }),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -324,26 +328,42 @@ class _AuthButton extends StatelessWidget {
   }
 }
 
-class _ToggleText extends StatelessWidget {
-  const _ToggleText({required this.isRegistering, required this.onTap});
+class _ToggleRow extends StatelessWidget {
+  const _ToggleRow({required this.isRegistering, required this.onToggle});
 
   final bool isRegistering;
-  final VoidCallback onTap;
+  final VoidCallback onToggle;
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: onTap,
-      child: Text(
-        isRegistering
-            ? 'Already have an account? Log In'
-            : "Don't have an account? Sign Up",
-        style: const TextStyle(
-          color: Colors.white70,
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          isRegistering
+              ? 'Already have an account?'
+              : "Don't have an account?",
+          style: const TextStyle(
+            color: Colors.white70,
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
         ),
-      ),
+        TextButton(
+          onPressed: onToggle,
+          style: TextButton.styleFrom(
+            padding: const EdgeInsets.only(left: 4),
+          ),
+          child: Text(
+            isRegistering ? 'Log In' : 'Create Account',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
