@@ -423,7 +423,7 @@ class CalendarScreen extends ConsumerWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       DailySummaryCard(
-                        moodLabel: selectedMood?.mood.label,
+                        mood: selectedMood?.mood,
                         expenseNet: expenseNet,
                         taskDone: taskDoneCount,
                         taskTotal: taskTotal,

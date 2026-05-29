@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.31 — 2026-05-29
+
+**Mood emoji in daily summary card**
+
+- The daily summary card now shows the mood emoji alongside the label (e.g. "🌟 Great" instead of just "Great")
+- Matches the emoji style used in the mood sheet, mood trend row, and weekly overview
+- No change when no mood is recorded for the day
+
 ## v3.30 — 2026-05-29
 
 **Add Note to quick actions menu**
