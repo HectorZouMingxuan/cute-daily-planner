@@ -1,5 +1,18 @@
 # Changelog
 
+## v4.2 — 2026-05-29
+
+**Firebase Firestore integration for Events**
+
+- Events now sync to Cloud Firestore via a write-through pattern: local storage first, Firestore best-effort alongside
+- Event reads prefer Firestore data when available, falling back to local storage on network errors
+- New `FirestoreEventDao` with collection structure `users/{username}/events`
+- `EventRepository` coordinates dual writes and merges remote events into local storage on read
+- `currentUserIdProvider` (Riverpod Notifier) tracks the logged-in username, defaulting to 'local-user'
+- Username from login screen now flows into provider state for Firestore document paths
+- `EventForm` converted to `ConsumerStatefulWidget` to access the user ID provider
+- All existing local-only functionality preserved — Firestore is additive, not a replacement
+
 ## v4.1 — 2026-05-29
 
 **Dark mode theme overhaul — cool palette and background dimming**

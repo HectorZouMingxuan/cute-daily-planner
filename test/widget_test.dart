@@ -36,13 +36,13 @@ void main() {
 
 class _FakeEventRepository implements EventRepository {
   @override
-  Future<List<CalendarEvent>> getEvents() async => [];
+  Future<List<CalendarEvent>> getEvents({String userId = 'local-user'}) async => [];
 
   @override
   Future<List<CalendarEvent>> getPendingSyncEvents() async => [];
 
   @override
-  Future<void> saveEvent(CalendarEvent event) async {}
+  Future<void> saveEvent(CalendarEvent event, {String userId = 'local-user'}) async {}
 
   @override
   Future<void> updateSyncStatus(String eventId, SyncStatus syncStatus) async {}

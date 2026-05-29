@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
@@ -6,6 +7,7 @@ import '../../models/calendar_event.dart';
 import '../../models/event_reminder.dart';
 import '../../models/recurrence_rule.dart';
 import '../../models/sync_metadata.dart';
+import '../../providers/user_provider.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_text_styles.dart';
@@ -13,7 +15,7 @@ import 'color_picker.dart';
 import 'recurrence_picker.dart';
 import 'reminder_picker.dart';
 
-class EventForm extends StatefulWidget {
+class EventForm extends ConsumerStatefulWidget {
   const EventForm({
     required this.selectedDate,
     required this.onSave,
@@ -28,10 +30,10 @@ class EventForm extends StatefulWidget {
   final ValueChanged<CalendarEvent>? onDelete;
 
   @override
-  State<EventForm> createState() => _EventFormState();
+  ConsumerState<EventForm> createState() => _EventFormState();
 }
 
-class _EventFormState extends State<EventForm> {
+class _EventFormState extends ConsumerState<EventForm> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -255,7 +257,7 @@ class _EventFormState extends State<EventForm> {
     final existing = widget.event;
     final event = CalendarEvent(
       id: existing?.id ?? const Uuid().v4(),
-      userId: existing?.userId ?? 'local-user',
+      userId: existing?.userId ?? ref.read(currentUserIdProvider),
       title: _titleController.text.trim(),
       description: _descriptionController.text.trim(),
       location: _locationController.text.trim(),

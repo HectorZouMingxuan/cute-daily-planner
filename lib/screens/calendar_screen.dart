@@ -14,6 +14,7 @@ import '../models/mood_entry.dart';
 import '../models/sync_metadata.dart';
 import '../models/todo_item.dart';
 import '../providers/calendar_view_provider.dart';
+import '../providers/user_provider.dart';
 import '../providers/daily_note_provider.dart';
 import '../providers/event_provider.dart';
 import '../providers/expense_provider.dart';
@@ -50,6 +51,14 @@ class CalendarScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final effectiveUserId =
+        (username != null && username!.isNotEmpty) ? username! : 'local-user';
+    if (ref.read(currentUserIdProvider) != effectiveUserId) {
+      Future.microtask(
+        () => ref.read(currentUserIdProvider.notifier).set(effectiveUserId),
+      );
+    }
+
     final calendarView = ref.watch(calendarViewProvider);
     final calendarController = ref.read(calendarViewProvider.notifier);
     final eventList = ref.watch(eventListProvider);

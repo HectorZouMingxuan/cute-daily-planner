@@ -1,11 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../firebase/firestore_event_dao.dart';
+import '../local/local_event_dao.dart';
+import '../local/local_event_store.dart';
 import '../models/calendar_event.dart';
 import '../repositories/event_repository.dart';
 import '../repositories/notification_repository.dart';
+import 'user_provider.dart';
 
 final eventRepositoryProvider = Provider<EventRepository>((ref) {
-  return createEventRepository();
+  final firestore = ref.read(firestoreProvider);
+  final dao = FirestoreEventDao(firestore);
+  return EventRepository(LocalEventDao(LocalEventStore()), firestoreDao: dao);
 });
 
 final notificationRepositoryProvider = Provider<NotificationRepository>((ref) {
@@ -24,16 +30,21 @@ class EventListController extends AsyncNotifier<List<CalendarEvent>> {
 
   @override
   Future<List<CalendarEvent>> build() {
-    return _repository.getEvents();
+    final userId = ref.read(currentUserIdProvider);
+    return _repository.getEvents(userId: userId);
   }
 
   Future<void> refreshEvents() async {
+    final userId = ref.read(currentUserIdProvider);
     state = const AsyncLoading();
-    state = await AsyncValue.guard(_repository.getEvents);
+    state = await AsyncValue.guard(
+      () => _repository.getEvents(userId: userId),
+    );
   }
 
   Future<void> saveEvent(CalendarEvent event) async {
-    await _repository.saveEvent(event);
+    final userId = ref.read(currentUserIdProvider);
+    await _repository.saveEvent(event, userId: userId);
     await _notificationRepository.rescheduleEvent(event);
     await refreshEvents();
   }
@@ -45,7 +56,8 @@ class EventListController extends AsyncNotifier<List<CalendarEvent>> {
       updatedAt: DateTime.now(),
       version: event.version + 1,
     );
-    await _repository.saveEvent(deletedEvent);
+    final userId = ref.read(currentUserIdProvider);
+    await _repository.saveEvent(deletedEvent, userId: userId);
     await refreshEvents();
   }
 }
