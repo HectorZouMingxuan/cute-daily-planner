@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.4 — 2026-05-29
+
+**Undo snackbar for task deletion**
+
+- Deleting a task now shows a snackbar with "Task deleted" and an "Undo" button
+- Undo restores the task with all its original properties
+- Works for both swipe-to-delete and the delete icon button
+
 ## v3.3 — 2026-05-29
 
 **Calendar swipe navigation**

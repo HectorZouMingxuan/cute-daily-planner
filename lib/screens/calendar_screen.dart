@@ -451,7 +451,19 @@ class CalendarScreen extends ConsumerWidget {
                                   selectedDate: calendarView.selectedDay,
                                 ),
                                 onToggle: todoController.toggleDone,
-                                onDelete: todoController.deleteTodo,
+                                onDelete: (todo) {
+                                  todoController.deleteTodo(todo);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: const Text('Task deleted'),
+                                      action: SnackBarAction(
+                                        label: 'Undo',
+                                        onPressed: () => todoController.restoreTodo(todo),
+                                      ),
+                                      duration: const Duration(seconds: 4),
+                                    ),
+                                  );
+                                },
                                 onClearDone: () => todoController.clearDoneTodos(calendarView.selectedDay),
                               ),
                             ),

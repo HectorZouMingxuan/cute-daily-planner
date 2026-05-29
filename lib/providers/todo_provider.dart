@@ -59,6 +59,23 @@ class TodoListController extends AsyncNotifier<List<TodoItem>> {
     state = await AsyncValue.guard(_repository.getTodos);
   }
 
+  Future<void> restoreTodo(TodoItem todo) async {
+    await _repository.saveTodo(TodoItem(
+      id: todo.id,
+      userId: todo.userId,
+      title: todo.title,
+      date: todo.date,
+      isDone: todo.isDone,
+      priority: todo.priority,
+      createdAt: todo.createdAt,
+      updatedAt: DateTime.now(),
+      deletedAt: null,
+      syncStatus: todo.syncStatus,
+      version: todo.version + 1,
+    ));
+    state = await AsyncValue.guard(_repository.getTodos);
+  }
+
   bool _isSameDate(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
