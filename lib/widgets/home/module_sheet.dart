@@ -377,12 +377,20 @@ class _MoodSheetState extends State<MoodSheet> {
                 ),
                 if (widget.mood != null) ...[
                   const SizedBox(height: AppSpacing.md),
-                  SoftCard(
-                    child: Text(
-                      'Today feels ${widget.mood!.mood.label}',
-                      style: AppTextStyles.body,
+                  if (widget.mood!.note.isNotEmpty)
+                    SoftCard(
+                      child: Text(
+                        widget.mood!.note,
+                        style: AppTextStyles.body,
+                      ),
+                    )
+                  else
+                    SoftCard(
+                      child: Text(
+                        'Today feels ${widget.mood!.mood.label}',
+                        style: AppTextStyles.body,
+                      ),
                     ),
-                  ),
                 ],
                 MoodTrendRow(moods: widget.moodList, selectedDate: widget.selectedDate),
               ],

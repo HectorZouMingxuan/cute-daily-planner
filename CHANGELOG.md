@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.19 — 2026-05-29
+
+**Mood note displayed in feedback card**
+
+- The mood sheet now shows your reflection note when one exists, instead of the generic "Today feels X" message
+- Generic message still appears when no note has been written
+- Makes the mood journaling feature (v3.10) more visible and rewarding
+
 ## v3.18 — 2026-05-29
 
 **Confirmation before clearing done tasks**
