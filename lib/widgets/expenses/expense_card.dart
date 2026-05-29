@@ -16,7 +16,16 @@ class ExpenseCard extends StatelessWidget {
     final isIncome = expense.type == ExpenseType.income;
     final sign = isIncome ? '+' : '-';
 
+    final categoryColor = expense.category.color;
+
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.medium),
+        side: BorderSide(
+          color: isIncome ? AppColors.mint : categoryColor,
+          width: 2.5,
+        ),
+      ),
       child: InkWell(
         borderRadius: BorderRadius.circular(AppRadius.medium),
         onTap: onTap,
@@ -27,7 +36,7 @@ class ExpenseCard extends StatelessWidget {
               CircleAvatar(
                 backgroundColor: isIncome
                     ? AppColors.mint.withValues(alpha: .45)
-                    : AppColors.pink.withValues(alpha: .45),
+                    : categoryColor.withValues(alpha: .35),
                 child: Icon(
                   isIncome
                       ? Icons.south_west_rounded
@@ -53,7 +62,7 @@ class ExpenseCard extends StatelessWidget {
                           : expense.note,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style:  TextStyle(color: AppColors.textMuted),
+                      style: TextStyle(color: AppColors.textMuted),
                     ),
                   ],
                 ),

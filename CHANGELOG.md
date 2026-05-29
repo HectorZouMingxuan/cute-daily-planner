@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.8 — 2026-05-29
+
+**Category colors on expense cards**
+
+- Each expense card now shows a colored left border matching its category
+- Expense circle avatar also uses the category color (income cards keep mint green)
+- Color-coded for quick visual scanning: amber=Food, blue=Transport, pink=Shopping, red=Bills, etc.
+
 ## v3.7 — 2026-05-29
 
 **Today highlight on calendar weekday headers**
