@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.17 — 2026-05-29
+
+**Current date in app bar greeting**
+
+- The greeting now includes today's full date (e.g. "Good Morning, Hector · Friday, May 29")
+- Combines time-based greeting with the current date for quick reference
+- Helps users see today's date without looking at the calendar grid
+
 ## v3.16 — 2026-05-29
 
 **Quick month picker**

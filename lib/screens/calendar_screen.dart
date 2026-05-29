@@ -607,9 +607,11 @@ class CalendarScreen extends ConsumerWidget {
   }
 
   String _greeting(String username) {
-    final hour = DateTime.now().hour;
+    final now = DateTime.now();
+    final hour = now.hour;
     final timeGreeting = hour < 12 ? 'Morning' : hour < 17 ? 'Afternoon' : 'Evening';
-    return 'Good $timeGreeting, $username';
+    final dateStr = DateFormat('EEEE, MMMM d').format(now);
+    return 'Good $timeGreeting, $username  ·  $dateStr';
   }
 
   String? _monthlySummary(
