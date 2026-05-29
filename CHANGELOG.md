@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.7 — 2026-05-29
+
+**Today highlight on calendar weekday headers**
+
+- The current day's weekday letter (M/T/W/T/F/S/S) in the calendar header is now highlighted
+- Uses primary gold color and bolder weight for instant visual orientation
+- Helps users quickly find today's column when scanning the month grid
+
 ## v3.6 — 2026-05-29
 
 **Colored expense categories**

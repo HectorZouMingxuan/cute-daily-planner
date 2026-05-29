@@ -127,6 +127,20 @@ class MonthView extends StatelessWidget {
           mood: moodLoader?.call(day),
           expenseNet: expenseNetLoader?.call(day),
         ),
+        dowBuilder: (context, day) {
+          const letters = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+          final isTodayDow = day.weekday == DateTime.now().weekday;
+          return Center(
+            child: Text(
+              letters[day.weekday - 1],
+              style: TextStyle(
+                color: isTodayDow ? AppColors.primary : AppColors.textMuted,
+                fontWeight: isTodayDow ? FontWeight.w900 : FontWeight.w700,
+                fontSize: 12,
+              ),
+            ),
+          );
+        },
         markerBuilder: (context, day, events) {
           if (events.isEmpty) {
             return const SizedBox.shrink();
