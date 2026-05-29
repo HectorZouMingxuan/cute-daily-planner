@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.30 — 2026-05-29
+
+**Add Note to quick actions menu**
+
+- Long-press any day on the calendar to reveal the quick-action bottom sheet, now with an "Add Note" option
+- Opens the note editor directly for the selected day, prepopulating any existing note
+- Joins Event, Task, and Expense as the fourth quick action from the calendar grid
+
 ## v3.29 — 2026-05-29
 
 **"Today" label in selected date title**

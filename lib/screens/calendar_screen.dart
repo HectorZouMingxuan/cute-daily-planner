@@ -337,6 +337,26 @@ class CalendarScreen extends ConsumerWidget {
                                         );
                                       },
                                     ),
+                                    ListTile(
+                                      leading: const Icon(Icons.edit_note_rounded),
+                                      title: const Text('Add Note'),
+                                      onTap: () {
+                                        Navigator.pop(ctx);
+                                        final dayNote = (noteList.value ?? const [])
+                                            .where((n) => _isSameDate(n.date, day))
+                                            .firstOrNull;
+                                        showAppBottomSheet(
+                                          context: context,
+                                          child: NotesSheet(
+                                            selectedDate: day,
+                                            note: dayNote,
+                                            onSave: (note) async {
+                                              await noteController.saveNote(note);
+                                            },
+                                          ),
+                                        );
+                                      },
+                                    ),
                                   ],
                                 ),
                               ),
