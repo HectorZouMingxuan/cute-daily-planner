@@ -8,6 +8,28 @@ import '../common/empty_state.dart';
 import '../common/soft_card.dart';
 import 'todo_card.dart';
 
+class _PriorityCount extends StatelessWidget {
+  const _PriorityCount({required this.label, required this.color});
+
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: .18),
+        borderRadius: BorderRadius.circular(AppRadius.small),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: color),
+      ),
+    );
+  }
+}
+
 class TodoList extends StatelessWidget {
   const TodoList({
     required this.todos,
@@ -26,6 +48,9 @@ class TodoList extends StatelessWidget {
   Widget build(BuildContext context) {
     final doneCount = todos.where((todo) => todo.isDone).length;
     final progress = todos.isEmpty ? 0.0 : doneCount / todos.length;
+    final highCount = todos.where((t) => t.priority == TodoPriority.high).length;
+    final mediumCount = todos.where((t) => t.priority == TodoPriority.medium).length;
+    final lowCount = todos.where((t) => t.priority == TodoPriority.low).length;
 
     return ListView(
       padding: EdgeInsets.zero,
@@ -43,6 +68,16 @@ class TodoList extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.sm),
               LinearProgressIndicator(value: progress),
+              if (todos.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Row(
+                  children: [
+                    if (highCount > 0) _PriorityCount(label: '$highCount high', color: AppColors.pink),
+                    if (mediumCount > 0) _PriorityCount(label: '$mediumCount med', color: AppColors.yellow),
+                    if (lowCount > 0) _PriorityCount(label: '$lowCount low', color: AppColors.mint),
+                  ].map((w) => Padding(padding: const EdgeInsets.only(right: AppSpacing.sm), child: w)).toList(),
+                ),
+              ],
             ],
           ),
         ),

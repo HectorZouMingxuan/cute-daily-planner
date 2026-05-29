@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.33 — 2026-05-29
+
+**Priority breakdown in task list header**
+
+- Task list header now shows a count of high, medium, and low priority tasks (e.g. "2 high · 3 med · 1 low")
+- Each priority count uses its associated color (pink=high, yellow=medium, mint=low)
+- Only shown when tasks exist; hidden when the list is empty
+
 ## v3.32 — 2026-05-29
 
 **Events sorted by start time**
