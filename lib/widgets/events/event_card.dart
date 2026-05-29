@@ -89,8 +89,16 @@ class EventCard extends StatelessWidget {
                         ),
                       ),
                     ],
-                    const SizedBox(height: 6),
-                    SyncStatusBadge(label: event.syncStatus.label),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        if (event.reminders.any((r) => r.minutesBefore != -1))
+                          Icon(Icons.notifications_active_rounded, size: 14, color: AppColors.textMuted),
+                        if (event.reminders.any((r) => r.minutesBefore != -1))
+                          const SizedBox(width: AppSpacing.sm),
+                        SyncStatusBadge(label: event.syncStatus.label),
+                      ],
+                    ),
                   ],
                 ),
               ),

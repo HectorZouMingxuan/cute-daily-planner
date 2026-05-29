@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.35 — 2026-05-29
+
+**Reminder indicator on event cards**
+
+- Event cards now show a small bell icon when reminders are configured for the event
+- Provides a visual cue to distinguish events with active reminders from those without
+- Appears on event cards, draggable tiles, and the upcoming events preview
+
 ## v3.34 — 2026-05-29
 
 **Weekend column tint in calendar grid**
