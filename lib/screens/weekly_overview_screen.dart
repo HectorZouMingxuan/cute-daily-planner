@@ -529,9 +529,9 @@ class _CategoryBar extends StatelessWidget {
     return Row(
       children: [
         SizedBox(
-          width: 80,
+          width: 90,
           child: Text(
-            category.label,
+            '${category.icon}  ${category.label}',
             style:  TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textMain),
           ),
         ),

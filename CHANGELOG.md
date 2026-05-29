@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.36 — 2026-05-29
+
+**Category emojis in spending breakdown**
+
+- Weekly overview "Spending by Category" bars now show a representative emoji alongside each category name
+- Food 🍽, Transport 🚗, Shopping 🛍, Bills 📄, Health 💊, Study 📚, Entertainment 🎬, Other 📌
+- Makes categories instantly recognizable without reading the text labels
+
 ## v3.35 — 2026-05-29
 
 **Reminder indicator on event cards**

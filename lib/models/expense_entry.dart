@@ -43,6 +43,17 @@ enum ExpenseCategory {
     ExpenseCategory.entertainment => const Color(0xFFD8A84E),
     ExpenseCategory.other => const Color(0xFF909890),
   };
+
+  String get icon => switch (this) {
+    ExpenseCategory.food => '\u{1F37D}',
+    ExpenseCategory.transport => '\u{1F697}',
+    ExpenseCategory.shopping => '\u{1F6CD}',
+    ExpenseCategory.bills => '\u{1F4C4}',
+    ExpenseCategory.health => '\u{1F48A}',
+    ExpenseCategory.study => '\u{1F4DA}',
+    ExpenseCategory.entertainment => '\u{1F3AC}',
+    ExpenseCategory.other => '\u{1F4CC}',
+  };
 }
 
 enum PaymentMethod {
