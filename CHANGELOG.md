@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.0 — 2026-05-29
+
+**Today cell ring indicator on calendar grid**
+
+- Today's cell now has a prominent primary-colored ring border in addition to the background tint
+- Makes today instantly locatable when scanning the month grid, even at a glance
+- Ring is replaced by the mint drop highlight when dragging an event over the cell
+
 ## v3.39 — 2026-05-29
 
 **Week number in weekly overview**

@@ -96,6 +96,7 @@ class MonthView extends StatelessWidget {
         todayBuilder: (context, day, focusedDay) => _DragTargetDayCell(
           day: day,
           backgroundColor: AppColors.primary.withValues(alpha: .35),
+          todayBorder: true,
           textStyle: TextStyle(
             color: AppColors.textMain,
             fontWeight: FontWeight.w800,
@@ -185,6 +186,7 @@ class _DragTargetDayCell extends StatelessWidget {
     this.textStyle,
     this.onLongPress,
     this.isWeekend = false,
+    this.todayBorder = false,
     this.incompleteCount = 0,
     this.allTasksDone = false,
     this.hasEvents = false,
@@ -198,6 +200,7 @@ class _DragTargetDayCell extends StatelessWidget {
   final void Function(CalendarEvent event, DateTime targetDay) onEventDropped;
   final VoidCallback? onLongPress;
   final bool isWeekend;
+  final bool todayBorder;
   final int incompleteCount;
   final bool allTasksDone;
   final bool hasEvents;
@@ -216,6 +219,11 @@ class _DragTargetDayCell extends StatelessWidget {
         onAcceptWithDetails: (details) => onEventDropped(details.data, day),
         builder: (context, candidateData, rejectedData) {
           final highlighted = candidateData.isNotEmpty;
+          final border = highlighted
+              ? Border.all(color: AppColors.mint, width: 2)
+              : todayBorder
+                  ? Border.all(color: AppColors.primary, width: 2)
+                  : null;
           return AnimatedContainer(
             duration: const Duration(milliseconds: 150),
             margin: const EdgeInsets.all(5),
@@ -225,9 +233,7 @@ class _DragTargetDayCell extends StatelessWidget {
                   ? AppColors.mint.withValues(alpha: .45)
                   : effectiveBg,
               borderRadius: BorderRadius.circular(AppRadius.small),
-              border: highlighted
-                  ? Border.all(color: AppColors.mint, width: 2)
-                  : null,
+              border: border,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
