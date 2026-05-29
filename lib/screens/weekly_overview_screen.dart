@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 
 import '../models/expense_entry.dart';
 import '../models/mood_entry.dart';
-import '../providers/calendar_view_provider.dart';
 import '../providers/event_provider.dart';
 import '../providers/expense_provider.dart';
 import '../providers/habit_provider.dart';
@@ -17,24 +16,31 @@ import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
 import '../widgets/common/soft_card.dart';
 
-class WeeklyOverviewScreen extends ConsumerWidget {
+class WeeklyOverviewScreen extends ConsumerStatefulWidget {
   const WeeklyOverviewScreen({super.key});
 
+  @override
+  ConsumerState<WeeklyOverviewScreen> createState() => _WeeklyOverviewScreenState();
+}
+
+class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
   static const _recurrenceCalculator = RecurrenceCalculator();
+  int _weekOffset = 0;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final eventList = ref.watch(eventListProvider);
     final expenseList = ref.watch(expenseListProvider);
     final todoList = ref.watch(todoListProvider);
     final moodList = ref.watch(moodListProvider);
     final habitState = ref.watch(habitProvider);
-    final calendarView = ref.watch(calendarViewProvider);
 
-    final today = calendarView.selectedDay;
-    final weekStart = today.subtract(Duration(days: today.weekday - 1));
+    final today = DateTime.now();
+    final monday = today.subtract(Duration(days: today.weekday - 1));
+    final weekStart = monday.add(Duration(days: _weekOffset * 7));
     final weekEnd = weekStart.add(const Duration(days: 6));
     final weekRange = '${DateFormat('MMM d').format(weekStart)} — ${DateFormat('MMM d, yyyy').format(weekEnd)}';
+    final isCurrentWeek = _weekOffset == 0;
 
     final events = eventList.value ?? const [];
     final expenses = expenseList.value ?? const [];
@@ -113,6 +119,24 @@ class WeeklyOverviewScreen extends ConsumerWidget {
         title: Text('Week', style: const TextStyle(fontSize: 16)),
         backgroundColor: AppColors.ink.withValues(alpha: .72),
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            tooltip: 'Previous week',
+            onPressed: () => setState(() => _weekOffset--),
+            icon: const Icon(Icons.chevron_left_rounded),
+          ),
+          if (!isCurrentWeek)
+            IconButton(
+              tooltip: 'Back to current week',
+              onPressed: () => setState(() => _weekOffset = 0),
+              icon: const Icon(Icons.today_outlined),
+            ),
+          IconButton(
+            tooltip: 'Next week',
+            onPressed: () => setState(() => _weekOffset++),
+            icon: const Icon(Icons.chevron_right_rounded),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Stack(

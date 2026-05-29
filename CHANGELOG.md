@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.1 — 2026-05-29
+
+**Week navigation arrows on weekly overview**
+
+- Added previous/next week chevron arrows in the weekly overview app bar
+- "Today" button appears when browsing non-current weeks to jump back instantly
+- Week offset state management for smooth browsing through past and future weeks
+- Cleaned up unused imports
+
 ## v2.0 — 2026-05-29
 
 **Weekly overview dashboard (major new feature)**
