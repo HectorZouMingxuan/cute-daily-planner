@@ -1,5 +1,19 @@
 # Changelog
 
+## v4.3.2 — 2026-05-29
+
+**Consistent notification system and UI polish**
+
+- New reusable `AppNotification` helper: `success()`, `error()`, `info()`, `confirm()` methods with theme-aware colored SnackBars, icons, and consistent floating style
+- Replaced all raw `ScaffoldMessenger.showSnackBar()` calls across the app with the new helper
+- Event, task, expense, habit, and mood actions now show icon+color-coded feedback (mint=success, danger=error, primary=info)
+- Login/register error text now styled in a themed danger container with icon, matching the app's design system
+- Logout now shows a confirmation dialog to prevent accidental sign-out
+- Mood saving now shows a success notification
+- Removed redundant "Note saved" SnackBar (DailyNoteEditor already shows inline "Saved!" indicator)
+- Added consistent drag handle indicators to Todo, Expense, and Habit bottom sheet forms
+- Improved login form error display with danger-tinted background container and error icon
+
 ## v4.3.1 — 2026-05-29
 
 **Fix: Register/Create Account option always visible**

@@ -28,6 +28,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
 import '../widgets/common/app_bottom_sheet.dart';
+import '../widgets/common/app_notification.dart';
 import '../widgets/common/soft_card.dart';
 import '../widgets/common/sync_status_badge.dart';
 import '../widgets/calendar/month_view.dart';
@@ -133,7 +134,26 @@ class CalendarScreen extends ConsumerWidget {
           IconButton(
             tooltip: 'Logout',
             onPressed: () {
-              ref.read(authControllerProvider).signOut();
+              showDialog(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: const Text('Logout'),
+                  content: const Text('Are you sure you want to logout?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                        ref.read(authControllerProvider).signOut();
+                      },
+                      child: const Text('Logout'),
+                    ),
+                  ],
+                ),
+              );
             },
             icon: Icon(Icons.logout_rounded),
           ),
@@ -292,9 +312,7 @@ class CalendarScreen extends ConsumerWidget {
                             calendarController.selectDay(targetDay, targetDay);
                             eventsSheet?.close();
                             if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Event moved')),
-                              );
+                              AppNotification.info(context, 'Event moved');
                             }
                           },
                           onDayLongPress: (day) {
@@ -543,25 +561,19 @@ class CalendarScreen extends ConsumerWidget {
                                       .where((t) => _isSameDate(t.date, calendarView.selectedDay))
                                       .toList();
                                   if (dayTodos.isNotEmpty && dayTodos.every((t) => t.isDone)) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('All tasks completed for the day!'),
-                                        duration: Duration(seconds: 3),
-                                      ),
+                                    AppNotification.success(
+                                      context,
+                                      'All tasks completed for the day!',
                                     );
                                   }
                                 },
                                 onDelete: (todo) {
                                   todoController.deleteTodo(todo);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: const Text('Task deleted'),
-                                      action: SnackBarAction(
-                                        label: 'Undo',
-                                        onPressed: () => todoController.restoreTodo(todo),
-                                      ),
-                                      duration: const Duration(seconds: 4),
-                                    ),
+                                  AppNotification.confirm(
+                                    context,
+                                    'Task deleted',
+                                    actionLabel: 'Undo',
+                                    onAction: () => todoController.restoreTodo(todo),
                                   );
                                 },
                                 onClearDone: () => todoController.clearDoneTodos(calendarView.selectedDay),
@@ -585,14 +597,6 @@ class CalendarScreen extends ConsumerWidget {
                                 note: selectedNote,
                                 onSave: (note) async {
                                   await noteController.saveNote(note);
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Note saved'),
-                                      ),
-                                    );
-                                  }
                                 },
                               ),
                             ),
@@ -622,6 +626,12 @@ class CalendarScreen extends ConsumerWidget {
                                       note: note,
                                     ),
                                   );
+                                  if (context.mounted) {
+                                    AppNotification.success(
+                                      context,
+                                      'Mood saved',
+                                    );
+                                  }
                                 },
                               ),
                             ),
@@ -873,18 +883,14 @@ class CalendarScreen extends ConsumerWidget {
           await eventController.saveEvent(event);
           if (context.mounted) {
             Navigator.of(context).pop();
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('Event saved')));
+            AppNotification.success(context, 'Event saved');
           }
         },
         onDelete: (event) async {
           await eventController.deleteEvent(event);
           if (context.mounted) {
             Navigator.of(context).pop();
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('Event deleted')));
+            AppNotification.info(context, 'Event deleted');
           }
         },
       ),
@@ -906,18 +912,14 @@ class CalendarScreen extends ConsumerWidget {
           await expenseController.saveExpense(expense);
           if (context.mounted) {
             Navigator.of(context).pop();
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('Expense saved')));
+            AppNotification.success(context, 'Expense saved');
           }
         },
         onDelete: (expense) async {
           await expenseController.deleteExpense(expense);
           if (context.mounted) {
             Navigator.of(context).pop();
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('Expense deleted')));
+            AppNotification.info(context, 'Expense deleted');
           }
         },
       ),
@@ -937,9 +939,7 @@ class CalendarScreen extends ConsumerWidget {
           await todoController.saveTodo(todo);
           if (context.mounted) {
             Navigator.of(context).pop();
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('Task saved')));
+            AppNotification.success(context, 'Task saved');
           }
         },
       ),
@@ -980,9 +980,7 @@ class CalendarScreen extends ConsumerWidget {
           await habitController.saveHabit(habit);
           if (context.mounted) {
             Navigator.of(context).pop();
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('Habit saved')));
+            AppNotification.success(context, 'Habit saved');
           }
         },
       ),

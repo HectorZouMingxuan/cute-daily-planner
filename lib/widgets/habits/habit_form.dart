@@ -59,6 +59,17 @@ class _HabitFormState extends ConsumerState<HabitForm> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Center(
+              child: Container(
+                width: 44,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: AppColors.border,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
             Text('Add Habit', style: AppTextStyles.title),
             const SizedBox(height: AppSpacing.md),
             TextFormField(

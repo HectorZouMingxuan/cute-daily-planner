@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 import '../../models/sync_metadata.dart';
 import '../../models/todo_item.dart';
 import '../../providers/user_provider.dart';
+import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_text_styles.dart';
 
@@ -41,6 +42,17 @@ class _TodoFormState extends ConsumerState<TodoForm> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Center(
+              child: Container(
+                width: 44,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: AppColors.border,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
             Text('Add Task', style: AppTextStyles.title),
             const SizedBox(height: AppSpacing.md),
             TextFormField(
