@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.26 — 2026-05-29
+
+**Pending habit visibility in weekly overview**
+
+- Day rows in the weekly overview now show the habit chip even when no habits are checked (e.g. "0/3 hab")
+- Unchecked habits display in dimmed text to indicate pending routines
+- "No data" message no longer appears for days that have habits defined
+
 ## v3.25 — 2026-05-29
 
 **Year in monthly expense total**

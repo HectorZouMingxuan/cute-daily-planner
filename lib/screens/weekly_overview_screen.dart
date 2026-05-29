@@ -469,12 +469,14 @@ class _DayRow extends StatelessWidget {
                       label: '${net > 0 ? "+" : ""}${net.toStringAsFixed(0)}',
                       color: net > 0 ? AppColors.mint : AppColors.danger,
                     ),
-                  if (habitsTotal > 0 && habitsChecked > 0)
+                  if (habitsTotal > 0)
                     _MiniChip(
                       label: '$habitsChecked/$habitsTotal hab',
-                      color: AppColors.mint,
+                      color: habitsChecked == 0
+                          ? AppColors.textMuted
+                          : AppColors.mint,
                     ),
-                  if (mood == null && eventCount == 0 && todoTotal == 0 && net == 0 && habitsChecked == 0)
+                  if (mood == null && eventCount == 0 && todoTotal == 0 && net == 0 && habitsTotal == 0)
                     Text(
                       'No data',
                       style: TextStyle(fontSize: 11, color: AppColors.textMuted),
