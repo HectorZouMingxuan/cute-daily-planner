@@ -100,7 +100,7 @@ class _DailyNoteEditorState extends State<DailyNoteEditor> {
                 ),
               ],
               if (_saved)
-                const Text(
+                Text(
                   'Saved!',
                   style: TextStyle(
                     fontSize: 12,

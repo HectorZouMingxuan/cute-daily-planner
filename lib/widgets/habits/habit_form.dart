@@ -31,7 +31,7 @@ class _HabitFormState extends State<HabitForm> {
     'book': Icons.menu_book_rounded,
   };
 
-  static const _colorOptions = [
+  static final _colorOptions = [
     AppColors.mint,
     AppColors.sage,
     AppColors.pink,

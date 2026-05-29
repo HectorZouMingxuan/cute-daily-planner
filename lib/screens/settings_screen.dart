@@ -35,7 +35,7 @@ class SettingsScreen extends ConsumerWidget {
                     color: AppColors.primary.withValues(alpha: .25),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.calendar_month_rounded,
+                  child: Icon(Icons.calendar_month_rounded,
                       color: AppColors.primary, size: 26),
                 ),
                 const SizedBox(width: AppSpacing.md),
@@ -88,7 +88,7 @@ class SettingsScreen extends ConsumerWidget {
                   color: AppColors.primary.withValues(alpha: .25),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.calendar_month_rounded,
+                child: Icon(Icons.calendar_month_rounded,
                     color: AppColors.primary, size: 26),
               ),
               children: [

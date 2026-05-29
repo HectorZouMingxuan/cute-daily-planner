@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import '../../theme/app_colors.dart';
 
 class PastelChip extends StatelessWidget {
-  const PastelChip({
+  PastelChip({
     required this.label,
     super.key,
-    this.color = AppColors.primarySoft,
-  });
+    Color? color,
+  }) : color = color ?? AppColors.primarySoft;
 
   final String label;
   final Color color;

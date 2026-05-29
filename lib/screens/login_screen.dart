@@ -94,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           ),
           DecoratedBox(
             decoration: BoxDecoration(
-              color: AppColors.ink.withValues(alpha: .45),
+              color: AppColors.dimOverlay,
             ),
           ),
           SafeArea(

@@ -370,7 +370,7 @@ class _MoodSheetState extends State<MoodSheet> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppRadius.small),
-                      borderSide: const BorderSide(color: AppColors.primary),
+                      borderSide: BorderSide(color: AppColors.primary),
                     ),
                   ),
                   style: TextStyle(fontSize: 13, color: AppColors.textMain),
@@ -493,7 +493,7 @@ class _MonthlyTotal extends StatelessWidget {
           if (income > 0)
             Text(
               '+${income.toStringAsFixed(0)}',
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.mint),
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.mint),
             ),
           if (income > 0 && spending > 0)
             Text('  ', style: TextStyle(fontSize: 12, color: AppColors.textMuted)),

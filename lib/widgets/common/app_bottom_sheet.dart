@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../theme/app_colors.dart';
 import '../../theme/app_radius.dart';
 
 Future<T?> showAppBottomSheet<T>({
@@ -11,9 +12,9 @@ Future<T?> showAppBottomSheet<T>({
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (context) => Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: const BorderRadius.vertical(
           top: Radius.circular(AppRadius.large),
         ),
       ),

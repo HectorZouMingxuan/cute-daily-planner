@@ -154,7 +154,7 @@ class _WeeklyOverviewScreenState extends ConsumerState<WeeklyOverviewScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Week', style: TextStyle(fontSize: 16)),
-        backgroundColor: AppColors.ink.withValues(alpha: .72),
+        backgroundColor: AppColors.appBarBg,
         foregroundColor: Colors.white,
         actions: [
           IconButton(
@@ -425,11 +425,11 @@ class _DayRow extends StatelessWidget {
     );
 
     return Card(
-      color: isToday ? AppColors.primarySoft.withValues(alpha: .55) : null,
+      color: isToday ? AppColors.todayHighlight : null,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.medium),
         side: isToday
-            ? const BorderSide(color: AppColors.primary, width: 1.5)
+            ? BorderSide(color: AppColors.primary, width: 1.5)
             : BorderSide.none,
       ),
       child: Padding(

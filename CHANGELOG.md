@@ -1,5 +1,18 @@
 # Changelog
 
+## v4.1 — 2026-05-29
+
+**Dark mode theme overhaul — cool palette and background dimming**
+
+- Background image now gets a deep navy overlay in dark mode (75% opacity vs 32% warm beige in light mode) so the image doesn't wash out the dark UI
+- All accent colors are now brightness-aware: warm gold/yellow/pink in light mode switch to cool blue/teal/violet in dark mode
+- Primary accent: gold (`#D8A84E`) → cool periwinkle blue (`#7B9EC7`)
+- Cards, FAB, buttons, selected date, calendar grid, and chip badges all follow the cool palette in dark mode
+- App bar and bottom sheet backgrounds now use theme-aware dark surfaces instead of hardcoded colors
+- Login screen dim overlay adapts to theme mode
+- Today row highlight in weekly overview uses primary tint for visibility in both themes
+- Light mode warm palette completely preserved — no visual changes in light mode
+
 ## v4.0 — 2026-05-29
 
 **Today cell ring indicator on calendar grid**

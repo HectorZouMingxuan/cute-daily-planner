@@ -99,7 +99,7 @@ class CalendarScreen extends ConsumerWidget {
               ),
           ],
         ),
-        backgroundColor: AppColors.ink.withValues(alpha: .72),
+        backgroundColor: AppColors.appBarBg,
         foregroundColor: Colors.white,
         actions: [
           IconButton(
@@ -152,7 +152,7 @@ class CalendarScreen extends ConsumerWidget {
             Positioned.fill(
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  color: AppColors.primarySoft.withValues(alpha: .32),
+                  color: AppColors.backgroundOverlay,
                 ),
               ),
             ),
@@ -214,7 +214,7 @@ class CalendarScreen extends ConsumerWidget {
                         height: 6,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(999),
-                          gradient: const LinearGradient(
+                          gradient: LinearGradient(
                             colors: [
                               AppColors.primary,
                               AppColors.sage,
