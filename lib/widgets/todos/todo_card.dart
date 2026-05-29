@@ -26,11 +26,27 @@ class TodoCard extends StatelessWidget {
     };
 
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.medium),
+        side: BorderSide(color: color.withValues(alpha: .6), width: 2),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.sm),
         child: Row(
           children: [
-            Checkbox(value: todo.isDone, onChanged: (_) => onToggle()),
+            SizedBox(
+              width: 24,
+              height: 24,
+              child: Checkbox(
+                value: todo.isDone,
+                onChanged: (_) => onToggle(),
+                fillColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.selected)) return color;
+                  return null;
+                }),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.xs),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,13 +70,13 @@ class TodoCard extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: color.withValues(alpha: .45),
+                      color: color.withValues(alpha: .25),
                       borderRadius: BorderRadius.circular(AppRadius.small),
                     ),
                     child: Text(
                       todo.priority.label,
-                      style: const TextStyle(
-                        color: AppColors.textMain,
+                      style: TextStyle(
+                        color: color,
                         fontSize: 11,
                         fontWeight: FontWeight.w800,
                       ),

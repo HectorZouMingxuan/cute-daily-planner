@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.7 — 2026-05-29
+
+**Enhanced task priority display**
+
+- Task cards now show a colored left border matching priority level (green/mint for Low, yellow for Medium, pink for High)
+- Checkbox fill color reflects priority when checked
+- Priority label chip uses subtler background tint for cleaner appearance
+
 ## v1.6 — 2026-05-29
 
 **Habit streak display in habits sheet**
