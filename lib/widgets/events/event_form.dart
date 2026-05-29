@@ -276,9 +276,27 @@ class _EventFormState extends State<EventForm> {
 
   void _delete() {
     final event = widget.event;
-    if (event != null && widget.onDelete != null) {
-      widget.onDelete!(event);
-    }
+    if (event == null || widget.onDelete == null) return;
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Event'),
+        content: Text('Delete "${event.title}"? This cannot be undone.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              widget.onDelete!(event);
+            },
+            child: const Text('Delete', style: TextStyle(color: AppColors.danger)),
+          ),
+        ],
+      ),
+    );
   }
 }
 

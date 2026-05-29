@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.14 — 2026-05-29
+
+**Event delete confirmation**
+
+- Deleting an event now shows an AlertDialog asking for confirmation
+- Shows the event title being deleted and warns the action cannot be undone
+- Prevents accidental data loss from mis-tapping the delete button
+
 ## v3.13 — 2026-05-29
 
 **Settings screen enrichment**
