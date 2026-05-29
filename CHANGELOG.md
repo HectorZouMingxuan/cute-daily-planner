@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.5 — 2026-05-29
+
+**Time-based greeting on home screen**
+
+- Calendar app bar now shows a time-based greeting: "Good Morning/Afternoon/Evening, [username]"
+- Greeting changes based on current hour: morning (<12), afternoon (12-16), evening (17+)
+- Updated widget test to match the new dynamic greeting format
+
 ## v2.4 — 2026-05-29
 
 **Mood distribution row in weekly overview**

@@ -29,7 +29,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Should see calendar screen
-    expect(find.text('Hi, TestUser'), findsOneWidget);
+    expect(find.textContaining('TestUser'), findsOneWidget);
     expect(find.text('Today'), findsOneWidget);
   });
 }

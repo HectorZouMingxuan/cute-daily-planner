@@ -79,7 +79,7 @@ class CalendarScreen extends ConsumerWidget {
             const Text('Cute Daily Planner', style: TextStyle(fontSize: 16)),
             if (username != null && username!.isNotEmpty)
               Text(
-                'Hi, $username',
+                _greeting(username!),
                 style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
               ),
           ],
@@ -542,6 +542,12 @@ class CalendarScreen extends ConsumerWidget {
       ),
       backgroundColor: AppColors.background,
     );
+  }
+
+  String _greeting(String username) {
+    final hour = DateTime.now().hour;
+    final timeGreeting = hour < 12 ? 'Morning' : hour < 17 ? 'Afternoon' : 'Evening';
+    return 'Good $timeGreeting, $username';
   }
 
   bool _isSameDate(DateTime a, DateTime b) {
