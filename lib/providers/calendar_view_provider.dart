@@ -52,6 +52,12 @@ class CalendarViewController extends Notifier<CalendarViewState> {
     );
   }
 
+  void goToMonth(DateTime month) {
+    state = state.copyWith(
+      focusedDay: _dateOnly(month),
+    );
+  }
+
   DateTime _dateOnly(DateTime date) =>
       DateTime(date.year, date.month, date.day);
 }

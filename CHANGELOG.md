@@ -1,5 +1,14 @@
 # Changelog
 
+## v3.16 — 2026-05-29
+
+**Quick month picker**
+
+- Tapping the month title in the calendar app bar now opens a month/year picker dialog
+- Year navigation with left/right arrows for jumping across years
+- Current month highlighted; tap any month to jump directly to it
+- Eliminates the need to swipe through many months to reach a distant date
+
 ## v3.15 — 2026-05-29
 
 **Event duration display**
