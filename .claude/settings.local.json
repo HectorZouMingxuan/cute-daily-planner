@@ -3,7 +3,31 @@
     "allow": [
       "Bash(flutter analyze *)",
       "Bash(flutter devices *)",
-      "Bash(flutter run *)"
+      "Bash(flutter run *)",
+      "Bash(git remote *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(flutter test *)",
+      "Bash(xargs -0 perl -i -pe 's/\\\\bconst \\(.*\\\\bAppColors\\\\.\\(textMain|textMuted|ink|smoke|border|background|surface\\)\\\\b\\)/$1/g')",
+      "Bash(xargs -0 perl -i -0777 -pe 's/const\\\\s+\\(TextStyle\\\\\\([^;]*?\\\\bAppColors\\\\.\\(textMain|textMuted|ink|smoke\\)\\\\b[^;]*?\\\\\\)\\)/$1/gs; s/const\\\\s+\\(BorderSide\\\\\\([^;]*?\\\\bAppColors\\\\.\\(border|ink\\)\\\\b[^;]*?\\\\\\)\\)/$1/gs; s/const\\\\s+\\(BoxDecoration\\\\\\([^;]*?\\\\bAppColors\\\\.\\(ink|surface|background\\)\\\\b[^;]*?\\\\\\)\\)/$1/gs; s/const\\\\s+\\(FloatingActionButtonThemeData\\\\\\([^;]*?\\\\bAppColors\\\\.ink\\\\b[^;]*?\\\\\\)\\)/$1/gs')",
+      "Bash(sed -n '138,142p' \"lib/screens/login_screen.dart\")",
+      "Bash(sed -n '478,482p' \"lib/screens/weekly_overview_screen.dart\")",
+      "Bash(sed -n '105,109p' \"lib/widgets/calendar/calendar_indicators.dart\")",
+      "Bash(sed -n '70,74p' \"lib/widgets/calendar/month_view.dart\")",
+      "Bash(sed -n '78,82p' \"lib/widgets/events/event_card.dart\")",
+      "Bash(sed -n '136,145p' \"lib/screens/login_screen.dart\")",
+      "Bash(sed -n '145,150p' \"lib/widgets/events/event_form.dart\")",
+      "Bash(sed -n '20,25p' \"lib/widgets/events/recurrence_picker.dart\")",
+      "Bash(sed -n '30,35p' \"lib/widgets/events/reminder_picker.dart\")",
+      "Bash(sed -n '38,42p' \"lib/widgets/habits/habit_form.dart\")",
+      "Bash(xargs -0 perl -i -0777 -pe 's/const\\\\s+\\(Icon\\\\\\([^;]*?\\\\bAppColors\\\\.\\(ink|textMuted|textMain\\)\\\\b[^;]*?\\\\\\)\\)/$1/gs; s/const\\\\s+\\(Text\\\\\\([^;]*?\\\\bAppTextStyles\\\\.\\(body|title|sectionTitle|muted\\)\\\\b[^;]*?\\\\\\)\\)/$1/gs; s/const\\\\s+\\(DaysOfWeekStyle\\\\\\([^;]*?\\\\bAppColors\\\\.\\\\w+\\\\b[^;]*?\\\\\\)\\)/$1/gs; s/const\\\\s+\\(Text\\\\\\([^;]*?\\\\bAppColors\\\\.textMuted\\\\b[^;]*?\\\\\\)\\)/$1/gs')",
+      "Bash(sed -n '104,110p' \"lib/widgets/calendar/calendar_indicators.dart\")",
+      "Bash(sed -n '144,150p' \"lib/widgets/events/event_form.dart\")",
+      "Bash(flutter create *)",
+      "Bash(git reset *)",
+      "Bash(flutter --version)",
+      "Bash(claude *)"
     ]
   }
 }

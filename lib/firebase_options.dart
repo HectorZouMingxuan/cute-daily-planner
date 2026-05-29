@@ -85,4 +85,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'cute-daily-planner.firebasestorage.app',
     measurementId: 'G-LSGXRGB013',
   );
+
 }
