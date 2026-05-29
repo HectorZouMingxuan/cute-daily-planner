@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.3 — 2026-05-29
+
+**Calendar swipe navigation**
+
+- Swipe left on the month view to go to next month
+- Swipe right on the month view to go to previous month
+- Existing arrow buttons retained alongside swipe gesture
+
 ## v3.2 — 2026-05-29
 
 **Monthly total in expense sheet**

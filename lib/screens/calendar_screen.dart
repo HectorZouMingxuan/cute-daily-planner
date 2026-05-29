@@ -212,9 +212,18 @@ class CalendarScreen extends ConsumerWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 4),
-                      child: SoftCard(
-                        padding: const EdgeInsets.all(AppSpacing.sm),
-                        child: MonthView(
+                      child: GestureDetector(
+                        onHorizontalDragEnd: (details) {
+                          if (details.primaryVelocity == null) return;
+                          if (details.primaryVelocity! < -100) {
+                            calendarController.goToNextMonth();
+                          } else if (details.primaryVelocity! > 100) {
+                            calendarController.goToPreviousMonth();
+                          }
+                        },
+                        child: SoftCard(
+                          padding: const EdgeInsets.all(AppSpacing.sm),
+                          child: MonthView(
                           focusedDay: calendarView.focusedDay,
                           selectedDay: calendarView.selectedDay,
                           eventLoader: (day) =>
@@ -273,6 +282,7 @@ class CalendarScreen extends ConsumerWidget {
                             }
                           },
                         ),
+                      ),
                       ),
                     ),
                   ],
