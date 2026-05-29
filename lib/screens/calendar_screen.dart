@@ -464,7 +464,7 @@ class CalendarScreen extends ConsumerWidget {
                             color: AppColors.yellow,
                             subtitle: selectedExpenses.isEmpty
                                 ? 'None'
-                                : _expenseSubtitle(expenseNet),
+                                : _expenseSubtitle(expenseNet, selectedExpenses.length),
                             onTap: () => showAppBottomSheet(
                               context: context,
                               child: ExpensesSheet(
@@ -716,10 +716,11 @@ class CalendarScreen extends ConsumerWidget {
     return '${events.length} event${events.length == 1 ? '' : 's'}';
   }
 
-  String _expenseSubtitle(double net) {
-    if (net == 0) return 'Balanced';
+  String _expenseSubtitle(double net, int count) {
+    final itemLabel = count == 1 ? 'item' : 'items';
+    if (net == 0) return 'Balanced · $count $itemLabel';
     final sign = net > 0 ? '+' : '';
-    return '$sign${net.toStringAsFixed(0)}';
+    return '$sign${net.toStringAsFixed(0)} · $count $itemLabel';
   }
 
   String _taskSubtitle(int done, int total) {

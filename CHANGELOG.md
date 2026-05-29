@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.22 — 2026-05-29
+
+**Expense count in module subtitle**
+
+- Expense module card now shows the number of transactions alongside the net amount
+- Format: "+500 · 2 items" or "-250 · 3 items" or "Balanced · 1 item"
+- Helps gauge daily transaction volume at a glance without opening the sheet
+
 ## v3.21 — 2026-05-29
 
 **Word count in note module subtitle**
