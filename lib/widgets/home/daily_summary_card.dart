@@ -25,6 +25,31 @@ class DailySummaryCard extends StatelessWidget {
   final int habitsChecked;
   final int habitsTotal;
 
+  String? _motivationalMessage() {
+    if (taskTotal > 0 && taskDone == taskTotal && habitsTotal > 0 && habitsChecked == habitsTotal) {
+      return 'Perfect day! All tasks and habits complete';
+    }
+    if (taskTotal > 0 && taskDone == taskTotal) {
+      return 'All tasks done — great work today!';
+    }
+    if (moodLabel == 'Great' || moodLabel == 'Good') {
+      return 'Wonderful mood today! Keep that energy';
+    }
+    if (habitsTotal > 0 && habitsChecked >= habitsTotal) {
+      return 'All habits checked in! You are consistent';
+    }
+    if (taskTotal > 0 && taskDone > 0 && taskDone >= taskTotal / 2) {
+      return 'More than halfway through your tasks!';
+    }
+    if (moodLabel == 'Tired' || moodLabel == 'Bad') {
+      return 'Take it easy — tomorrow is a fresh start';
+    }
+    if (taskTotal > 0 && taskDone == 0) {
+      return 'A few tasks waiting — you got this!';
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (moodLabel == null &&
@@ -35,29 +60,48 @@ class DailySummaryCard extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
+    final message = _motivationalMessage();
+
     return SoftCard(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
         vertical: AppSpacing.sm + 4,
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          if (moodLabel != null) _StatChip(label: moodLabel!),
-          if (eventCount > 0)
-            _StatChip(label: '$eventCount event${eventCount == 1 ? '' : 's'}'),
-          if (taskTotal > 0)
-            _StatChip(
-              label: taskDone == taskTotal
-                  ? 'All done'
-                  : '$taskDone/$taskTotal',
-              icon: taskDone == taskTotal
-                  ? const Icon(Icons.check_circle, size: 14, color: AppColors.mint)
-                  : null,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              if (moodLabel != null) _StatChip(label: moodLabel!),
+              if (eventCount > 0)
+                _StatChip(label: '$eventCount event${eventCount == 1 ? '' : 's'}'),
+              if (taskTotal > 0)
+                _StatChip(
+                  label: taskDone == taskTotal
+                      ? 'All done'
+                      : '$taskDone/$taskTotal',
+                  icon: taskDone == taskTotal
+                      ? const Icon(Icons.check_circle, size: 14, color: AppColors.mint)
+                      : null,
+                ),
+              if (expenseNet != 0) _ExpenseStatChip(net: expenseNet),
+              if (habitsTotal > 0)
+                _StatChip(label: '$habitsChecked/$habitsTotal habits'),
+            ],
+          ),
+          if (message != null) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              message,
+              style: const TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textMuted,
+              ),
+              textAlign: TextAlign.center,
             ),
-          if (expenseNet != 0) _ExpenseStatChip(net: expenseNet),
-          if (habitsTotal > 0)
-            _StatChip(label: '$habitsChecked/$habitsTotal habits'),
+          ],
         ],
       ),
     );

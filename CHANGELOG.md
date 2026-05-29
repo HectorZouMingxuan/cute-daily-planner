@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.9 — 2026-05-29
+
+**Motivational message in daily summary**
+
+- Daily summary card now shows a contextual motivational message based on the day's data
+- Different messages for all tasks done, great mood, all habits checked, halfway progress, tired/bad mood, etc.
+- Prioritizes messages in order: perfect day → tasks done → great mood → habits → progress → encouragement
+- Message is hidden when no data exists (clean state)
+
 ## v1.8 — 2026-05-29
 
 **Improved notes editor**
