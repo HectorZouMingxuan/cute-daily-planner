@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.18 — 2026-05-29
+
+**Confirmation before clearing done tasks**
+
+- "Clear X done" button now shows an AlertDialog asking for confirmation
+- Warns that bulk deletion cannot be undone, preventing accidental data loss
+- Cancel button lets users back out safely
+
 ## v3.17 — 2026-05-29
 
 **Current date in app bar greeting**

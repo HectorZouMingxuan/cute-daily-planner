@@ -51,7 +51,31 @@ class TodoList extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: TextButton.icon(
-              onPressed: onClearDone,
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Clear Done Tasks'),
+                    content: Text(
+                      'Remove all $doneCount completed tasks? This cannot be undone.',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(ctx);
+                          onClearDone?.call();
+                        },
+                        child: const Text('Clear',
+                            style: TextStyle(color: AppColors.danger)),
+                      ),
+                    ],
+                  ),
+                );
+              },
               icon: Icon(Icons.clear_all_rounded, size: 16),
               label: Text('Clear $doneCount done'),
               style: TextButton.styleFrom(
