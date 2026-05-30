@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/auth_provider.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/common/app_notification.dart';
 
@@ -18,7 +19,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     with SingleTickerProviderStateMixin {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
   late final AnimationController _animController;
   late final List<Animation<double>> _entrances;
   bool _isRegistering = false;
@@ -30,13 +30,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     super.initState();
     _animController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 700),
     );
     _entrances = List.generate(7, (i) {
-      final start = i * 0.08;
+      final start = i * .07;
       return CurvedAnimation(
         parent: _animController,
-        curve: Interval(start, start + 0.4, curve: Curves.easeOutCubic),
+        curve: Interval(start, start + .45, curve: Curves.easeOutCubic),
       );
     });
     _animController.forward();
@@ -86,9 +86,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       if (mounted) {
         AppNotification.error(context, _friendlyMessage(e.code));
       }
-    } catch (e) {
+    } catch (_) {
       if (mounted) {
-        AppNotification.error(context, 'Something went wrong. Please try again.');
+        AppNotification.error(
+          context,
+          'Something went wrong. Please try again.',
+        );
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -109,111 +112,239 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     };
   }
 
-  Widget _buildAnimated(int index, Widget child) {
-    if (index >= _entrances.length) return child;
+  Widget _fadeSlide(int i, Widget child) {
+    if (i >= _entrances.length) return child;
     return AnimatedBuilder(
-      animation: _entrances[index],
-      builder: (context, child) {
-        return Opacity(
-          opacity: _entrances[index].value,
-          child: Transform.translate(
-            offset: Offset(0, 20 * (1 - _entrances[index].value)),
-            child: child,
-          ),
-        );
-      },
+      animation: _entrances[i],
+      builder: (_, c) => Opacity(
+        opacity: _entrances[i].value,
+        child: Transform.translate(
+          offset: Offset(0, 24 * (1 - _entrances[i].value)),
+          child: c,
+        ),
+      ),
       child: child,
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
+          // Background image
           Image.asset(
             'assets/images/background.jpg',
             fit: BoxFit.cover,
           ),
+          // Dim overlay
           DecoratedBox(
-            decoration: BoxDecoration(color: AppColors.dimOverlay),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: isDark
+                    ? [
+                        const Color(0xFF080C14).withValues(alpha: .82),
+                        const Color(0xFF0E1420).withValues(alpha: .7),
+                      ]
+                    : [
+                        const Color(0xFF1F2320).withValues(alpha: .38),
+                        const Color(0xFF1F2320).withValues(alpha: .52),
+                      ],
+              ),
+            ),
           ),
+          // Content
           SafeArea(
             child: Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(AppSpacing.xl),
-                child: Form(
-                  key: _formKey,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 400),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl,
+                    vertical: AppSpacing.md,
+                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      _buildAnimated(0, _LogoIcon()),
-                      const SizedBox(height: AppSpacing.lg),
-                      _buildAnimated(1, const _TitleText()),
-                      const SizedBox(height: AppSpacing.sm),
-                      _buildAnimated(
-                        2,
-                        _SubtitleText(isRegistering: _isRegistering),
-                      ),
-                      const SizedBox(height: AppSpacing.xl),
-                      _buildAnimated(
-                        3,
-                        TextFormField(
-                          controller: _emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          textInputAction: TextInputAction.next,
-                          style: TextStyle(color: AppColors.ink),
-                          decoration: const InputDecoration(
-                            hintText: 'Email',
-                            prefixIcon: Icon(Icons.email_outlined),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      _buildAnimated(
-                        4,
-                        TextFormField(
-                          controller: _passwordController,
-                          obscureText: _obscurePassword,
-                          textInputAction: TextInputAction.done,
-                          style: TextStyle(color: AppColors.ink),
-                          decoration: InputDecoration(
-                            hintText: 'Password',
-                            prefixIcon: const Icon(Icons.lock_outlined),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscurePassword
-                                    ? Icons.visibility_off_outlined
-                                    : Icons.visibility_outlined,
-                              ),
-                              onPressed: () => setState(
-                                () => _obscurePassword = !_obscurePassword,
-                              ),
+                      const SizedBox(height: AppSpacing.xxl),
+                      // Logo
+                      _fadeSlide(
+                        0,
+                        Container(
+                          width: 88,
+                          height: 88,
+                          decoration: BoxDecoration(
+                            color: AppColors.primary
+                                .withValues(alpha: isDark ? .2 : .18),
+                            borderRadius:
+                                BorderRadius.circular(AppRadius.xl),
+                            border: Border.all(
+                              color: AppColors.primary.withValues(alpha: .35),
+                              width: 1.5,
                             ),
                           ),
-                          onFieldSubmitted: (_) => _submit(),
+                          child: Icon(
+                            Icons.calendar_month_rounded,
+                            size: 44,
+                            color: isDark
+                                ? AppColors.primary
+                                : const Color(0xFFD4A84B),
+                          ),
                         ),
                       ),
-                      const SizedBox(height: AppSpacing.md),
-                      _buildAnimated(
-                        5,
-                        _AuthButton(
-                          loading: _loading,
-                          onPressed: _submit,
-                          isRegistering: _isRegistering,
+                      const SizedBox(height: AppSpacing.lg),
+                      // Title
+                      _fadeSlide(
+                        1,
+                        const Text(
+                          'Cute Daily\nPlanner',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                            height: 1.15,
+                            letterSpacing: -0.8,
+                          ),
                         ),
                       ),
                       const SizedBox(height: AppSpacing.sm),
-                      _buildAnimated(
-                        6,
-                        _ToggleRow(
-                          isRegistering: _isRegistering,
-                          onToggle: () => setState(() {
-                            _isRegistering = !_isRegistering;
-                          }),
+                      // Subtitle
+                      _fadeSlide(
+                        2,
+                        Text(
+                          _isRegistering
+                              ? 'Create your account'
+                              : 'Sign in to continue',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white.withValues(alpha: .72),
+                          ),
                         ),
                       ),
+                      const SizedBox(height: AppSpacing.xl + 8),
+                      // Email field
+                      _fadeSlide(
+                        3,
+                        _LoginTextField(
+                          controller: _emailController,
+                          hint: 'Email',
+                          icon: Icons.email_outlined,
+                          keyboardType: TextInputType.emailAddress,
+                          textInputAction: TextInputAction.next,
+                          isDark: isDark,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.sm + 4),
+                      // Password field
+                      _fadeSlide(
+                        4,
+                        _LoginTextField(
+                          controller: _passwordController,
+                          hint: 'Password',
+                          icon: Icons.lock_outlined,
+                          obscure: _obscurePassword,
+                          textInputAction: TextInputAction.done,
+                          isDark: isDark,
+                          onSubmitted: (_) => _submit(),
+                          suffix: IconButton(
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined,
+                              color: Colors.white70,
+                              size: 20,
+                            ),
+                            onPressed: () =>
+                                setState(() => _obscurePassword = !_obscurePassword),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      // Submit button
+                      _fadeSlide(
+                        5,
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: FilledButton(
+                            onPressed: _loading ? null : _submit,
+                            style: FilledButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: isDark
+                                  ? const Color(0xFF1A1F28)
+                                  : const Color(0xFF1F2320),
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(AppRadius.md),
+                              ),
+                            ),
+                            child: _loading
+                                ? const SizedBox(
+                                    width: 22,
+                                    height: 22,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.5,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : Text(
+                                    _isRegistering ? 'Sign Up' : 'Log In',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      // Toggle
+                      _fadeSlide(
+                        6,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              _isRegistering
+                                  ? 'Already have an account?'
+                                  : "Don't have an account?",
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: .65),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () =>
+                                  setState(() => _isRegistering = !_isRegistering),
+                              style: TextButton.styleFrom(
+                                padding:
+                                    const EdgeInsets.only(left: 2, right: 0),
+                              ),
+                              child: Text(
+                                _isRegistering
+                                    ? 'Log In'
+                                    : 'Create Account',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w800,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: Colors.white38,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xl),
                     ],
                   ),
                 ),
@@ -226,128 +357,65 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   }
 }
 
-class _LogoIcon extends StatelessWidget {
+class _LoginTextField extends StatelessWidget {
+  const _LoginTextField({
+    required this.controller,
+    required this.hint,
+    required this.icon,
+    required this.isDark,
+    this.obscure = false,
+    this.keyboardType,
+    this.textInputAction,
+    this.suffix,
+    this.onSubmitted,
+  });
+
+  final TextEditingController controller;
+  final String hint;
+  final IconData icon;
+  final bool isDark;
+  final bool obscure;
+  final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
+  final Widget? suffix;
+  final ValueChanged<String>? onSubmitted;
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 80,
-      height: 80,
       decoration: BoxDecoration(
-        color: AppColors.primarySoft.withValues(alpha: .85),
-        borderRadius: BorderRadius.circular(20),
+        color: Colors.black.withValues(alpha: .35),
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: .22),
+        ),
       ),
-      child: Icon(
-        Icons.calendar_month_rounded,
-        size: 40,
-        color: AppColors.ink,
-      ),
-    );
-  }
-}
-
-class _TitleText extends StatelessWidget {
-  const _TitleText();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Text(
-      'Cute Daily Planner',
-      style: TextStyle(
-        fontSize: 28,
-        fontWeight: FontWeight.w900,
-        color: Colors.white,
-      ),
-    );
-  }
-}
-
-class _SubtitleText extends StatelessWidget {
-  const _SubtitleText({required this.isRegistering});
-
-  final bool isRegistering;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      isRegistering ? 'Create your account' : 'Sign in to continue',
-      style: const TextStyle(
-        fontSize: 13,
-        fontWeight: FontWeight.w600,
-        color: Colors.white70,
-      ),
-    );
-  }
-}
-
-class _AuthButton extends StatelessWidget {
-  const _AuthButton({
-    required this.loading,
-    required this.onPressed,
-    required this.isRegistering,
-  });
-
-  final bool loading;
-  final VoidCallback onPressed;
-  final bool isRegistering;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 48,
-      child: FilledButton(
-        onPressed: loading ? null : onPressed,
-        child: loading
-            ? const SizedBox(
-                width: 22,
-                height: 22,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2.5,
-                  color: Colors.white,
-                ),
-              )
-            : Text(isRegistering ? 'Sign Up' : 'Log In'),
-      ),
-    );
-  }
-}
-
-class _ToggleRow extends StatelessWidget {
-  const _ToggleRow({required this.isRegistering, required this.onToggle});
-
-  final bool isRegistering;
-  final VoidCallback onToggle;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          isRegistering
-              ? 'Already have an account?'
-              : "Don't have an account?",
-          style: const TextStyle(
-            color: Colors.white70,
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
+      child: TextField(
+        controller: controller,
+        obscureText: obscure,
+        keyboardType: keyboardType,
+        textInputAction: textInputAction,
+        onSubmitted: onSubmitted,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 15,
+          fontWeight: FontWeight.w500,
+        ),
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: TextStyle(
+            color: Colors.white.withValues(alpha: .6),
+            fontSize: 14,
+          ),
+          prefixIcon: Icon(icon, color: Colors.white.withValues(alpha: .75), size: 20),
+          suffixIcon: suffix,
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
           ),
         ),
-        TextButton(
-          onPressed: onToggle,
-          style: TextButton.styleFrom(
-            padding: const EdgeInsets.only(left: 4),
-          ),
-          child: Text(
-            isRegistering ? 'Log In' : 'Create Account',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 13,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

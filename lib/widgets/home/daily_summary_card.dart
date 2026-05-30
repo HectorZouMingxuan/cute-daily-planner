@@ -4,8 +4,10 @@ import '../../models/mood_entry.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_radius.dart';
 import '../../theme/app_spacing.dart';
-import '../common/soft_card.dart';
+import '../common/planner_card.dart';
 
+/// At-a-glance daily snapshot shown between the calendar grid and
+/// module cards on the home screen.
 class DailySummaryCard extends StatelessWidget {
   const DailySummaryCard({
     required this.mood,
@@ -35,26 +37,29 @@ class DailySummaryCard extends StatelessWidget {
   };
 
   String? _motivationalMessage() {
-    if (taskTotal > 0 && taskDone == taskTotal && habitsTotal > 0 && habitsChecked == habitsTotal) {
-      return 'Perfect day! All tasks and habits complete';
+    if (taskTotal > 0 &&
+        taskDone == taskTotal &&
+        habitsTotal > 0 &&
+        habitsChecked == habitsTotal) {
+      return 'Perfect day! All tasks and habits complete ✨';
     }
     if (taskTotal > 0 && taskDone == taskTotal) {
-      return 'All tasks done — great work today!';
+      return 'All tasks done — great work today! 🎉';
     }
     if (mood == MoodOption.great || mood == MoodOption.good) {
-      return 'Wonderful mood today! Keep that energy';
+      return 'Wonderful mood today! Keep that energy 🌈';
     }
     if (habitsTotal > 0 && habitsChecked >= habitsTotal) {
-      return 'All habits checked in! You are consistent';
+      return 'All habits checked in! You are consistent 💪';
     }
     if (taskTotal > 0 && taskDone > 0 && taskDone >= taskTotal / 2) {
-      return 'More than halfway through your tasks!';
+      return 'More than halfway through your tasks! 🚀';
     }
     if (mood == MoodOption.tired || mood == MoodOption.bad) {
-      return 'Take it easy — tomorrow is a fresh start';
+      return 'Take it easy — tomorrow is a fresh start 🌿';
     }
     if (taskTotal > 0 && taskDone == 0) {
-      return 'A few tasks waiting — you got this!';
+      return 'A few tasks waiting — you got this! 💫';
     }
     return null;
   }
@@ -71,42 +76,70 @@ class DailySummaryCard extends StatelessWidget {
 
     final message = _motivationalMessage();
 
-    return SoftCard(
+    return PlannerCard(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
+        horizontal: AppSpacing.card,
         vertical: AppSpacing.sm + 4,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          // Stat chips row
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
             children: [
-              if (mood != null) _StatChip(label: '${_emojis[mood]!} ${mood!.label}'),
-              if (eventCount > 0)
-                _StatChip(label: '$eventCount event${eventCount == 1 ? '' : 's'}'),
-              if (taskTotal > 0)
-                _StatChip(
-                  label: taskDone == taskTotal
-                      ? 'All done'
-                      : '$taskDone/$taskTotal',
-                  icon: taskDone == taskTotal
-                      ? Icon(Icons.check_circle, size: 14, color: AppColors.mint)
-                      : null,
+              if (mood != null)
+                _Chip(
+                  label: '${_emojis[mood]!} ${mood!.label}',
+                  bgColor: AppColors.primarySoft,
+                  textColor: AppColors.textMain,
                 ),
-              if (expenseNet != 0) _ExpenseStatChip(net: expenseNet),
+              if (eventCount > 0)
+                _Chip(
+                  label: '$eventCount event${eventCount == 1 ? '' : 's'}',
+                  bgColor: AppColors.primary.withValues(alpha: .15),
+                  textColor: AppColors.primary,
+                ),
+              if (taskTotal > 0)
+                _Chip(
+                  label: taskDone == taskTotal
+                      ? 'All tasks done ✅'
+                      : '$taskDone/$taskTotal tasks',
+                  bgColor: taskDone == taskTotal
+                      ? AppColors.mint.withValues(alpha: .18)
+                      : AppColors.sage.withValues(alpha: .22),
+                  textColor: taskDone == taskTotal
+                      ? AppColors.mint
+                      : AppColors.textMain,
+                ),
+              if (expenseNet != 0) ...[
+                _Chip(
+                  label: '${expenseNet > 0 ? "+" : ""}${expenseNet.toStringAsFixed(0)}',
+                  bgColor: (expenseNet > 0 ? AppColors.mint : AppColors.danger)
+                      .withValues(alpha: .18),
+                  textColor:
+                      expenseNet > 0 ? AppColors.mint : AppColors.danger,
+                ),
+              ],
               if (habitsTotal > 0)
-                _StatChip(label: '$habitsChecked/$habitsTotal habits'),
+                _Chip(
+                  label: '$habitsChecked/$habitsTotal habits',
+                  bgColor: AppColors.mint.withValues(alpha: .18),
+                  textColor: AppColors.mint,
+                ),
             ],
           ),
+          // Motivational message
           if (message != null) ...[
-            const SizedBox(height: AppSpacing.sm),
+            const SizedBox(height: AppSpacing.sm + 2),
             Text(
               message,
               style: TextStyle(
-                fontSize: 11,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textMuted,
+                height: 1.35,
               ),
               textAlign: TextAlign.center,
             ),
@@ -117,58 +150,33 @@ class DailySummaryCard extends StatelessWidget {
   }
 }
 
-class _StatChip extends StatelessWidget {
-  const _StatChip({required this.label, this.icon});
+class _Chip extends StatelessWidget {
+  const _Chip({
+    required this.label,
+    required this.bgColor,
+    required this.textColor,
+  });
 
   final String label;
-  final Widget? icon;
+  final Color bgColor;
+  final Color textColor;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.primarySoft.withValues(alpha: .5),
-        borderRadius: BorderRadius.circular(AppRadius.small),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (icon != null) ...[icon!, const SizedBox(width: 4)],
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textMain,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ExpenseStatChip extends StatelessWidget {
-  const _ExpenseStatChip({required this.net});
-
-  final double net;
-
-  @override
-  Widget build(BuildContext context) {
-    final isIncome = net > 0;
-    final sign = isIncome ? '+' : '';
-    final color = isIncome ? AppColors.mint : AppColors.danger;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: .15),
-        borderRadius: BorderRadius.circular(AppRadius.small),
+        color: bgColor,
+        borderRadius: BorderRadius.circular(AppRadius.sm),
       ),
       child: Text(
-        '$sign${net.toStringAsFixed(0)}',
-        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: color),
+        label,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+          color: textColor,
+          height: 1.2,
+        ),
       ),
     );
   }

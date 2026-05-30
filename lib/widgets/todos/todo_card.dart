@@ -20,23 +20,34 @@ class TodoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = switch (todo.priority) {
-      TodoPriority.low => AppColors.mint,
-      TodoPriority.medium => AppColors.yellow,
-      TodoPriority.high => AppColors.pink,
+      TodoPriority.low => AppColors.priorityLow,
+      TodoPriority.medium => AppColors.priorityMedium,
+      TodoPriority.high => AppColors.priorityHigh,
     };
 
     return Card(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppRadius.medium),
-        side: BorderSide(color: color.withValues(alpha: .6), width: 2),
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        side: BorderSide(
+          color: todo.isDone
+              ? AppColors.border.withValues(alpha: .4)
+              : color.withValues(alpha: .5),
+          width: todo.isDone ? 1 : 2,
+        ),
       ),
+      color: todo.isDone
+          ? AppColors.surface.withValues(alpha: .6)
+          : AppColors.surface,
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.sm),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm,
+          vertical: AppSpacing.sm - 2,
+        ),
         child: Row(
           children: [
             SizedBox(
-              width: 24,
-              height: 24,
+              width: 26,
+              height: 26,
               child: Checkbox(
                 value: todo.isDone,
                 onChanged: (_) => onToggle(),
@@ -46,18 +57,22 @@ class TodoCard extends StatelessWidget {
                 }),
               ),
             ),
-            const SizedBox(width: AppSpacing.xs),
+            const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     todo.title,
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: AppColors.textMain,
-                      fontWeight: FontWeight.w800,
+                      color: todo.isDone
+                          ? AppColors.textMuted
+                          : AppColors.textMain,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
                       decoration: todo.isDone
                           ? TextDecoration.lineThrough
                           : TextDecoration.none,
@@ -67,18 +82,19 @@ class TodoCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,
-                      vertical: 4,
+                      vertical: 3,
                     ),
                     decoration: BoxDecoration(
-                      color: color.withValues(alpha: .25),
-                      borderRadius: BorderRadius.circular(AppRadius.small),
+                      color: color.withValues(alpha: .2),
+                      borderRadius: BorderRadius.circular(AppRadius.xs),
                     ),
                     child: Text(
                       todo.priority.label,
                       style: TextStyle(
                         color: color,
-                        fontSize: 11,
+                        fontSize: 10,
                         fontWeight: FontWeight.w800,
+                        letterSpacing: .3,
                       ),
                     ),
                   ),
@@ -88,7 +104,12 @@ class TodoCard extends StatelessWidget {
             IconButton(
               tooltip: 'Delete',
               onPressed: onDelete,
-              icon: const Icon(Icons.delete_outline_rounded),
+              icon: Icon(
+                Icons.delete_outline_rounded,
+                size: 19,
+                color: AppColors.textMuted,
+              ),
+              visualDensity: VisualDensity.compact,
             ),
           ],
         ),

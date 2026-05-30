@@ -1,5 +1,38 @@
 # Changelog
 
+## v4.5.0 — 2026-05-30 (fix)
+
+**Login text visibility fix + bottom sheet width constraint**
+
+- Fixed login/register text fields: replaced near-transparent fill with opaque dark glass panel for clear contrast against white text in both light and dark modes
+- Hint text, prefix icons, and password visibility toggle now have sufficient contrast
+- Bottom sheets (`showAppBottomSheet`) now cap at 600px max-width on desktop, centered, preventing full-width stretching
+- On mobile screens, bottom sheets still use full width for compact layout
+
+**Full UI/UX redesign — polished, modern, and consistent**
+
+- Complete design system overhaul with enhanced color palette, spacing scale, radius tokens, and typography
+- New reusable component library: `PlannerCard` (soft glass card), `PlannerScaffold` / `PlannerPage` (centered layout)
+- Redesigned login screen with glass-texture input fields, refined logo, staggered entrance animations, and proper keyboard scrolling
+- Redesigned calendar home screen with centered max-width layout, improved calendar grid card, and better visual hierarchy
+- Redesigned module cards with colored icon boxes and consistent spacing
+- Redesigned daily summary card with wrapped stat chips and emoji-rich motivational messages
+- Redesigned task cards with color-coded priority borders, improved checkbox, and clearer completed state
+- Redesigned habit checklist with PlannerCard styling, per-habit color theming, and improved streak badges
+- Redesigned mood picker with animated selection, per-mood colors, and better touch targets
+- Redesigned settings screen with grouped cards, section labels, and polished app info header
+- Improved bottom sheet behavior: proper scroll handling via `FormShell`, `isScrollControlled`, and max-height constraints
+- All forms now scroll correctly on small screens — fields and buttons never overflow
+- Quick-actions bottom sheet redesigned with colored icon tiles
+- Dark mode now feels intentionally designed: cool-toned palette, deep navy gradients, carefully tuned borders and surfaces
+- Light mode: warmer cream background, soft pastel accents, subtle gradient overlay
+- Calendar background upgraded to gradient overlay for depth in both themes
+- Consistent spacing across all screens using the `AppSpacing` token system
+- Better empty states with rounded icon containers and optional action buttons
+- Centered content layout on desktop/wide screens (max 640px) while keeping mobile compact
+- Bug fix: removed nested `SingleChildScrollView` in event and expense forms (now handled by `FormShell`)
+- Updated `AppRadius` with backward-compatible aliases (`small`/`medium`/`large`)
+
 ## v4.4.0 — 2026-05-29
 
 **Firestore persistence for all planner data + per-account dark mode fix**

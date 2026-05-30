@@ -7,31 +7,10 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_date_utils.dart';
 import '../../theme/app_radius.dart';
 import '../../theme/app_spacing.dart';
+import '../../theme/app_text_styles.dart';
 import '../common/empty_state.dart';
-import '../common/soft_card.dart';
+import '../common/planner_card.dart';
 import 'todo_card.dart';
-
-class _PriorityCount extends StatelessWidget {
-  const _PriorityCount({required this.label, required this.color});
-
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: .18),
-        borderRadius: BorderRadius.circular(AppRadius.small),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: color),
-      ),
-    );
-  }
-}
 
 class TodoList extends ConsumerWidget {
   const TodoList({
@@ -56,39 +35,73 @@ class TodoList extends ConsumerWidget {
 
     final doneCount = todos.where((todo) => todo.isDone).length;
     final progress = todos.isEmpty ? 0.0 : doneCount / todos.length;
-    final highCount = todos.where((t) => t.priority == TodoPriority.high).length;
-    final mediumCount = todos.where((t) => t.priority == TodoPriority.medium).length;
-    final lowCount = todos.where((t) => t.priority == TodoPriority.low).length;
+    final highCount =
+        todos.where((t) => t.priority == TodoPriority.high).length;
+    final mediumCount =
+        todos.where((t) => t.priority == TodoPriority.medium).length;
+    final lowCount =
+        todos.where((t) => t.priority == TodoPriority.low).length;
 
     return ListView(
-      padding: EdgeInsets.zero,
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.screenH,
+        0,
+        AppSpacing.screenH,
+        AppSpacing.screenH,
+      ),
       children: [
-        SoftCard(
+        // Progress card
+        PlannerCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '$doneCount of ${todos.length} Done',
-                style: TextStyle(
-                  color: AppColors.textMain,
-                  fontWeight: FontWeight.w900,
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '$doneCount of ${todos.length} Done',
+                      style: AppTextStyles.subheading,
+                    ),
+                  ),
+                  Text(
+                    '${(progress * 100).round()}%',
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: AppSpacing.sm),
-              LinearProgressIndicator(value: progress),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: progress,
+                  minHeight: 6,
+                  backgroundColor: AppColors.border.withValues(alpha: .35),
+                  color: progress >= 1 ? AppColors.mint : AppColors.primary,
+                ),
+              ),
               if (todos.isNotEmpty) ...[
-                const SizedBox(height: AppSpacing.sm),
-                Row(
+                const SizedBox(height: AppSpacing.sm + 4),
+                Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.xs,
                   children: [
-                    if (highCount > 0) _PriorityCount(label: '$highCount high', color: AppColors.pink),
-                    if (mediumCount > 0) _PriorityCount(label: '$mediumCount med', color: AppColors.yellow),
-                    if (lowCount > 0) _PriorityCount(label: '$lowCount low', color: AppColors.mint),
-                  ].map((w) => Padding(padding: const EdgeInsets.only(right: AppSpacing.sm), child: w)).toList(),
+                    if (highCount > 0)
+                      _Pill(label: '$highCount high', color: AppColors.priorityHigh),
+                    if (mediumCount > 0)
+                      _Pill(label: '$mediumCount med', color: AppColors.priorityMedium),
+                    if (lowCount > 0)
+                      _Pill(label: '$lowCount low', color: AppColors.priorityLow),
+                  ],
                 ),
               ],
             ],
           ),
         ),
+        // Clear done button
         if (onClearDone != null && doneCount > 0) ...[
           const SizedBox(height: AppSpacing.sm),
           Align(
@@ -119,31 +132,29 @@ class TodoList extends ConsumerWidget {
                   ),
                 );
               },
-              icon: Icon(Icons.clear_all_rounded, size: 16),
+              icon: const Icon(Icons.clear_all_rounded, size: 16),
               label: Text('Clear $doneCount done'),
               style: TextButton.styleFrom(
                 foregroundColor: AppColors.textMuted,
-                textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                textStyle:
+                    const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
               ),
             ),
           ),
         ],
-        const SizedBox(height: AppSpacing.md),
+        const SizedBox(height: AppSpacing.cardGap),
+        // Task list or empty state
         if (todos.isEmpty)
-          const SoftCard(
-            child: EmptyState(
-              icon: Icons.check_circle_outline_rounded,
-              title: 'Today Tasks',
-              message: 'No tasks yet',
-            ),
+          const EmptyState(
+            icon: Icons.check_circle_outline_rounded,
+            title: 'Today Tasks',
+            message: 'No tasks yet',
           )
         else if (doneCount == todos.length)
-          const SoftCard(
-            child: EmptyState(
-              icon: Icons.celebration_outlined,
-              title: 'All done!',
-              message: 'Every task is complete — great work!',
-            ),
+          const EmptyState(
+            icon: Icons.celebration_outlined,
+            title: 'All done!',
+            message: 'Every task is complete — great work!',
           )
         else
           ...todos.map(
@@ -154,12 +165,13 @@ class TodoList extends ConsumerWidget {
                 direction: DismissDirection.endToStart,
                 background: Container(
                   alignment: Alignment.centerRight,
-                  padding: const EdgeInsets.only(right: AppSpacing.md),
+                  padding: const EdgeInsets.only(right: AppSpacing.lg),
                   decoration: BoxDecoration(
                     color: AppColors.danger.withValues(alpha: .85),
-                    borderRadius: BorderRadius.circular(AppRadius.medium),
+                    borderRadius: BorderRadius.circular(AppRadius.md),
                   ),
-                  child: const Icon(Icons.delete_rounded, color: Colors.white, size: 20),
+                  child: const Icon(Icons.delete_rounded,
+                      color: Colors.white, size: 22),
                 ),
                 onDismissed: (_) => onDelete(todo),
                 child: TodoCard(
@@ -173,5 +185,29 @@ class TodoList extends ConsumerWidget {
       ],
     );
   }
+}
 
+class _Pill extends StatelessWidget {
+  const _Pill({required this.label, required this.color});
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: .18),
+        borderRadius: BorderRadius.circular(AppRadius.xs),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+          color: color,
+        ),
+      ),
+    );
+  }
 }

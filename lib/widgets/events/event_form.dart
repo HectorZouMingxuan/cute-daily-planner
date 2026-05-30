@@ -95,8 +95,7 @@ class _EventFormState extends ConsumerState<EventForm> {
       ),
       child: Form(
         key: _formKey,
-        child: SingleChildScrollView(
-          child: Column(
+        child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -161,7 +160,6 @@ class _EventFormState extends ConsumerState<EventForm> {
             ],
           ),
         ),
-      ),
     );
   }
 

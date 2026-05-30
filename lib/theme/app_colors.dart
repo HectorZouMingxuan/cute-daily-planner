@@ -1,97 +1,153 @@
 import 'package:flutter/material.dart';
 
+/// Central color system for the Cute Daily Planner.
+///
+/// Every color is brightness-aware so light and dark modes both feel
+/// intentionally designed rather than mechanically inverted.
 class AppColors {
   AppColors._();
 
   static Brightness brightness = Brightness.light;
 
-  // Light accent colors (warm palette)
-  static const _primaryLight = Color(0xFFD8A84E);
-  static const _primarySoftLight = Color(0xFFF7E7C3);
-  static const _mintLight = Color(0xFF9DBB9A);
-  static const _sageLight = Color(0xFFC8D8BE);
-  static const _pinkLight = Color(0xFFDFA7A0);
-  static const _lavenderLight = Color(0xFFB9A7CF);
-  static const _yellowLight = Color(0xFFEBC66F);
+  // ── Light palette (warm, soft, pastel) ──────────────────────────
+  static const _primaryLight = Color(0xFFD4A84B);
+  static const _primarySoftLight = Color(0xFFF9F0D7);
+  static const _mintLight = Color(0xFF8AAF8A);
+  static const _sageLight = Color(0xFFBCCCB4);
+  static const _pinkLight = Color(0xFFDCA9A2);
+  static const _lavenderLight = Color(0xFFB8A6CE);
+  static const _yellowLight = Color(0xFFE8C36A);
+  static const _peachLight = Color(0xFFF2C9A6);
+  static const _skyLight = Color(0xFFA4C8E1);
 
-  // Dark accent colors (cool palette)
-  static const _primaryDark = Color(0xFF7B9EC7);
-  static const _primarySoftDark = Color(0xFF1A1F2E);
-  static const _mintDark = Color(0xFF7BA89A);
-  static const _sageDark = Color(0xFF8FA89A);
-  static const _pinkDark = Color(0xFFB89A9E);
-  static const _lavenderDark = Color(0xFF9B95B8);
-  static const _yellowDark = Color(0xFFC9B86F);
+  // ── Dark palette (cool, deep, calm) ─────────────────────────────
+  static const _primaryDark = Color(0xFF8BADD4);
+  static const _primarySoftDark = Color(0xFF1A2030);
+  static const _mintDark = Color(0xFF7CA897);
+  static const _sageDark = Color(0xFF8A9E8E);
+  static const _pinkDark = Color(0xFFC4A0A4);
+  static const _lavenderDark = Color(0xFF9F99BA);
+  static const _yellowDark = Color(0xFFC9B872);
+  static const _peachDark = Color(0xFFC4A892);
+  static const _skyDark = Color(0xFF88A8C4);
 
-  // Accent colors — theme-aware
+  // ── Accent getters ──────────────────────────────────────────────
+
   static Color get primary =>
       brightness == Brightness.dark ? _primaryDark : _primaryLight;
+
   static Color get primarySoft =>
       brightness == Brightness.dark ? _primarySoftDark : _primarySoftLight;
+
   static Color get mint =>
       brightness == Brightness.dark ? _mintDark : _mintLight;
+
   static Color get sage =>
       brightness == Brightness.dark ? _sageDark : _sageLight;
+
   static Color get pink =>
       brightness == Brightness.dark ? _pinkDark : _pinkLight;
+
   static Color get lavender =>
       brightness == Brightness.dark ? _lavenderDark : _lavenderLight;
+
   static Color get yellow =>
       brightness == Brightness.dark ? _yellowDark : _yellowLight;
 
+  static Color get peach =>
+      brightness == Brightness.dark ? _peachDark : _peachLight;
+
+  static Color get sky =>
+      brightness == Brightness.dark ? _skyDark : _skyLight;
+
   static const danger = Color(0xFFC85B63);
 
-  // Light-only
-  static const Color _backgroundLight = Color(0xFFF8FAFC);
-  static const Color _surfaceLight = Color(0xFFFFFFFF);
-  static const Color _inkLight = Color(0xFF171D1B);
-  static const Color _smokeLight = Color(0xFF2D332F);
-  static const Color _textMainLight = Color(0xFF202820);
-  static const Color _textMutedLight = Color(0xFF6F786F);
-  static const Color _borderLight = Color(0xFFE8DECC);
+  // ── Surface / text / border ─────────────────────────────────────
 
-  // Dark-only
-  static const Color _backgroundDark = Color(0xFF0E1218);
-  static const Color _surfaceDark = Color(0xFF1A1F28);
-  static const Color _inkDark = Color(0xFFE0E4E8);
-  static const Color _smokeDark = Color(0xFFB0B8C0);
-  static const Color _textMainDark = Color(0xFFE0E4E8);
-  static const Color _textMutedDark = Color(0xFF88909C);
-  static const Color _borderDark = Color(0xFF2A3040);
+  static const _bgLight = Color(0xFFF6F4F0);
+  static const _bgDark = Color(0xFF0C1018);
+
+  static const _surfaceLight = Color(0xFFFFFFFF);
+  static const _surfaceDark = Color(0xFF151B26);
+
+  static const _surfaceAltLight = Color(0xFFFDF9F2);
+  static const _surfaceAltDark = Color(0xFF1A2030);
+
+  static const _inkLight = Color(0xFF1F2320);
+  static const _inkDark = Color(0xFFE4E8EE);
+
+  static const _smokeLight = Color(0xFF5A605A);
+  static const _smokeDark = Color(0xFF98A0AC);
+
+  static const _textMainLight = Color(0xFF222622);
+  static const _textMainDark = Color(0xFFE4E8EE);
+
+  static const _textMutedLight = Color(0xFF7A827A);
+  static const _textMutedDark = Color(0xFF88909C);
+
+  static const _borderLight = Color(0xFFE6DDCC);
+  static const _borderDark = Color(0xFF2A3242);
 
   static Color get background =>
-      brightness == Brightness.dark ? _backgroundDark : _backgroundLight;
+      brightness == Brightness.dark ? _bgDark : _bgLight;
+
   static Color get surface =>
       brightness == Brightness.dark ? _surfaceDark : _surfaceLight;
+
+  static Color get surfaceAlt =>
+      brightness == Brightness.dark ? _surfaceAltDark : _surfaceAltLight;
+
   static Color get ink =>
       brightness == Brightness.dark ? _inkDark : _inkLight;
+
   static Color get smoke =>
       brightness == Brightness.dark ? _smokeDark : _smokeLight;
+
   static Color get textMain =>
       brightness == Brightness.dark ? _textMainDark : _textMainLight;
+
   static Color get textMuted =>
       brightness == Brightness.dark ? _textMutedDark : _textMutedLight;
+
   static Color get border =>
       brightness == Brightness.dark ? _borderDark : _borderLight;
 
-  /// Background overlay for the calendar screen.
-  /// Light: warm translucent beige. Dark: deep navy with high opacity.
+  /// Warm / cool overlay for the calendar background.
   static Color get backgroundOverlay => brightness == Brightness.dark
-      ? _primarySoftDark.withValues(alpha: .75)
-      : _primarySoftLight.withValues(alpha: .32);
+      ? _primarySoftDark.withValues(alpha: .78)
+      : const Color(0xFFF9F0D7).withValues(alpha: .28);
 
-  /// Dim overlay for login screen backgrounds. Always dark.
+  /// Dim overlay for login screens.
   static Color get dimOverlay => brightness == Brightness.dark
-      ? const Color(0xFF0A0D14).withValues(alpha: .72)
-      : const Color(0xFF171D1B).withValues(alpha: .45);
+      ? const Color(0xFF080C14).withValues(alpha: .76)
+      : const Color(0xFF1F2320).withValues(alpha: .42);
 
-  /// Semi-transparent app bar background. Always reads as dark.
+  /// Semi-transparent app bar.
   static Color get appBarBg => brightness == Brightness.dark
-      ? const Color(0xFF0F141E).withValues(alpha: .8)
-      : const Color(0xFF171D1B).withValues(alpha: .72);
+      ? const Color(0xFF0E1420).withValues(alpha: .85)
+      : const Color(0xFF1F2320).withValues(alpha: .78);
 
-  /// Highlight for today's row in weekly overview. Visible in both themes.
+  /// Today row highlight.
   static Color get todayHighlight => brightness == Brightness.dark
-      ? _primaryDark.withValues(alpha: .28)
-      : _primarySoftLight.withValues(alpha: .55);
+      ? _primaryDark.withValues(alpha: .24)
+      : _primarySoftLight.withValues(alpha: .5);
+
+  // ── Priority colors (theme-stable) ──────────────────────────────
+
+  static const priorityHigh = Color(0xFFD4878A);
+  static const priorityMedium = Color(0xFFD4B84B);
+  static const priorityLow = Color(0xFF8AAF8A);
+
+  // ── Mood colors ─────────────────────────────────────────────────
+
+  static Color moodGreat(Color fallback) =>
+      brightness == Brightness.dark ? const Color(0xFFC9B872) : const Color(0xFFE8C36A);
+  static Color moodGood(Color fallback) =>
+      brightness == Brightness.dark ? const Color(0xFF8BADD4) : const Color(0xFFA4C8E1);
+  static Color moodOkay(Color fallback) =>
+      brightness == Brightness.dark ? const Color(0xFF8A9E8E) : const Color(0xFFBCCCB4);
+  static Color moodTired(Color fallback) =>
+      brightness == Brightness.dark ? const Color(0xFF9F99BA) : const Color(0xFFB8A6CE);
+  static Color moodBad(Color fallback) =>
+      brightness == Brightness.dark ? const Color(0xFFC4A0A4) : const Color(0xFFDCA9A2);
 }

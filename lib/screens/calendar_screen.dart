@@ -24,12 +24,12 @@ import '../providers/todo_provider.dart';
 import '../recurrence/recurrence_calculator.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_date_utils.dart';
+import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
 import '../widgets/common/app_bottom_sheet.dart';
 import '../widgets/common/app_notification.dart';
-import '../widgets/common/soft_card.dart';
-import '../widgets/common/responsive_wrapper.dart';
+import '../widgets/common/planner_card.dart';
 import '../widgets/common/sync_status_badge.dart';
 import '../widgets/calendar/month_view.dart';
 import '../widgets/home/daily_summary_card.dart';
@@ -94,13 +94,20 @@ class CalendarScreen extends ConsumerWidget {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Cute Daily Planner', style: TextStyle(fontSize: 16)),
+            const Text(
+              'Cute Daily Planner',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+            ),
             () {
               final authUser = ref.watch(authStateProvider).asData?.value;
               if (authUser != null) {
                 return Text(
                   _greeting(authUser.displayName),
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white.withValues(alpha: .8),
+                  ),
                 );
               }
               return const SizedBox.shrink();
@@ -112,9 +119,7 @@ class CalendarScreen extends ConsumerWidget {
         actions: [
           IconButton(
             tooltip: 'Weekly overview',
-            onPressed: () {
-              Navigator.of(context).pushNamed('/weekly');
-            },
+            onPressed: () => Navigator.of(context).pushNamed('/weekly'),
             icon: const Icon(Icons.view_week_rounded),
           ),
           Center(child: SyncStatusBadge(label: syncState.status.label)),
@@ -125,40 +130,17 @@ class CalendarScreen extends ConsumerWidget {
           ),
           IconButton(
             tooltip: 'Settings',
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (context) => const SettingsScreen(),
-                ),
-              );
-            },
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const SettingsScreen(),
+              ),
+            ),
             icon: const Icon(Icons.settings_outlined),
           ),
           IconButton(
             tooltip: 'Logout',
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  title: const Text('Logout'),
-                  content: const Text('Are you sure you want to logout?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(ctx),
-                      child: const Text('Cancel'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(ctx);
-                        ref.read(authControllerProvider).signOut();
-                      },
-                      child: const Text('Logout'),
-                    ),
-                  ],
-                ),
-              );
-            },
-            icon: Icon(Icons.logout_rounded),
+            onPressed: () => _confirmLogout(context, ref),
+            icon: const Icon(Icons.logout_rounded),
           ),
         ],
       ),
@@ -166,42 +148,28 @@ class CalendarScreen extends ConsumerWidget {
         child: Stack(
           children: [
             const CalendarBackground(),
-            ResponsiveWrapper(
-              child: ListView(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                children: [
-                CalendarHeader(
-                  monthTitle: monthTitle,
-                  monthlySummary: monthlySummary,
-                  calendarController: calendarController,
-                  onMonthTap: () => showMonthPickerDialog(
-                    context,
-                    calendarView.focusedDay,
-                    calendarController,
-                  ),
-                ),
-                Stack(
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 640),
+                child: ListView(
+                  padding: const EdgeInsets.all(AppSpacing.screenH),
                   children: [
-                    Positioned(
-                      top: 0,
-                      left: 18,
-                      right: 18,
-                      child: Container(
-                        height: 6,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(999),
-                          gradient: LinearGradient(
-                            colors: [
-                              AppColors.primary,
-                              AppColors.sage,
-                              AppColors.lavender,
-                            ],
-                          ),
-                        ),
+                    CalendarHeader(
+                      monthTitle: monthTitle,
+                      monthlySummary: monthlySummary,
+                      calendarController: calendarController,
+                      onMonthTap: () => showMonthPickerDialog(
+                        context,
+                        calendarView.focusedDay,
+                        calendarController,
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4),
+                    // Calendar grid card
+                    PlannerCard(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.sm,
+                        vertical: AppSpacing.sm,
+                      ),
                       child: GestureDetector(
                         onHorizontalDragEnd: (details) {
                           if (details.primaryVelocity == null) return;
@@ -211,9 +179,7 @@ class CalendarScreen extends ConsumerWidget {
                             calendarController.goToPreviousMonth();
                           }
                         },
-                        child: SoftCard(
-                          padding: const EdgeInsets.all(AppSpacing.sm),
-                          child: MonthView(
+                        child: MonthView(
                           focusedDay: calendarView.focusedDay,
                           selectedDay: calendarView.selectedDay,
                           eventLoader: (day) =>
@@ -232,20 +198,17 @@ class CalendarScreen extends ConsumerWidget {
                                 tasks.every((t) => t.isDone);
                           },
                           hasEventsLoader: (day) =>
-                              _eventsForDay(
-                                  eventList.value ?? const [], day)
+                              _eventsForDay(eventList.value ?? const [], day)
                                   .isNotEmpty,
                           moodLoader: (day) {
                             final entry = (moodList.value ?? const [])
-                                .where(
-                                    (m) => AppDateUtils.isSameDate(m.date, day))
+                                .where((m) => AppDateUtils.isSameDate(m.date, day))
                                 .firstOrNull;
                             return entry?.mood;
                           },
                           expenseNetLoader: (day) {
                             final entries = (expenseList.value ?? const [])
-                                .where(
-                                    (e) => AppDateUtils.isSameDate(e.date, day))
+                                .where((e) => AppDateUtils.isSameDate(e.date, day))
                                 .toList();
                             if (entries.isEmpty) return null;
                             final net = entries.fold<double>(
@@ -260,8 +223,8 @@ class CalendarScreen extends ConsumerWidget {
                           },
                           onDaySelected: calendarController.selectDay,
                           onEventDropped: (event, targetDay) async {
-                            final movedEvent = _dragEventController
-                                .moveEventToDay(event, targetDay);
+                            final movedEvent =
+                                _dragEventController.moveEventToDay(event, targetDay);
                             await eventController.saveEvent(movedEvent);
                             calendarController.selectDay(targetDay, targetDay);
                             eventsSheet?.close();
@@ -271,371 +234,353 @@ class CalendarScreen extends ConsumerWidget {
                           },
                           onDayLongPress: (day) {
                             calendarController.selectDay(day, day);
-                            showModalBottomSheet(
-                              context: context,
-                              builder: (ctx) => SafeArea(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    ListTile(
-                                      leading: const Icon(Icons.add_rounded),
-                                      title: const Text('Add Event'),
+                            _showQuickActions(
+                              context,
+                              ref,
+                              day,
+                              eventController,
+                              todoController,
+                              expenseController,
+                              noteController,
+                              noteList,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.section),
+                    // Selected date title
+                    Text(selectedDateTitle, style: AppTextStyles.heading),
+                    const SizedBox(height: AppSpacing.sm),
+                    // Daily summary
+                    () {
+                      final selectedEvents = _eventsForDay(
+                        eventList.value ?? const [],
+                        calendarView.selectedDay,
+                      )..sort((a, b) => a.startAt.compareTo(b.startAt));
+                      final selectedExpenses = (expenseList.value ?? const [])
+                          .where((e) => AppDateUtils.isSameDate(
+                              e.date, calendarView.selectedDay))
+                          .toList();
+                      final selectedTodos = (todoList.value ?? const [])
+                          .where((t) => AppDateUtils.isSameDate(
+                              t.date, calendarView.selectedDay))
+                          .toList();
+                      final selectedNote = (noteList.value ?? const [])
+                          .where((n) => AppDateUtils.isSameDate(
+                              n.date, calendarView.selectedDay))
+                          .firstOrNull;
+                      final selectedMood = (moodList.value ?? const [])
+                          .where((m) => AppDateUtils.isSameDate(
+                              m.date, calendarView.selectedDay))
+                          .firstOrNull;
+                      final habits = habitState.valueOrNullForUi.habits;
+                      final habitCheckIns = habitState.valueOrNullForUi.checkIns;
+                      final taskDoneCount =
+                          selectedTodos.where((t) => t.isDone).length;
+                      final taskTotal = selectedTodos.length;
+                      final expenseNet = selectedExpenses.fold<double>(
+                        0,
+                        (sum, e) => e.type == ExpenseType.income
+                            ? sum + e.amount
+                            : sum - e.amount,
+                      );
+                      final habitsCheckedToday = habitCheckIns
+                          .where((c) =>
+                              AppDateUtils.isSameDate(
+                                  c.date, calendarView.selectedDay) &&
+                              c.isDone)
+                          .length;
+                      final habitsTotal = habits.length;
+
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          DailySummaryCard(
+                            mood: selectedMood?.mood,
+                            expenseNet: expenseNet,
+                            taskDone: taskDoneCount,
+                            taskTotal: taskTotal,
+                            eventCount: selectedEvents.length,
+                            habitsChecked: habitsCheckedToday,
+                            habitsTotal: habitsTotal,
+                          ),
+                          const SizedBox(height: AppSpacing.cardGap),
+                          UpcomingEventsCard(
+                            events:
+                                _upcomingEvents(eventList.value ?? const []),
+                          ),
+                          const SizedBox(height: AppSpacing.cardGap),
+                          // Module grid — 2 columns
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              final cardWidth =
+                                  (constraints.maxWidth - AppSpacing.cardGap) /
+                                      2;
+
+                              return Wrap(
+                                spacing: AppSpacing.cardGap,
+                                runSpacing: AppSpacing.cardGap,
+                                children: [
+                                  SizedBox(
+                                    width: cardWidth,
+                                    child: ModuleCard(
+                                      icon: Icons.event_rounded,
+                                      title: 'Events',
+                                      color: AppColors.primary,
+                                      subtitle: selectedEvents.isEmpty
+                                          ? 'None'
+                                          : _eventSubtitle(selectedEvents),
                                       onTap: () {
-                                        Navigator.pop(ctx);
-                                        _openEventForm(
-                                          context: context,
-                                          eventController: eventController,
-                                          selectedDate: day,
-                                        );
-                                      },
-                                    ),
-                                    ListTile(
-                                      leading: const Icon(Icons.checklist_rounded),
-                                      title: const Text('Add Task'),
-                                      onTap: () {
-                                        Navigator.pop(ctx);
-                                        _openTodoForm(
-                                          context: context,
-                                          todoController: todoController,
-                                          selectedDate: day,
-                                        );
-                                      },
-                                    ),
-                                    ListTile(
-                                      leading: const Icon(Icons.account_balance_wallet_rounded),
-                                      title: const Text('Add Expense'),
-                                      onTap: () {
-                                        Navigator.pop(ctx);
-                                        _openExpenseForm(
-                                          context: context,
-                                          expenseController: expenseController,
-                                          selectedDate: day,
-                                        );
-                                      },
-                                    ),
-                                    ListTile(
-                                      leading: const Icon(Icons.edit_note_rounded),
-                                      title: const Text('Add Note'),
-                                      onTap: () {
-                                        Navigator.pop(ctx);
-                                        final dayNote = (noteList.value ?? const [])
-                                            .where((n) => AppDateUtils.isSameDate(n.date, day))
-                                            .firstOrNull;
-                                        showAppBottomSheet(
-                                          context: context,
-                                          child: NotesSheet(
-                                            selectedDate: day,
-                                            note: dayNote,
-                                            onSave: (note) async {
-                                              await noteController.saveNote(note);
+                                        final scaffold = Scaffold.of(context);
+                                        eventsSheet =
+                                            scaffold.showBottomSheet(
+                                          (sheetContext) => EventsSheet(
+                                            selectedDate:
+                                                calendarView.selectedDay,
+                                            events: selectedEvents,
+                                            onAdd: () {
+                                              eventsSheet?.close();
+                                              _openEventForm(
+                                                context: context,
+                                                eventController:
+                                                    eventController,
+                                                selectedDate:
+                                                    calendarView.selectedDay,
+                                              );
+                                            },
+                                            onEventTap: (event) {
+                                              eventsSheet?.close();
+                                              _openEventForm(
+                                                context: context,
+                                                eventController:
+                                                    eventController,
+                                                selectedDate:
+                                                    calendarView.selectedDay,
+                                                event: event,
+                                              );
                                             },
                                           ),
                                         );
                                       },
                                     ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                Text(selectedDateTitle, style: AppTextStyles.sectionTitle),
-                const SizedBox(height: AppSpacing.sm),
-                () {
-                  final selectedEvents = _eventsForDay(
-                    eventList.value ?? const [],
-                    calendarView.selectedDay,
-                  )..sort((a, b) => a.startAt.compareTo(b.startAt));
-                  final selectedExpenses = (expenseList.value ?? const [])
-                      .where(
-                        (e) => AppDateUtils.isSameDate(e.date, calendarView.selectedDay),
-                      )
-                      .toList();
-                  final selectedTodos = (todoList.value ?? const [])
-                      .where(
-                        (t) => AppDateUtils.isSameDate(t.date, calendarView.selectedDay),
-                      )
-                      .toList();
-                  final selectedNote =
-                      (noteList.value ?? const [])
-                          .where(
-                            (n) => AppDateUtils.isSameDate(
-                              n.date,
-                              calendarView.selectedDay,
-                            ),
-                          )
-                          .firstOrNull;
-                  final selectedMood =
-                      (moodList.value ?? const [])
-                          .where(
-                            (m) => AppDateUtils.isSameDate(
-                              m.date,
-                              calendarView.selectedDay,
-                            ),
-                          )
-                          .firstOrNull;
-                  final habits = habitState.valueOrNullForUi.habits;
-                  final habitCheckIns = habitState.valueOrNullForUi.checkIns;
-                  final taskDoneCount = selectedTodos.where((t) => t.isDone).length;
-                  final taskTotal = selectedTodos.length;
-                  final expenseNet = selectedExpenses.fold<double>(
-                    0,
-                    (sum, e) => e.type == ExpenseType.income
-                        ? sum + e.amount
-                        : sum - e.amount,
-                  );
-                  final habitsCheckedToday = habitCheckIns
-                      .where((c) => AppDateUtils.isSameDate(c.date, calendarView.selectedDay) && c.isDone)
-                      .length;
-                  final habitsTotal = habits.length;
-
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      DailySummaryCard(
-                        mood: selectedMood?.mood,
-                        expenseNet: expenseNet,
-                        taskDone: taskDoneCount,
-                        taskTotal: taskTotal,
-                        eventCount: selectedEvents.length,
-                        habitsChecked: habitsCheckedToday,
-                        habitsTotal: habitsTotal,
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      UpcomingEventsCard(events: _upcomingEvents(eventList.value ?? const [])),
-                      const SizedBox(height: AppSpacing.md),
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          final cardWidth =
-                              (constraints.maxWidth - AppSpacing.md) / 2;
-
-                    return Wrap(
-                      spacing: AppSpacing.md,
-                      runSpacing: AppSpacing.md,
-                      children: [
-                        SizedBox(
-                          width: cardWidth,
-                          child: ModuleCard(
-                            icon: Icons.event_rounded,
-                            title: 'Events',
-                            color: AppColors.primary,
-                            subtitle: selectedEvents.isEmpty
-                                ? 'None'
-                                : _eventSubtitle(selectedEvents),
-                            onTap: () {
-                              final scaffold =
-                                  Scaffold.of(context);
-                              eventsSheet = scaffold.showBottomSheet(
-                                (sheetContext) => EventsSheet(
-                                  selectedDate: calendarView.selectedDay,
-                                  events: selectedEvents,
-                                  onAdd: () {
-                                    eventsSheet?.close();
-                                    _openEventForm(
-                                      context: context,
-                                      eventController: eventController,
-                                      selectedDate: calendarView.selectedDay,
-                                    );
-                                  },
-                                  onEventTap: (event) {
-                                    eventsSheet?.close();
-                                    _openEventForm(
-                                      context: context,
-                                      eventController: eventController,
-                                      selectedDate: calendarView.selectedDay,
-                                      event: event,
-                                    );
-                                  },
-                                ),
+                                  ),
+                                  SizedBox(
+                                    width: cardWidth,
+                                    child: ModuleCard(
+                                      icon:
+                                          Icons.account_balance_wallet_rounded,
+                                      title: 'Expenses',
+                                      color: AppColors.yellow,
+                                      subtitle: selectedExpenses.isEmpty
+                                          ? 'None'
+                                          : _expenseSubtitle(expenseNet,
+                                              selectedExpenses.length),
+                                      onTap: () => showAppBottomSheet(
+                                        context: context,
+                                        child: ExpensesSheet(
+                                          selectedDate:
+                                              calendarView.selectedDay,
+                                          expenses: selectedExpenses,
+                                          allExpenses:
+                                              expenseList.value ?? const [],
+                                          onAdd: () => _openExpenseForm(
+                                            context: context,
+                                            expenseController:
+                                                expenseController,
+                                            selectedDate:
+                                                calendarView.selectedDay,
+                                          ),
+                                          onExpenseTap: (expense) =>
+                                              _openExpenseForm(
+                                            context: context,
+                                            expenseController:
+                                                expenseController,
+                                            selectedDate:
+                                                calendarView.selectedDay,
+                                            expense: expense,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: cardWidth,
+                                    child: ModuleCard(
+                                      icon: Icons.checklist_rounded,
+                                      title: 'Tasks',
+                                      color: AppColors.sage,
+                                      subtitle: selectedTodos.isEmpty
+                                          ? 'None'
+                                          : _taskSubtitle(
+                                              taskDoneCount, taskTotal),
+                                      onTap: () => showAppBottomSheet(
+                                        context: context,
+                                        child: TasksSheet(
+                                          selectedDate:
+                                              calendarView.selectedDay,
+                                          onAdd: () => _openTodoForm(
+                                            context: context,
+                                            todoController: todoController,
+                                            selectedDate:
+                                                calendarView.selectedDay,
+                                          ),
+                                          onToggle: (todo) async {
+                                            await todoController
+                                                .toggleDone(todo);
+                                            if (!context.mounted) return;
+                                            final newIsDone = !todo.isDone;
+                                            AppNotification.success(
+                                              context,
+                                              newIsDone
+                                                  ? 'Task completed'
+                                                  : 'Task marked as incomplete',
+                                            );
+                                            final currentTodos =
+                                                ref
+                                                    .read(todoListProvider)
+                                                    .value ?? [];
+                                            final dayTodos = currentTodos
+                                                .where((t) =>
+                                                    AppDateUtils.isSameDate(
+                                                        t.date,
+                                                        calendarView
+                                                            .selectedDay))
+                                                .toList();
+                                            if (dayTodos.isNotEmpty &&
+                                                dayTodos.every(
+                                                    (t) => t.isDone)) {
+                                              AppNotification.success(
+                                                context,
+                                                'All tasks completed for the day!',
+                                              );
+                                            }
+                                          },
+                                          onDelete: (todo) {
+                                            todoController.deleteTodo(todo);
+                                            AppNotification.confirm(
+                                              context,
+                                              'Task deleted',
+                                              actionLabel: 'Undo',
+                                              onAction: () =>
+                                                  todoController
+                                                      .restoreTodo(todo),
+                                            );
+                                          },
+                                          onClearDone: () =>
+                                              todoController.clearDoneTodos(
+                                                  calendarView.selectedDay),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: cardWidth,
+                                    child: ModuleCard(
+                                      icon: Icons.edit_note_rounded,
+                                      title: 'Notes',
+                                      color: AppColors.lavender,
+                                      subtitle: selectedNote != null
+                                          ? _notePreview(selectedNote.content)
+                                          : 'Tap to write',
+                                      onTap: () => showAppBottomSheet(
+                                        context: context,
+                                        child: NotesSheet(
+                                          selectedDate:
+                                              calendarView.selectedDay,
+                                          note: selectedNote,
+                                          onSave: (note) async {
+                                            await noteController.saveNote(note);
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: cardWidth,
+                                    child: ModuleCard(
+                                      icon:
+                                          Icons.sentiment_satisfied_alt_rounded,
+                                      title: 'Mood',
+                                      color: AppColors.pink,
+                                      subtitle: selectedMood?.mood.label ??
+                                          'Not set',
+                                      onTap: () => showAppBottomSheet(
+                                        context: context,
+                                        child: MoodSheet(
+                                          selectedDate:
+                                              calendarView.selectedDay,
+                                          mood: selectedMood,
+                                          moodList:
+                                              moodList.value ?? const [],
+                                          onMoodChanged: (mood, note) async {
+                                            await moodController.saveMood(
+                                              _createMoodEntry(
+                                                selectedMood,
+                                                calendarView.selectedDay,
+                                                mood,
+                                                userId: ref.read(
+                                                    currentUserIdProvider),
+                                                note: note,
+                                              ),
+                                            );
+                                            if (context.mounted) {
+                                              AppNotification.success(
+                                                context,
+                                                'Mood saved',
+                                              );
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: cardWidth,
+                                    child: ModuleCard(
+                                      icon: Icons.auto_awesome_rounded,
+                                      title: 'Habits',
+                                      color: AppColors.mint,
+                                      subtitle: habits.isEmpty
+                                          ? 'None'
+                                          : _habitSubtitle(
+                                              habitsCheckedToday, habitsTotal),
+                                      onTap: () => showAppBottomSheet(
+                                        context: context,
+                                        child: HabitsSheet(
+                                          selectedDate:
+                                              calendarView.selectedDay,
+                                          habits: habits,
+                                          checkIns: habitCheckIns,
+                                          onAdd: () => _openHabitForm(
+                                            context: context,
+                                            habitController: habitController,
+                                          ),
+                                          onToggle: (habit, checkIn) async {
+                                            await habitController.saveCheckIn(
+                                              _createHabitCheckIn(
+                                                habit,
+                                                checkIn,
+                                                calendarView.selectedDay,
+                                              ),
+                                            );
+                                          },
+                                          onDelete: (habit) =>
+                                              habitController
+                                                  .deleteHabit(habit.id),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               );
                             },
                           ),
-                        ),
-                        SizedBox(
-                          width: cardWidth,
-                          child: ModuleCard(
-                            icon: Icons.account_balance_wallet_rounded,
-                            title: 'Expenses',
-                            color: AppColors.yellow,
-                            subtitle: selectedExpenses.isEmpty
-                                ? 'None'
-                                : _expenseSubtitle(expenseNet, selectedExpenses.length),
-                            onTap: () => showAppBottomSheet(
-                              context: context,
-                              child: ExpensesSheet(
-                                selectedDate: calendarView.selectedDay,
-                                expenses: selectedExpenses,
-                                allExpenses: expenseList.value ?? const [],
-                                onAdd: () => _openExpenseForm(
-                                  context: context,
-                                  expenseController: expenseController,
-                                  selectedDate: calendarView.selectedDay,
-                                ),
-                                onExpenseTap: (expense) =>
-                                    _openExpenseForm(
-                                  context: context,
-                                  expenseController: expenseController,
-                                  selectedDate: calendarView.selectedDay,
-                                  expense: expense,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: cardWidth,
-                          child: ModuleCard(
-                            icon: Icons.checklist_rounded,
-                            title: 'Tasks',
-                            color: AppColors.sage,
-                            subtitle: selectedTodos.isEmpty
-                                ? 'None'
-                                : _taskSubtitle(taskDoneCount, taskTotal),
-                            onTap: () => showAppBottomSheet(
-                              context: context,
-                              child: TasksSheet(
-                                selectedDate: calendarView.selectedDay,
-                                onAdd: () => _openTodoForm(
-                                  context: context,
-                                  todoController: todoController,
-                                  selectedDate: calendarView.selectedDay,
-                                ),
-                                onToggle: (todo) async {
-                                  await todoController.toggleDone(todo);
-                                  if (!context.mounted) return;
-                                  final newIsDone = !todo.isDone;
-                                  AppNotification.success(
-                                    context,
-                                    newIsDone ? 'Task completed' : 'Task marked as incomplete',
-                                  );
-                                  final currentTodos = ref.read(todoListProvider).value ?? [];
-                                  final dayTodos = currentTodos
-                                      .where((t) => AppDateUtils.isSameDate(t.date, calendarView.selectedDay))
-                                      .toList();
-                                  if (dayTodos.isNotEmpty && dayTodos.every((t) => t.isDone)) {
-                                    AppNotification.success(
-                                      context,
-                                      'All tasks completed for the day!',
-                                    );
-                                  }
-                                },
-                                onDelete: (todo) {
-                                  todoController.deleteTodo(todo);
-                                  AppNotification.confirm(
-                                    context,
-                                    'Task deleted',
-                                    actionLabel: 'Undo',
-                                    onAction: () => todoController.restoreTodo(todo),
-                                  );
-                                },
-                                onClearDone: () => todoController.clearDoneTodos(calendarView.selectedDay),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: cardWidth,
-                          child: ModuleCard(
-                            icon: Icons.edit_note_rounded,
-                            title: 'Notes',
-                            color: AppColors.lavender,
-                            subtitle: selectedNote != null
-                                ? _notePreview(selectedNote.content)
-                                : 'Tap to write',
-                            onTap: () => showAppBottomSheet(
-                              context: context,
-                              child: NotesSheet(
-                                selectedDate: calendarView.selectedDay,
-                                note: selectedNote,
-                                onSave: (note) async {
-                                  await noteController.saveNote(note);
-                                },
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: cardWidth,
-                          child: ModuleCard(
-                            icon: Icons.sentiment_satisfied_alt_rounded,
-                            title: 'Mood',
-                            color: AppColors.pink,
-                            subtitle:
-                                selectedMood?.mood.label ?? 'Not set',
-                            onTap: () => showAppBottomSheet(
-                              context: context,
-                              child: MoodSheet(
-                                selectedDate: calendarView.selectedDay,
-                                mood: selectedMood,
-                                moodList: moodList.value ?? const [],
-                                onMoodChanged: (mood, note) async {
-                                  await moodController.saveMood(
-                                    _createMoodEntry(
-                                      selectedMood,
-                                      calendarView.selectedDay,
-                                      mood,
-                                      userId: ref.read(currentUserIdProvider),
-                                      note: note,
-                                    ),
-                                  );
-                                  if (context.mounted) {
-                                    AppNotification.success(
-                                      context,
-                                      'Mood saved',
-                                    );
-                                  }
-                                },
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: cardWidth,
-                          child: ModuleCard(
-                            icon: Icons.auto_awesome_rounded,
-                            title: 'Habits',
-                            color: AppColors.mint,
-                            subtitle: habits.isEmpty
-                                ? 'None'
-                                : _habitSubtitle(habitsCheckedToday, habitsTotal),
-                            onTap: () => showAppBottomSheet(
-                              context: context,
-                              child: HabitsSheet(
-                                selectedDate: calendarView.selectedDay,
-                                habits: habits,
-                                checkIns: habitCheckIns,
-                                onAdd: () => _openHabitForm(
-                                  context: context,
-                                  habitController: habitController,
-                                ),
-                                onToggle: (habit, checkIn) async {
-                                  await habitController.saveCheckIn(
-                                    _createHabitCheckIn(
-                                      habit,
-                                      checkIn,
-                                      calendarView.selectedDay,
-                                    ),
-                                  );
-                                },
-                                onDelete: (habit) => habitController.deleteHabit(habit.id),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
+                        ],
+                      );
+                    }(),
                   ],
-                );
-              }(),
-                ],
+                ),
               ),
             ),
           ],
@@ -654,10 +599,135 @@ class CalendarScreen extends ConsumerWidget {
     );
   }
 
+  // ── Quick-actions bottom sheet ──────────────────────────────────
+
+  void _showQuickActions(
+    BuildContext context,
+    WidgetRef ref,
+    DateTime day,
+    EventListController eventController,
+    TodoListController todoController,
+    ExpenseListController expenseController,
+    DailyNoteListController noteController,
+    AsyncValue<List<DailyNote>> noteList,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              _QuickActionTile(
+                icon: Icons.add_rounded,
+                label: 'Add Event',
+                color: AppColors.primary,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _openEventForm(
+                    context: context,
+                    eventController: eventController,
+                    selectedDate: day,
+                  );
+                },
+              ),
+              _QuickActionTile(
+                icon: Icons.checklist_rounded,
+                label: 'Add Task',
+                color: AppColors.sage,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _openTodoForm(
+                    context: context,
+                    todoController: todoController,
+                    selectedDate: day,
+                  );
+                },
+              ),
+              _QuickActionTile(
+                icon: Icons.account_balance_wallet_rounded,
+                label: 'Add Expense',
+                color: AppColors.yellow,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _openExpenseForm(
+                    context: context,
+                    expenseController: expenseController,
+                    selectedDate: day,
+                  );
+                },
+              ),
+              _QuickActionTile(
+                icon: Icons.edit_note_rounded,
+                label: 'Add Note',
+                color: AppColors.lavender,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  final dayNote = (noteList.value ?? const [])
+                      .where((n) => AppDateUtils.isSameDate(n.date, day))
+                      .firstOrNull;
+                  showAppBottomSheet(
+                    context: context,
+                    child: NotesSheet(
+                      selectedDate: day,
+                      note: dayNote,
+                      onSave: (note) async {
+                        await noteController.saveNote(note);
+                      },
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ── Helpers (unchanged business logic) ──────────────────────────
+
+  void _confirmLogout(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Logout'),
+        content: const Text('Are you sure you want to logout?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              ref.read(authControllerProvider).signOut();
+            },
+            child: const Text('Logout'),
+          ),
+        ],
+      ),
+    );
+  }
+
   String _greeting(String username) {
     final now = DateTime.now();
     final hour = now.hour;
-    final timeGreeting = hour < 12 ? 'Morning' : hour < 17 ? 'Afternoon' : 'Evening';
+    final timeGreeting =
+        hour < 12 ? 'Morning' : hour < 17 ? 'Afternoon' : 'Evening';
     final dateStr = DateFormat('EEEE, MMMM d').format(now);
     return 'Good $timeGreeting, $username  ·  $dateStr';
   }
@@ -673,12 +743,18 @@ class CalendarScreen extends ConsumerWidget {
     final month = focusedDay.month;
     final year = focusedDay.year;
 
-    final monthTodos = todos.where((t) => t.date.month == month && t.date.year == year).toList();
-    final monthEvents = events.where((e) {
-      final d = e.startAt;
-      return d.month == month && d.year == year;
-    }).length;
-    final monthExpenses = expenses.where((e) => e.date.month == month && e.date.year == year).toList();
+    final monthTodos = todos
+        .where((t) => t.date.month == month && t.date.year == year)
+        .toList();
+    final monthEvents = events
+        .where((e) {
+          final d = e.startAt;
+          return d.month == month && d.year == year;
+        })
+        .length;
+    final monthExpenses = expenses
+        .where((e) => e.date.month == month && e.date.year == year)
+        .toList();
 
     var net = 0.0;
     for (final e in monthExpenses) {
@@ -686,11 +762,15 @@ class CalendarScreen extends ConsumerWidget {
     }
 
     final monthCheckIns = checkIns
-        .where((c) => c.date.month == month && c.date.year == year && c.isDone)
+        .where((c) =>
+            c.date.month == month && c.date.year == year && c.isDone)
         .length;
 
     final monthNotes = notes
-        .where((n) => n.date.month == month && n.date.year == year && n.content.trim().isNotEmpty)
+        .where((n) =>
+            n.date.month == month &&
+            n.date.year == year &&
+            n.content.trim().isNotEmpty)
         .length;
 
     final parts = <String>[];
@@ -699,14 +779,17 @@ class CalendarScreen extends ConsumerWidget {
       parts.add('$done/${monthTodos.length} tasks');
     }
     if (monthEvents > 0) parts.add('$monthEvents events');
-    if (net != 0) parts.add('${net > 0 ? "+" : ""}${net.toStringAsFixed(0)} net');
+    if (net != 0) {
+      parts.add('${net > 0 ? "+" : ""}${net.toStringAsFixed(0)} net');
+    }
     if (monthCheckIns > 0) parts.add('$monthCheckIns habits done');
     if (monthNotes > 0) parts.add('$monthNotes notes');
 
     return parts.isEmpty ? null : parts.join('  ·  ');
   }
 
-  List<CalendarEvent> _eventsForDay(List<CalendarEvent> events, DateTime day) {
+  List<CalendarEvent> _eventsForDay(
+      List<CalendarEvent> events, DateTime day) {
     return events
         .where((event) => _recurrenceCalculator.occursOn(event, day))
         .map((event) => _recurrenceCalculator.occurrenceFor(event, day))
@@ -718,7 +801,9 @@ class CalendarScreen extends ConsumerWidget {
     final timed = events.where((e) => !e.isAllDay).toList();
     if (timed.isNotEmpty) {
       final time = DateFormat('HH:mm').format(timed.first.startAt);
-      return events.length == 1 ? 'at $time' : '${events.length} events, next $time';
+      return events.length == 1
+          ? 'at $time'
+          : '${events.length} events, next $time';
     }
     return '${events.length} event${events.length == 1 ? '' : 's'}';
   }
@@ -737,7 +822,8 @@ class CalendarScreen extends ConsumerWidget {
 
   String _notePreview(String content) {
     final trimmed = content.trim();
-    final wordCount = trimmed.isEmpty ? 0 : trimmed.split(RegExp(r'\s+')).length;
+    final wordCount =
+        trimmed.isEmpty ? 0 : trimmed.split(RegExp(r'\s+')).length;
     final wordsLabel = '$wordCount word${wordCount == 1 ? '' : 's'}';
     if (trimmed.length <= 22) return '$trimmed  ·  $wordsLabel';
     return '${trimmed.substring(0, 22)}...  ·  $wordsLabel';
@@ -755,13 +841,17 @@ class CalendarScreen extends ConsumerWidget {
     return events
         .where((e) {
           final occ = _recurrenceCalculator.occurrenceFor(e, today);
-          final d = DateTime(occ.startAt.year, occ.startAt.month, occ.startAt.day);
-          return d.isAfter(today) && d.isBefore(nextWeek.add(const Duration(days: 1)));
+          final d = DateTime(
+              occ.startAt.year, occ.startAt.month, occ.startAt.day);
+          return d.isAfter(today) &&
+              d.isBefore(nextWeek.add(const Duration(days: 1)));
         })
         .map((e) => _recurrenceCalculator.occurrenceFor(e, today))
         .toList()
       ..sort((a, b) => a.startAt.compareTo(b.startAt));
   }
+
+  // ── Form openers ────────────────────────────────────────────────
 
   Future<void> _openEventForm({
     required BuildContext context,
@@ -850,8 +940,7 @@ class CalendarScreen extends ConsumerWidget {
   }) {
     final now = DateTime.now();
     return MoodEntry(
-      id:
-          existing?.id ??
+      id: existing?.id ??
           '${selectedDate.year}-${selectedDate.month}-${selectedDate.day}',
       userId: existing?.userId ?? userId,
       date: DateTime(selectedDate.year, selectedDate.month, selectedDate.day),
@@ -903,6 +992,42 @@ class CalendarScreen extends ConsumerWidget {
       updatedAt: now,
       syncStatus: SyncStatus.localOnly,
       version: (existing?.version ?? 0) + 1,
+    );
+  }
+}
+
+// ── Quick-action tile ─────────────────────────────────────────────
+
+class _QuickActionTile extends StatelessWidget {
+  const _QuickActionTile({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Container(
+        width: 38,
+        height: 38,
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: .18),
+          borderRadius: BorderRadius.circular(AppRadius.sm),
+        ),
+        child: Icon(icon, color: color, size: 20),
+      ),
+      title: Text(
+        label,
+        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+      ),
+      onTap: onTap,
     );
   }
 }

@@ -72,8 +72,7 @@ class _ExpenseFormState extends ConsumerState<ExpenseForm> {
       ),
       child: Form(
         key: _formKey,
-        child: SingleChildScrollView(
-          child: Column(
+        child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -143,7 +142,6 @@ class _ExpenseFormState extends ConsumerState<ExpenseForm> {
             ],
           ),
         ),
-      ),
     );
   }
 

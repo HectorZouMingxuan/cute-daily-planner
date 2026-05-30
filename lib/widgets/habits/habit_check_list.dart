@@ -7,7 +7,7 @@ import '../../theme/app_date_utils.dart';
 import '../../theme/app_radius.dart';
 import '../../theme/app_spacing.dart';
 import '../common/empty_state.dart';
-import '../common/soft_card.dart';
+import '../common/planner_card.dart';
 
 const _habitIcons = {
   'check': Icons.check_rounded,
@@ -37,90 +37,155 @@ class HabitCheckList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (habits.isEmpty) {
-      return const SoftCard(
-        child: EmptyState(
-          icon: Icons.auto_awesome_outlined,
-          title: 'Habits',
-          message: 'Add a small routine',
-        ),
+      return const EmptyState(
+        icon: Icons.auto_awesome_outlined,
+        title: 'Habits',
+        message: 'Add a small routine',
       );
     }
 
     final allDone = habits.every((h) {
-      final ci = checkIns.where((c) =>
-          c.habitId == h.id && AppDateUtils.isSameDate(c.date, selectedDate)).firstOrNull;
+      final ci = checkIns
+          .where((c) =>
+              c.habitId == h.id &&
+              AppDateUtils.isSameDate(c.date, selectedDate))
+          .firstOrNull;
       return ci?.isDone ?? false;
     });
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         ...habits.map((habit) {
-          final checkIn = checkIns.where((item) {
-            return item.habitId == habit.id &&
-                AppDateUtils.isSameDate(item.date, selectedDate);
-          }).firstOrNull;
+          final checkIn = checkIns
+              .where((item) =>
+                  item.habitId == habit.id &&
+                  AppDateUtils.isSameDate(item.date, selectedDate))
+              .firstOrNull;
           final done = checkIn?.isDone ?? false;
           final streak = _calculateStreak(habit.id, selectedDate);
+          final habitColor = Color(habit.color);
 
-          return Dismissible(
-            key: Key(habit.id),
-            direction: DismissDirection.endToStart,
-            background: Container(
-              alignment: Alignment.centerRight,
-              padding: const EdgeInsets.only(right: AppSpacing.lg),
-              decoration: BoxDecoration(
-                color: AppColors.danger.withValues(alpha: .85),
-                borderRadius: BorderRadius.circular(AppRadius.medium),
-              ),
-              child: const Icon(Icons.delete_rounded, color: Colors.white),
-            ),
-            confirmDismiss: (_) async {
-              onDelete(habit);
-              return false;
-            },
-            child: Card(
-              child: CheckboxListTile(
-                value: done,
-                onChanged: (_) => onToggle(habit, checkIn),
-                title: Text(
-                  habit.title,
-                  style: TextStyle(
-                    color: AppColors.textMain,
-                    fontWeight: FontWeight.w800,
-                  ),
+          return Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: Dismissible(
+              key: Key(habit.id),
+              direction: DismissDirection.endToStart,
+              background: Container(
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.only(right: AppSpacing.lg),
+                decoration: BoxDecoration(
+                  color: AppColors.danger.withValues(alpha: .85),
+                  borderRadius: BorderRadius.circular(AppRadius.md),
                 ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: const Icon(Icons.delete_rounded, color: Colors.white),
+              ),
+              confirmDismiss: (_) async {
+                onDelete(habit);
+                return false;
+              },
+              child: PlannerCard(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm + 4,
+                  vertical: AppSpacing.sm,
+                ),
+                borderColor: done
+                    ? habitColor.withValues(alpha: .35)
+                    : null,
+                child: Row(
                   children: [
-                    Row(
-                      children: [
-                        Text(done ? 'Done' : 'Not done'),
-                        if (streak > 1) ...[
-                          const SizedBox(width: AppSpacing.sm),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: Color(habit.color).withValues(alpha: .25),
-                              borderRadius: BorderRadius.circular(AppRadius.small),
-                            ),
-                            child: Text(
-                              '$streak day streak',
-                              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(habit.color)),
+                    // Habit icon
+                    CircleAvatar(
+                      radius: 18,
+                      backgroundColor: habitColor.withValues(alpha: .3),
+                      child: Icon(
+                        _habitIcons[habit.icon] ?? Icons.check_rounded,
+                        size: 18,
+                        color: habitColor,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.sm + 4),
+                    // Title + streak + week dots
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  habit.title,
+                                  style: TextStyle(
+                                    color: done
+                                        ? AppColors.textMuted
+                                        : AppColors.textMain,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 14,
+                                    decoration: done
+                                        ? TextDecoration.lineThrough
+                                        : TextDecoration.none,
+                                  ),
+                                ),
+                              ),
+                              if (streak > 1)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 3,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: habitColor.withValues(alpha: .2),
+                                    borderRadius:
+                                        BorderRadius.circular(AppRadius.xs),
+                                  ),
+                                  child: Text(
+                                    '$streak day streak',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700,
+                                      color: habitColor,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            done ? 'Done ✓' : 'Tap to complete',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: done
+                                  ? AppColors.mint
+                                  : AppColors.textMuted,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
+                          const SizedBox(height: 4),
+                          _WeekDots(
+                            habitId: habit.id,
+                            selectedDate: selectedDate,
+                            checkIns: checkIns,
+                            color: habitColor,
+                          ),
                         ],
-                      ],
+                      ),
                     ),
-                    const SizedBox(height: 4),
-                    _WeekDots(habitId: habit.id, selectedDate: selectedDate, checkIns: checkIns, color: Color(habit.color)),
+                    // Checkbox
+                    SizedBox(
+                      width: 28,
+                      height: 28,
+                      child: Checkbox(
+                        value: done,
+                        onChanged: (_) => onToggle(habit, checkIn),
+                        fillColor: WidgetStateProperty.resolveWith((states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return habitColor;
+                          }
+                          return null;
+                        }),
+                      ),
+                    ),
                   ],
-                ),
-                secondary: CircleAvatar(
-                  backgroundColor: Color(habit.color).withValues(alpha: .45),
-                  child: Icon(_habitIcons[habit.icon] ?? Icons.check_rounded),
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm,
                 ),
               ),
             ),
@@ -129,7 +194,7 @@ class HabitCheckList extends StatelessWidget {
         if (allDone) ...[
           const SizedBox(height: AppSpacing.md),
           Text(
-            'All habits checked in today!',
+            'All habits checked in today! 🎉',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 13,
@@ -175,7 +240,8 @@ class _WeekDots extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final monday = selectedDate.subtract(Duration(days: selectedDate.weekday - 1));
+    final monday =
+        selectedDate.subtract(Duration(days: selectedDate.weekday - 1));
     final doneSet = checkIns
         .where((c) => c.habitId == habitId && c.isDone)
         .map((c) => DateTime(c.date.year, c.date.month, c.date.day))
@@ -195,7 +261,7 @@ class _WeekDots extends StatelessWidget {
             shape: BoxShape.circle,
             color: isDone
                 ? color.withValues(alpha: .75)
-                : AppColors.border.withValues(alpha: .4),
+                : AppColors.border.withValues(alpha: .35),
             border: isToday && !isDone
                 ? Border.all(color: color.withValues(alpha: .5), width: 1.5)
                 : null,
@@ -204,5 +270,4 @@ class _WeekDots extends StatelessWidget {
       }),
     );
   }
-
 }

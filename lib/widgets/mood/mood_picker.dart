@@ -22,31 +22,58 @@ class MoodPicker extends StatelessWidget {
       runSpacing: AppSpacing.sm,
       children: MoodOption.values.map((mood) {
         final selected = selectedMood == mood;
-        return ChoiceChip(
-          label: Text('${_emojiFor(mood)}  ${mood.label}'),
-          selected: selected,
-          avatar: Icon(_iconFor(mood), size: 16),
-          selectedColor: AppColors.lavender.withValues(alpha: .55),
-          backgroundColor: AppColors.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.medium),
-            side: BorderSide(
-              color: selected ? AppColors.lavender : AppColors.border,
+        final moodColor = _colorFor(mood);
+
+        return GestureDetector(
+          onTap: () => onChanged(mood),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            curve: Curves.easeOutCubic,
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm + 4,
+            ),
+            decoration: BoxDecoration(
+              color: selected
+                  ? moodColor.withValues(alpha: .22)
+                  : AppColors.surface,
+              borderRadius: BorderRadius.circular(AppRadius.md),
+              border: Border.all(
+                color: selected ? moodColor : AppColors.border.withValues(alpha: .5),
+                width: selected ? 2 : 1,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  _emojiFor(mood),
+                  style: const TextStyle(fontSize: 20),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Text(
+                  mood.label,
+                  style: TextStyle(
+                    color: selected ? moodColor : AppColors.textMain,
+                    fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+                    fontSize: 13,
+                  ),
+                ),
+              ],
             ),
           ),
-          onSelected: (_) => onChanged(mood),
         );
       }).toList(),
     );
   }
 
-  IconData _iconFor(MoodOption mood) {
+  Color _colorFor(MoodOption mood) {
     return switch (mood) {
-      MoodOption.great => Icons.star_rounded,
-      MoodOption.good => Icons.wb_sunny_outlined,
-      MoodOption.okay => Icons.eco_outlined,
-      MoodOption.tired => Icons.nights_stay_outlined,
-      MoodOption.bad => Icons.cloud_outlined,
+      MoodOption.great => AppColors.yellow,
+      MoodOption.good => AppColors.sky,
+      MoodOption.okay => AppColors.sage,
+      MoodOption.tired => AppColors.lavender,
+      MoodOption.bad => AppColors.pink,
     };
   }
 
